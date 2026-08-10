@@ -26,10 +26,9 @@ This argument is exclusive with \code{n_origins}.}
 \item{h}{Integer giving the forecast horizon in reporting intervals (for
 example, weeks for weekly data). Defaults to \code{4}.}
 
-\item{models}{Named list of \code{fable} model specifications. Defaults to
-\code{\link{default_models}}. Additional models can be added with
-\code{c(default_models(), list(...))}. Each model must use
-\code{observation} as the response variable.}
+\item{models}{Named list of \code{fable} or joint incast model
+specifications, such as \code{\link{HHH4}}. Defaults to
+\code{\link{default_models}}.}
 
 \item{step}{Integer giving the number of reporting intervals between
 successive cross-validation origins. Defaults to \code{h}, resulting in

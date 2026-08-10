@@ -22,10 +22,9 @@
 #' @param h Integer giving the forecast horizon in reporting intervals (for
 #'   example, weeks for weekly data). Defaults to \code{4}.
 #'
-#' @param models Named list of \code{fable} model specifications. Defaults to
-#'   \code{\link{default_models}}. Additional models can be added with
-#'   \code{c(default_models(), list(...))}. Each model must use
-#'   \code{observation} as the response variable.
+#' @param models Named list of \code{fable} or joint incast model
+#'   specifications, such as \code{\link{HHH4}}. Defaults to
+#'   \code{\link{default_models}}.
 #'
 #' @param step Integer giving the number of reporting intervals between
 #'   successive cross-validation origins. Defaults to \code{h}, resulting in

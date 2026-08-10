@@ -16,7 +16,8 @@
 #' 
 #' @param x An \code{incast_*} object.
 #'
-#' @param models Named list of \code{fable} model specifications. Defaults to
+#' @param models Named list of ordinary \code{fable} or joint incast model
+#'   specifications, such as \code{\link{HHH4}}. Defaults to
 #'   \code{\link{default_models}}. When \code{x} is an \code{incast_cv} object,
 #'   leave unset to use the top-ranked models from cross-validation, or provide
 #'   a custom set of models.
@@ -203,13 +204,13 @@ get_fcast <- function(
 }
 
 
-#' Fit forecasting models and generate forecasts
+#' Fit and forecast models
 #'
-#' Fit each model to every series and generate forecasts for the specified
-#' horizon.
+#' Fit standard \code{fable} models by series and joint incast models across
+#' all series. Both return the same forecast format.
 #'
 #' @param ts A keyed model \code{tsibble} created by \code{as_model_ts}.
-#' @param models A named list of \code{fable} model specifications.
+#' @param models A named list of standard or joint model specifications.
 #' @param h Forecast horizon in reporting intervals.
 #'
 #' @return A tibble containing forecasts for each series and model, including
@@ -220,6 +221,24 @@ get_fcast <- function(
 #' @keywords internal
 #' @noRd
 forecast_final <- function(ts, models, h) {
+  is_joint <- vapply(models, inherits, logical(1L), "incast_joint")
+
+  out <- dplyr::bind_rows(
+    if (any(!is_joint)) forecast_fable(ts, models[!is_joint], h),
+    if (any(is_joint)) forecast_joint(ts, models[is_joint], h)
+  )
+
+  dplyr::mutate(out, observation = truncate_counts(observation))
+}
+
+
+#' Fit and forecast standard fable models
+#'
+#' @inheritParams forecast_final
+#' @return A tibble of forecasts.
+#' @keywords internal
+#' @noRd
+forecast_fable <- function(ts, models, h) {
   fit <- fabletools::model(ts, !!!models)
 
   # A model that fails to fit becomes a fable "null model" whose NA forecasts
@@ -246,7 +265,6 @@ forecast_final <- function(ts, models, h) {
 
   fit |>
     fabletools::forecast(h = h) |>
-    dplyr::mutate(observation = truncate_counts(observation)) |>
     dplyr::as_tibble()
 }
 
