@@ -15,7 +15,8 @@ get_fcast(
 \arguments{
 \item{x}{An \code{incast_*} object.}
 
-\item{models}{Named list of \code{fable} model specifications. Defaults to
+\item{models}{Named list of ordinary \code{fable} or joint incast model
+specifications, such as \code{\link{HHH4}}. Defaults to
 \code{\link{default_models}}. When \code{x} is an \code{incast_cv} object,
 leave unset to use the top-ranked models from cross-validation, or provide
 a custom set of models.}

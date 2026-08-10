@@ -27,10 +27,12 @@ Imports:
     baselinenowcast (>= 0.2.0),
     pipetime,
     urca,
-    feasts
+    feasts,
+    rlang
 Suggests:
     EpiEstim,
     projections,
+    surveillance,
     DiagrammeR,
     knitr,
     rmarkdown,

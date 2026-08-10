@@ -145,15 +145,15 @@ validate_positive_scalar <- function(x, name, what) {
 
 #' Validate forecasting models
 #'
-#' Check that a model specification is a non-empty named list.
+#' Check that model specifications form a non-empty named list.
 #'
-#' @param models A named list of \code{fable} model specifications.
+#' @param models A named list of model specifications.
 #' @return \code{models}, invisibly.
 #' @keywords internal
 #' @noRd
 validate_models <- function(models) {
   if (!is.list(models) || length(models) == 0L) {
-    stop("`models` must be a non-empty list of fable model definitions.")
+    stop("`models` must be a non-empty list of model definitions.")
   }
   nms <- names(models)
   if (is.null(nms) || any(!nzchar(nms)) || anyDuplicated(nms) > 0L) {
