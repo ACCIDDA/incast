@@ -23,7 +23,9 @@ get_fcast(
 
 - models:
 
-  Named list of `fable` model specifications. Defaults to
+  Named list of ordinary `fable` or joint incast model specifications,
+  such as [`HHH4`](https://accidda.github.io/incast/reference/HHH4.md).
+  Defaults to
   [`default_models`](https://accidda.github.io/incast/reference/default_models.md).
   When `x` is an `incast_cv` object, leave unset to use the top-ranked
   models from cross-validation, or provide a custom set of models.

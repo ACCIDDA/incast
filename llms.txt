@@ -124,6 +124,9 @@ Hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).
 - [`FOUNDATION()`](https://accidda.github.io/incast/reference/FOUNDATION.md)
   : Forecast with a pretrained time-series model
 
+- [`HHH4()`](https://accidda.github.io/incast/reference/HHH4.md) : Joint
+  endemic-epidemic model
+
 - [`as_tibble(`*`<incast_data>`*`)`](https://accidda.github.io/incast/reference/as_tibble.incast_data.md)
   [`as_tibble(`*`<incast_ncast>`*`)`](https://accidda.github.io/incast/reference/as_tibble.incast_data.md)
   [`as_tibble(`*`<incast_fcast>`*`)`](https://accidda.github.io/incast/reference/as_tibble.incast_data.md)
@@ -194,4 +197,6 @@ Hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).
   Data](https://accidda.github.io/incast/articles/external_data.md):
 - [Disease Forecast Planning for Public
   Health](https://accidda.github.io/incast/articles/forecast_planning.md):
+- [Forecasting connected time series with
+  HHH4](https://accidda.github.io/incast/articles/hhh4.md):
 - [incast](https://accidda.github.io/incast/articles/incast.md):

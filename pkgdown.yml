@@ -5,8 +5,9 @@ articles:
   ebola_2026: ebola_2026.html
   external_data: external_data.html
   forecast_planning: forecast_planning.html
+  hhh4: hhh4.html
   incast: incast.html
-last_built: 2026-07-31T17:12Z
+last_built: 2026-08-10T18:50Z
 urls:
   reference: https://accidda.github.io/incast/reference
   article: https://accidda.github.io/incast/articles

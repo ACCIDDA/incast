@@ -8,6 +8,9 @@
 - [`FOUNDATION()`](https://accidda.github.io/incast/reference/FOUNDATION.md)
   : Forecast with a pretrained time-series model
 
+- [`HHH4()`](https://accidda.github.io/incast/reference/HHH4.md) : Joint
+  endemic-epidemic model
+
 - [`as_tibble(`*`<incast_data>`*`)`](https://accidda.github.io/incast/reference/as_tibble.incast_data.md)
   [`as_tibble(`*`<incast_ncast>`*`)`](https://accidda.github.io/incast/reference/as_tibble.incast_data.md)
   [`as_tibble(`*`<incast_fcast>`*`)`](https://accidda.github.io/incast/reference/as_tibble.incast_data.md)

@@ -42,10 +42,10 @@ get_cv(
 
 - models:
 
-  Named list of `fable` model specifications. Defaults to
+  Named list of `fable` or joint incast model specifications, such as
+  [`HHH4`](https://accidda.github.io/incast/reference/HHH4.md). Defaults
+  to
   [`default_models`](https://accidda.github.io/incast/reference/default_models.md).
-  Additional models can be added with `c(default_models(), list(...))`.
-  Each model must use `observation` as the response variable.
 
 - step:
 
