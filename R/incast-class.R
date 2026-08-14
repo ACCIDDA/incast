@@ -1,11 +1,4 @@
-#' Constructors for the pipeline's typed S3 objects
-#'
-#' Low-level constructors that assemble and type-check the four pipeline
-#' objects. \code{incast_data} / \code{incast_ncast} carry the full metadata
-#' backbone (\code{key}, \code{target}, \code{window}, \code{interval},
-#' \code{history}); \code{incast_cv} / \code{incast_fcast} keep only
-#' \code{key}, \code{target} and \code{interval}. User-facing validation lives
-#' in \code{\link{check_data}}.
+#' Internal S3 constructors
 #'
 #' @name incast-class
 #' @keywords internal
@@ -50,7 +43,6 @@ new_incast_ncast <- function(
   meta
 ) {
   stopifnot(is.list(meta))
-  # Same backbone as incast_data, validated in one place, plus `meta`.
   out <- new_incast_data(data, key, target, window, interval, history)
   out$meta <- meta
   class(out) <- "incast_ncast"
@@ -87,11 +79,7 @@ new_incast_fcast <- function(hub, score, meta) {
 }
 
 
-#' Read the shared metadata backbone from a pipeline object
-#'
-#' Returns the fields shared by every stage (\code{key}, \code{target},
-#' \code{interval}), plus \code{window} and \code{history} for
-#' \code{incast_data} / \code{incast_ncast}.
+#' Read shared metadata from a pipeline object
 #' @param x An \code{incast_data}, \code{incast_ncast}, \code{incast_cv} or
 #'   \code{incast_fcast}.
 #' @return A named list.

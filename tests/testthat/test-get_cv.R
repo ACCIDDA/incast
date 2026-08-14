@@ -16,6 +16,7 @@ test_that("get_cv validates its parameters", {
 
   expect_error(get_cv(x, eval_start_date = "2023-03-01", h = -1), "`h`")
   expect_error(get_cv(x, eval_start_date = "2023-03-01", h = c(1, 2)), "`h`")
+  expect_error(get_cv(x, eval_start_date = "2023-03-01", h = 1.5), "integer")
   expect_error(get_cv(x, eval_start_date = "2023-03-01", step = 0), "`step`")
   expect_error(get_cv(x, eval_start_date = c("2023-03-01", "2023-04-01")), "single date")
   expect_error(get_cv(x, eval_start_date = "2019-01-01"), "data window")

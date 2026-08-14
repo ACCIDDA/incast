@@ -7,45 +7,34 @@
 get_ncast(x, max_delay = 2, draws = 1000, prop_delay = 0.5, scale_factor = 3)
 }
 \arguments{
-\item{x}{An \code{incast_data} (\code{\link{get_data}} /
-\code{\link{check_data}}) with revision history; use
-\code{get_data(revisions = TRUE)}.}
+\item{x}{An \code{incast_data} object with revision history.}
 
-\item{max_delay}{Integer. Number of recent weeks treated as
-right-truncated. Default 2.}
+\item{max_delay}{Number of recent weeks to nowcast. Defaults to \code{2}.}
 
-\item{draws}{Integer. Number of posterior samples. Default 1000.}
+\item{draws}{Number of posterior samples. Defaults to \code{1000}.}
 
-\item{prop_delay}{Numeric in (0, 1). Proportion of reference times used for
-delay estimation. Default 0.5.}
+\item{prop_delay}{Proportion of reference times used to estimate delays.
+Must be between 0 and 1. Defaults to \code{0.5}.}
 
-\item{scale_factor}{Numeric. Multiplier on \code{max_delay} for the
-estimation window. Default 3.}
+\item{scale_factor}{Multiplier applied to \code{max_delay} to set the estimation
+window. Defaults to \code{3}.}
 }
 \value{
 An \code{incast_ncast} object with the shared backbone
 (\code{key}, \code{target}, \code{window}, \code{interval},
 \code{history}) plus:
 \describe{
-\item{data}{Corrected series. \code{observation} holds the nowcast
-median for corrected weeks; \code{ncast_lower} / \code{ncast_upper}
-(95\\% CrI) are non-NA only there, and let \code{\link{get_fcast}}
-propagate nowcast uncertainty.}
-\item{meta}{The nowcast settings (\code{max_delay}, \code{draws},
-\code{prop_delay}, \code{scale_factor}) and \code{ncast_summary},
-one tidy table of per-series weekly nowcasts (median, CrI bounds and
-the reported-so-far \code{observed} count) plotted by
-\code{\link[ggplot2]{autoplot}}.}
+\item{data}{Corrected series with \code{ncast_lower} and \code{ncast_upper} 95\%
+credible interval bounds.}
+\item{meta}{Nowcast settings and a per-series \code{ncast_summary}.}
 }
 }
 \description{
-Recent weeks of surveillance data are incomplete because of reporting
-delays (right truncation). \code{get_ncast} estimates their final counts
-with \href{https://baselinenowcast.epinowcast.org/}{baselinenowcast},
-replacing the last \code{max_delay} weeks of every series and leaving
-earlier weeks untouched. Downward revisions are redistributed across
-earlier delays via
-\code{\link[baselinenowcast]{preprocess_negative_values}}.
+Estimate final counts for recent, incomplete weeks using
+\href{https://baselinenowcast.epinowcast.org/}{baselinenowcast}. The last
+\code{max_delay} weeks are replaced; earlier observations are unchanged.
+Downward revisions are redistributed with
+\code{\link[baselinenowcast:preprocess_negative_values]{baselinenowcast::preprocess_negative_values()}}.
 }
 \details{
 Weekly data only; other cadences are rejected (the rest of the pipeline is

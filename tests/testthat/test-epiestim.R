@@ -13,6 +13,19 @@ weekly_ts <- function(n = 24, start = as.Date("2024-01-06"), r = 0.08) {
   )
 }
 
+test_that("EPIESTIM validates model settings", {
+  expect_error(EPIESTIM(observation, mean_si = 0, std_si = 4), "mean_si")
+  expect_error(EPIESTIM(observation, mean_si = 5, std_si = Inf), "std_si")
+  expect_error(
+    EPIESTIM(observation, mean_si = 5, std_si = 4, rt_window = 1.5),
+    "positive integer"
+  )
+  expect_error(
+    EPIESTIM(observation, mean_si = 5, std_si = 4, R_fix_within = NA),
+    "TRUE.*FALSE"
+  )
+})
+
 test_that("EPIESTIM fits and forecasts h future periods", {
   skip_if_no_epiestim()
   ts <- weekly_ts()

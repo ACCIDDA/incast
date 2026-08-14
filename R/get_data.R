@@ -1,28 +1,29 @@
 #' Fetch hospitalisation data
 #'
-#' Fetch confirmed US hospital admissions (COVID-19, influenza or RSV) from
-#' NHSN via \link[epidatr]{pub_covidcast}.
+#' Fetch confirmed US hospital admissions for COVID-19, influenza or RSV from
+#' NHSN through [epidatr::pub_covidcast()].
 #'
 #' @author Cyril Geismar
-#' 
-#' @param pathogen One of "covid", "flu" or "rsv".
-#' @param geo_value Geographic value(s) to fetch, as per
-#'   \link[epidatr]{pub_covidcast}.
-#' @param revisions Logical. If \code{TRUE}, fetch the full revision history
-#'   needed by \code{\link{get_ncast}}. Default \code{FALSE} (latest only).
+#'
+#' @param pathogen One of `"covid"`, `"flu"` or `"rsv"`.
+#' @param geo_value Geographic values accepted by [epidatr::pub_covidcast()].
+#' @param revisions Fetch revision history for [get_ncast()]. Defaults to
+#'   `FALSE`.
 #'
 #' @return An \code{incast_data} object (see \code{\link{check_data}}).
 #'
 #' @export
-#' @importFrom epidatr pub_covidcast
-#' @importFrom dplyr transmute
 #' @examples
+#' \dontrun{
 #' get_data(pathogen = "covid", geo_value = "ny")
 #'
-#' # Revision history for nowcasting
 #' get_data(pathogen = "covid", geo_value = "ca", revisions = TRUE)
+#' }
 get_data <- function(pathogen, geo_value, revisions = FALSE) {
   pathogen <- match.arg(pathogen, choices = c("covid", "flu", "rsv"))
+  if (!is.logical(revisions) || length(revisions) != 1L || is.na(revisions)) {
+    stop("`revisions` must be `TRUE` or `FALSE`.")
+  }
 
   signal_map <- c(
     covid = "confirmed_admissions_covid_ew",

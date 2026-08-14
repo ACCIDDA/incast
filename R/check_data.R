@@ -1,8 +1,6 @@
 #' Validate surveillance data
 #'
-#' Validate and standardise surveillance data for use throughout the package.
-#' The returned \code{incast_data} object can be passed directly to forecasting
-#' and nowcasting functions.
+#' Validate and standardise surveillance data for nowcasting and forecasting.
 #'
 #' Data must contain one row per time series and reporting date (and
 #' \code{as_of}, if present). All series must have the same reporting interval,
@@ -10,17 +8,13 @@
 #' at different times and may contain missing reporting periods.
 #'
 #' @author Cyril Geismar
-#' 
-#' @param data A data frame containing \code{target_end_date} (\code{Date}),
-#' \code{observation} (numeric), \code{target} (character), and one or more
-#' key columns. An optional \code{as_of} (\code{Date}) column enables
-#' nowcasting with \code{\link{get_ncast}}. If \code{data} is already an
-#' \code{incast_data} object, it is returned unchanged.
 #'
-#' @param key Character vector giving the column name(s) that uniquely identify
-#' each time series, equivalent to the key of a
-#' \code{\link[tsibble]{tsibble}}. Each unique combination of key values is
-#' treated as a separate series. Defaults to \code{"location"}.
+#' @param data A data frame with `target_end_date` (`Date`), `observation`
+#'   (numeric), `target` (character) and the key columns. Add `as_of` (`Date`)
+#'   for revision history. An `incast_data` object is returned unchanged.
+#'
+#' @param key Character vector naming the columns that identify a series.
+#'   Defaults to `"location"`.
 #'
 #' @return An \code{incast_data} object containing:
 #' \describe{
@@ -28,8 +22,8 @@
 #' \item{key}{Names of the key columns.}
 #' \item{target}{Target variable name.}
 #' \item{window}{Start and end dates of the data.}
-#' \item{interval}{Reporting interval in days (for example, 7 for weekly data).}
-#' \item{history}{Logical indicating whether revision history (\code{as_of}) is available.}
+#' \item{interval}{Reporting interval in days.}
+#' \item{history}{Logical indicating whether multiple revisions are available.}
 #' }
 #'
 #' @examples
@@ -41,11 +35,16 @@
 #'
 #' @export
 check_data <- function(data, key = "location") {
-  if (!is.character(key) || length(key) == 0L || anyNA(key)) {
-    stop("`key` must be a character vector of column names.")
+  if (
+    !is.character(key) ||
+      length(key) == 0L ||
+      anyNA(key) ||
+      any(!nzchar(key)) ||
+      anyDuplicated(key)
+  ) {
+    stop("`key` must be a vector of unique column names.")
   }
 
-  # Already validated: return as-is
   if (inherits(data, "incast_data")) {
     if (!missing(key) && !identical(key, data$key)) {
       stop(
@@ -56,7 +55,6 @@ check_data <- function(data, key = "location") {
     return(data)
   }
 
-  # --- Column checks ---
   if (!is.data.frame(data)) {
     stop("`data` must be a data frame.")
   }
@@ -67,38 +65,50 @@ check_data <- function(data, key = "location") {
     stop("Missing required columns: ", paste(missing_cols, collapse = ", "))
   }
 
-  # --- Type coercion ---
   data$target_end_date <- as.Date(data$target_end_date)
-  data$observation <- as.numeric(data$observation)
+  observation <- data$observation
+  data$observation <- suppressWarnings(as.numeric(as.character(observation)))
   data$target <- as.character(data$target)
   data[key] <- lapply(data[key], as.character)
 
   if (any(is.na(data$target_end_date))) {
     stop("`target_end_date` contains values that cannot be coerced to Date.")
   }
+  if (any(!is.na(observation) & is.na(data$observation))) {
+    stop("`observation` contains values that cannot be coerced to numeric.")
+  }
+  if (any(!is.finite(data$observation) & !is.na(data$observation))) {
+    stop("`observation` must contain finite values or `NA`.")
+  }
+  if (anyNA(data[key]) || any(!vapply(data[key], nzchar, logical(nrow(data))))) {
+    stop("Key columns must not contain missing or empty values.")
+  }
+  if (anyNA(data$target) || any(!nzchar(data$target))) {
+    stop("`target` must not contain missing or empty values.")
+  }
 
-  # --- One target ---
   target <- unique(data$target)
   if (length(target) != 1) {
     stop(
       "Data must contain exactly one target (found ",
       length(target),
       ": ",
-      paste(head(target, 5), collapse = ", "),
+      paste(utils::head(target, 5), collapse = ", "),
       if (length(target) > 5) ", ..." else "",
       "). Filter before calling check_data()."
     )
   }
 
-  # --- Revision history ---
-  history <- "as_of" %in% names(data) && length(unique(data$as_of)) > 1
-  if (history) {
+  history <- FALSE
+  if ("as_of" %in% names(data)) {
     data$as_of <- as.Date(data$as_of)
+    if (anyNA(data$as_of)) {
+      stop("`as_of` contains values that cannot be coerced to Date.")
+    }
+    history <- any(duplicated(data[c(key, "target_end_date")]))
   }
 
-  # --- One row per series and date ---
-  # A column that splits the series further (e.g. age_group outside `key`)
-  # would otherwise be aggregated silently downstream.
+  # Prevent unkeyed groups from being aggregated downstream.
   id_cols <- c(key, "target_end_date", intersect("as_of", names(data)))
   dup <- data[duplicated(data[id_cols]), id_cols, drop = FALSE]
   if (nrow(dup) > 0) {
@@ -111,8 +121,6 @@ check_data <- function(data, key = "location") {
     )
   }
 
-  # --- Reporting interval (time unit) ---
-  # Every series must share the same interval.
   by_series <- split(data$target_end_date, data[key], drop = TRUE)
   intervals <- vapply(
     names(by_series),
@@ -132,17 +140,19 @@ check_data <- function(data, key = "location") {
     stop(
       "Series report at different intervals (days): most report every ",
       usual, " days, but ",
-      paste0(head(names(odd), 6L), " = ", head(odd, 6L), collapse = ", "),
+      paste0(
+        utils::head(names(odd), 6L),
+        " = ",
+        utils::head(odd, 6L),
+        collapse = ", "
+      ),
       if (length(odd) > 6L) ", ..." else "",
       ". Resample or filter before calling check_data()."
     )
   }
   interval <- intervals[[1L]]
 
-  # --- Same reporting dates across series ---
-  # All series must share the same reporting calendar. Different reporting
-  # dates (for example, weeks ending on different weekdays) would create
-  # inconsistent time indices across series.
+  # Series must use the same calendar, such as the same week-ending day.
   pooled_gaps <- as.integer(diff(sort(unique(data$target_end_date))))
   if (any(pooled_gaps %% interval != 0L)) {
     stop(
@@ -153,16 +163,18 @@ check_data <- function(data, key = "location") {
     )
   }
 
-  # --- Same end date across series ---
-  # Forecasts and cross-validation require all series to have the same final
-  # observation date. Different start dates are allowed: shorter series simply
-  # have less historical data available.
+  # Different start dates are allowed, but forecast origins must align.
   ends <- do.call(c, lapply(by_series, max))
   if (length(unique(ends)) > 1) {
     short <- ends[ends < max(ends)]
     stop(
       "All series must end on the same date (", max(ends), "), but ",
-      paste0(head(names(short), 6L), " ends ", head(short, 6L), collapse = ", "),
+      paste0(
+        utils::head(names(short), 6L),
+        " ends ",
+        utils::head(short, 6L),
+        collapse = ", "
+      ),
       if (length(short) > 6L) ", ..." else "",
       ".\nTrim every series to a common end date before calling check_data()."
     )

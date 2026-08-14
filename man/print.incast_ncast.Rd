@@ -12,5 +12,5 @@
 \item{...}{Ignored.}
 }
 \description{
-Display a summary of the target, series, data window, and nowcast period.
+Print an \code{incast_ncast} object
 }

@@ -17,15 +17,14 @@
 #'   \item{value}{Forecast value.}
 #' }
 #'
-#' @source Generated with `incast` from CDC NHSN influenza hospitalization
+#' @source Generated with `incast` from CDC NHSN influenza hospital admission
 #'   data for the 2025--26 FluSight season.
 "flusight_forecasts"
 
 #' Scores from the 2025--26 FluSight backtest
 #'
-#' Precomputed score summaries comparing forecasts from `incast` and selected
-#' FluSight models. These data let the FluSight vignette display its results
-#' without refitting the forecasting models or downloading Hub data.
+#' Score summaries comparing `incast` with selected FluSight models. They let
+#' the FluSight vignette run without refitting models or downloading Hub data.
 #'
 #' `flusight_scores` contains scores pooled across locations.
 #' `flusight_scores_by_location` contains scores stratified by location.

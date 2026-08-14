@@ -7,16 +7,12 @@
 check_data(data, key = "location")
 }
 \arguments{
-\item{data}{A data frame containing \code{target_end_date} (\code{Date}),
-\code{observation} (numeric), \code{target} (character), and one or more
-key columns. An optional \code{as_of} (\code{Date}) column enables
-nowcasting with \code{\link{get_ncast}}. If \code{data} is already an
-\code{incast_data} object, it is returned unchanged.}
+\item{data}{A data frame with \code{target_end_date} (\code{Date}), \code{observation}
+(numeric), \code{target} (character) and the key columns. Add \code{as_of} (\code{Date})
+for revision history. An \code{incast_data} object is returned unchanged.}
 
-\item{key}{Character vector giving the column name(s) that uniquely identify
-each time series, equivalent to the key of a
-\code{\link[tsibble]{tsibble}}. Each unique combination of key values is
-treated as a separate series. Defaults to \code{"location"}.}
+\item{key}{Character vector naming the columns that identify a series.
+Defaults to \code{"location"}.}
 }
 \value{
 An \code{incast_data} object containing:
@@ -25,14 +21,12 @@ An \code{incast_data} object containing:
 \item{key}{Names of the key columns.}
 \item{target}{Target variable name.}
 \item{window}{Start and end dates of the data.}
-\item{interval}{Reporting interval in days (for example, 7 for weekly data).}
-\item{history}{Logical indicating whether revision history (\code{as_of}) is available.}
+\item{interval}{Reporting interval in days.}
+\item{history}{Logical indicating whether multiple revisions are available.}
 }
 }
 \description{
-Validate and standardise surveillance data for use throughout the package.
-The returned \code{incast_data} object can be passed directly to forecasting
-and nowcasting functions.
+Validate and standardise surveillance data for nowcasting and forecasting.
 }
 \details{
 Data must contain one row per time series and reporting date (and

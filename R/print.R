@@ -1,8 +1,5 @@
 #' Shared print helpers
 #'
-#' Internal helpers for printing \code{incast} objects using a consistent
-#' summary format.
-#'
 #' @keywords internal
 #' @noRd
 cat_field <- function(label, ...) {
@@ -11,8 +8,6 @@ cat_field <- function(label, ...) {
 
 
 #' Format series information
-#'
-#' Create a summary of the number of series and their key columns.
 #'
 #' @keywords internal
 #' @noRd
@@ -51,8 +46,6 @@ print.incast_data <- function(x, ...) {
 
 #' Print an \code{incast_ncast} object
 #'
-#' Display a summary of the target, series, data window, and nowcast period.
-#'
 #' @param x An \code{incast_ncast} object.
 #' @param ... Ignored.
 #'
@@ -72,9 +65,6 @@ print.incast_ncast <- function(x, ...) {
 
 
 #' Print an \code{incast_cv} object
-#'
-#' Display a summary of the target, series, data window, and
-#' cross-validation settings.
 #'
 #' @param x An \code{incast_cv} object.
 #' @param ... Ignored.
@@ -100,8 +90,6 @@ print.incast_cv <- function(x, ...) {
 
 #' Print an \code{incast_fcast} object
 #'
-#' Display a summary of the target, series, forecast period, and models used.
-#'
 #' @param x An \code{incast_fcast} object.
 #' @param ... Ignored.
 #'
@@ -113,7 +101,6 @@ print.incast_fcast <- function(x, ...) {
   cat_field("Target", m$target)
   cat_field("Series", fmt_series(x$hub$model_out_tbl, m$key))
   cat_field("Forecast", rng[1], " to ", rng[2], " (h = ", x$meta$h, ")")
-  # Distinct models in the forecast itself; ENSEMBLE is always one of them.
   n_models <- dplyr::n_distinct(x$hub$model_out_tbl$model_id) - 1L
   cat_field("Models", n_models, " + ENSEMBLE")
   invisible(x)

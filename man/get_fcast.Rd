@@ -13,7 +13,7 @@ get_fcast(
 )
 }
 \arguments{
-\item{x}{An \code{incast_*} object.}
+\item{x}{An \verb{incast_*} object.}
 
 \item{models}{Named list of ordinary \code{fable} or joint incast model
 specifications, such as \code{\link{HHH4}}. Defaults to
@@ -21,9 +21,8 @@ specifications, such as \code{\link{HHH4}}. Defaults to
 leave unset to forecast its models and use the top-ranked models for the
 ensemble, or provide a custom set of models to forecast and combine.}
 
-\item{h}{Integer giving the forecast horizon in reporting intervals. Defaults
-to \code{4}. When \code{x} is an \code{incast_cv} object, the default is
-the cross-validation horizon.}
+\item{h}{Forecast horizon in reporting intervals. Defaults to \code{4}, or the
+cross-validation horizon when \code{x} is an \code{incast_cv} object.}
 
 \item{top_n}{Integer giving the number of top-ranked models to combine into
 the ensemble for each series. Used only when \code{x} is an
@@ -50,8 +49,7 @@ interval, nowcast information, and evaluation date.}
 }
 }
 \description{
-Fit forecasting models to the full time series and generate forecasts for the
-next \code{h} reporting intervals.
+Fit models to the full series and forecast the next \code{h} reporting intervals.
 }
 \details{
 When provided with an \code{incast_cv} object, the function forecasts every

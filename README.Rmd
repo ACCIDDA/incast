@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   out.width = "100%",
   dpi = 300
 )
+set.seed(2026)
 ```
 
 # incast <a href="https://accidda.github.io/incast/"><img src="man/figures/logo.png" align="right" height="139" alt="incast website" /></a>
@@ -19,13 +20,13 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`incast` is an R package for infectious disease nowcasting and forecasting developed as part of **[Insight Net](https://www.cdc.gov/insight-net)**, a **[CDC Center for Forecasting and Outbreak Analytics](https://www.cdc.gov/forecast-outbreak-analytics/index.html)** initiative. It provides a unified framework for generating, evaluating, and operationalising infectious disease forecasts.
+`incast` is an R package for infectious disease nowcasting and forecasting. It was developed through **[Insight Net](https://www.cdc.gov/insight-net)**, a **[CDC Center for Forecasting and Outbreak Analytics](https://www.cdc.gov/forecast-outbreak-analytics/index.html)** initiative.
 
-It fetches (`get_data()`) and validates input data (`check_data()`), optionally applies nowcasting to adjust for reporting delays (`get_ncast()`), evaluates models by cross-validation (`get_cv()`), and generates forecasts (`get_fcast()`).
+Use it to fetch or validate data, correct reporting delays, compare models and produce forecasts.
 
 ## Installation
 
-You can install the development version of incast from [GitHub](https://github.com/) with:
+Install the development version from GitHub:
 
 ```{r install, eval = FALSE}
 # install.packages("pak")
@@ -33,24 +34,27 @@ pak::pak("ACCIDDA/incast")
 ```
 
 ## Quick start
+
 ```{r example-data, eval = TRUE, message = FALSE}
 library(incast)
 tail(example_data)
 ```
 
-```{r forecast, eval = TRUE}
+```{r forecast-fit, eval = TRUE, message = FALSE, results = "hide"}
 fcast <- example_data |>
   check_data() |>
   get_ncast() |>
   get_cv(eval_start_date = as.Date("2024-10-01")) |>
   get_fcast()
+```
 
+```{r forecast, eval = TRUE}
 fcast
 
 fcast |> autoplot()
 ```
 
-Save and upload to [myRespiLens](https://www.respilens.com/myrespilens):
+Save a forecast for [myRespiLens](https://www.respilens.com/myrespilens):
 ```{r respilens, eval = FALSE}
 library(dplyr)
 fcast$hub$model_out_tbl |>
@@ -66,11 +70,12 @@ fcast$hub$model_out_tbl |>
 
 ## Citation
 
-If you use `incast` in your work, please cite the package as follows:
+To cite `incast`:
+
 ```{r citation}
 citation("incast")
 ```
 
 ## Acknowledgements
 
-The package relies on the [`baselinenowcast`](https://baselinenowcast.epinowcast.org/) and [`fable`](https://fable.tidyverts.org/) framework for time series nowcasting and forecasting. It produces forecasts in the [`hubverse`](https://hubverse.io/) format for submission to the [CDC Forecast Hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).
+`incast` uses [`baselinenowcast`](https://baselinenowcast.epinowcast.org/) and [`fable`](https://fable.tidyverts.org/). It returns forecasts in [`hubverse`](https://hubverse.io/) format for submission to [CDC forecast hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).

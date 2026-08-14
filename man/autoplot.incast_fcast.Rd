@@ -18,12 +18,8 @@
 A ggplot object.
 }
 \description{
-Plot observed values alongside forecast distributions for a selected model.
-Forecasts are shown as the median, with 50\% and 95\% prediction intervals.
-By default, the ensemble forecast is displayed.
-}
-\details{
-Each panel corresponds to a single time series.
+Plot observed values with a model's median and 50\% and 95\% prediction
+intervals. The ensemble is shown by default.
 }
 \author{
 Cyril Geismar

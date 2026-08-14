@@ -11,16 +11,16 @@ dplyr::as_tibble
 #'     \code{target_end_date} (latest reported value per date when revisions
 #'     are present).}
 #'   \item{\code{incast_ncast}}{Weekly nowcast summary, one row per series and
-#'     reporting week (\code{reference_date}): \code{median}, 50\% (\code{q25},
-#'     \code{q75}) and 95\% (\code{lower}, \code{upper}) credible intervals,
+#'     reporting week (\code{reference_date}): \code{median}, 50% (\code{q25},
+#'     \code{q75}) and 95% (\code{lower}, \code{upper}) credible intervals,
 #'     and the reported-so-far \code{observed} count.}
 #'   \item{\code{incast_fcast}}{Forecast quantiles per model, one row per
-#'     \code{model_id}, series and \code{target_end_date}: \code{median}, 50\%
-#'     (\code{q25}, \code{q75}) and 95\% (\code{lower}, \code{upper})
+#'     \code{model_id}, series and \code{target_end_date}: \code{median}, 50%
+#'     (\code{q25}, \code{q75}) and 95% (\code{lower}, \code{upper})
 #'     prediction intervals. Observed counts for context are in
 #'     \code{x$hub$oracle_output}.}
 #' }
-#' 
+#'
 #' @author Cyril Geismar
 #'
 #' @param x An \code{incast_data}, \code{incast_ncast} or

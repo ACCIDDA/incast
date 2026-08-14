@@ -11,22 +11,25 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  eval = FALSE,
   message = FALSE,
   warning = FALSE,
   fig.width = 8,
   fig.height = 5
 )
+
+library(incast)
+flu <- readRDS("hhh4_data.rds")
+cv <- readRDS("hhh4_cv.rds")
+fcast <- readRDS("hhh4_fcast.rds")
 ```
 
 ## Overview
 
-Most `incast` models forecast each series separately. HHH4 fits all series
-together, allowing recent counts in one series to help predict another.
+Most `incast` models fit each series separately. HHH4 fits them jointly, so
+recent counts in one series can help predict another.
 
-A **unit** is one value of the series key, such as one state when
-`key = "location"`. HHH4 requires a single key column and a meaningful set of
-connected units.
+A **unit** is one key value, such as a state when `key = "location"`. HHH4
+requires one key column and a meaningful set of connected units.
 
 ## Model components
 
@@ -65,19 +68,23 @@ and size of a repeating annual cycle.
 ## Example
 
 This example forecasts weekly influenza hospital admissions in Connecticut,
-New Jersey, New York, and Pennsylvania. The code is not run when the vignette
-is built because `get_data()` uses a live API.
+New Jersey, New York and Pennsylvania. The vignette loads objects fitted to data
+available on 8 August 2026. Data collection and model fitting remain disabled;
+the saved plots are rebuilt with the article.
 
 ### Data
 
-```{r packages-data}
+```{r packages-data, eval = FALSE}
 # install.packages("surveillance") # Run once if needed.
 library(incast)
 library(surveillance)
 
 states <- c("ct", "nj", "ny", "pa")
 flu <- get_data(pathogen = "flu", geo_value = states)
+```
 
+```{r show-data, fig.cap = "Weekly influenza hospital admissions by state."}
+flu
 autoplot(flu)
 ```
 
@@ -89,7 +96,7 @@ external data, use `check_data(data, key = "location")`.
 Rows of the connection matrix are sources and columns are receiving units.
 Here, `1` means that two states share a border.
 
-```{r inputs}
+```{r inputs, eval = FALSE}
 adjacency <- rbind(
   CT = c(CT = 0, NJ = 0, NY = 1, PA = 0),
   NJ = c(CT = 0, NJ = 0, NY = 1, PA = 1),
@@ -113,7 +120,7 @@ background count. All names must match the series key values exactly.
 
 First define one annual cycle for the endemic component:
 
-```{r seasonality}
+```{r seasonality, eval = FALSE}
 annual_seasonality <- addSeason2formula(
   f = ~1,
   S = 1,
@@ -121,7 +128,7 @@ annual_seasonality <- addSeason2formula(
 )
 ```
 
-We will compare four component structures:
+Compare four component structures:
 
 | Model | Endemic | Autoregressive | Neighbour |
 |---|:---:|:---:|:---:|
@@ -130,8 +137,7 @@ We will compare four component structures:
 | `HHH4_NE_END` | on | off | on |
 | `HHH4_FULL` | on | on | on |
 
-```{r controls}
-# Endemic only.
+```{r controls, eval = FALSE}
 end_control <- list(
   ar = list(f = ~ -1),
   ne = list(f = ~ -1),
@@ -139,22 +145,19 @@ end_control <- list(
   family = "NegBin1"
 )
 
-# Autoregressive + endemic.
 ar_end_control <- end_control
 ar_end_control$ar <- list(f = ~1, lag = 1)
 
-# Neighbour + endemic.
 ne_end_control <- end_control
 ne_end_control$ne <- list(f = ~1, lag = 1, normalize = TRUE)
 
-# Full HHH4.
 full_control <- ar_end_control
 full_control$ne <- ne_end_control$ne
 ```
 
-Create the four `incast` model specifications:
+Create the model specifications:
 
-```{r models}
+```{r models, eval = FALSE}
 hhh4_models <- list(
   HHH4_END = HHH4(
     observation,
@@ -186,40 +189,46 @@ hhh4_models <- list(
 Compare the HHH4 specifications with the default `incast` models using the same
 forecast origins:
 
-```{r evaluate}
+```{r evaluate, eval = FALSE}
 models <- c(default_models(), hhh4_models)
 
 set.seed(2026)
 cv <- get_cv(
   flu,
   h = 4,
-  eval_start_date = as.Date("2024-09-01"),
+  n_origins = 12,
   models = models
 )
+```
 
+```{r show-cv, fig.cap = "Cross-validation performance by model and state."}
+cv
 autoplot(cv)
 ```
 
-Passing `hhh4_models` to `get_fcast()` refits and forecasts all four
-specifications. The default plot shows their ensemble; use `model` to inspect
-each specification.
+Passing `hhh4_models` to `get_fcast()` refits all four specifications. The
+default plot shows their ensemble; set `model` to inspect one specification.
 
-```{r forecast}
+```{r forecast, eval = FALSE}
 set.seed(2026)
 fcast <- get_fcast(cv, models = hhh4_models)
+```
 
+```{r show-forecast, fig.cap = "Ensemble forecast from the four HHH4 specifications."}
+fcast
 autoplot(fcast)
-autoplot(fcast, model = "HHH4_END")
-autoplot(fcast, model = "HHH4_AR_END")
-autoplot(fcast, model = "HHH4_NE_END")
+```
+
+```{r show-full, fig.cap = "Forecast from the full endemic, autoregressive and neighbour model."}
 autoplot(fcast, model = "HHH4_FULL")
 ```
 
 ## Add a covariate
 
-HHH4 has a separate formula for each component, so add the covariate to the component it affects and supply its values in `control$data`. For example, school holidays may affect background incidence, so add them to the endemic component:
+Add a covariate to the component it affects and supply its values in
+`control$data`. For example, school holidays may affect the endemic component:
 
-```{r covariate}
+```{r covariate, eval = FALSE}
 h <- 4L
 dates <- seq(
   min(flu$data$target_end_date),
@@ -244,10 +253,9 @@ hhh4_models$HHH4_SCHOOL_HOLIDAY <- HHH4(
 )
 ```
 
-This simple example treats July and August as school holidays.
-Time-varying covariates must cover the observed history and forecast horizon.
-See `?surveillance::hhh4` for component formulas, lags, covariates, distributions,
-weights, random effects, and optimizer options.
+This example treats July and August as school holidays. Time-varying covariates
+must cover the observed history and forecast horizon. See
+`?surveillance::hhh4` for other controls.
 
 ## Reference
 

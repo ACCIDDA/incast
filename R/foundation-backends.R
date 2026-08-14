@@ -9,7 +9,6 @@
 .incast_pipelines <- new.env(parent = emptyenv())
 
 
-# Error early if reticulate is not installed.
 ensure_reticulate <- function() {
   if (!requireNamespace("reticulate", quietly = TRUE)) {
     stop(

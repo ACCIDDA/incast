@@ -1,8 +1,4 @@
-#' Joint models
-#'
-#' Joint models, such as \code{\link{HHH4}}, fit all series together.
-#' \code{new_joint_model()} marks them for \code{forecast_joint()}, which
-#' returns the same forecast format as standard \code{fable} models.
+#' Internal joint models
 #'
 #' @name incast-joint
 #' @keywords internal
@@ -11,9 +7,6 @@ NULL
 
 
 #' Create a joint model specification
-#'
-#' Store a \code{fable} model class and its training arguments for
-#' \code{forecast_joint()}.
 #'
 #' @param model A model class from \code{\link[fabletools]{new_model_class}}.
 #' @param ... Arguments passed to the model's \code{train} function.
@@ -30,9 +23,6 @@ new_joint_model <- function(model, ...) {
 
 #' Fit and forecast joint models
 #'
-#' Pivot the series wide, fit each model jointly, then return one forecast
-#' distribution per series.
-#'
 #' @param ts A keyed model \code{tsibble} from \code{as_model_ts}.
 #' @param models A named list of \code{incast_joint} specifications.
 #' @param h Forecast horizon in reporting intervals.
@@ -40,14 +30,9 @@ new_joint_model <- function(model, ...) {
 #'
 #' @keywords internal
 #' @noRd
-#' @importFrom tsibble key_vars as_tsibble
-#' @importFrom dplyr as_tibble bind_rows all_of
-#' @importFrom distributional dist_sample
 forecast_joint <- function(ts, models, h) {
   key <- setdiff(tsibble::key_vars(ts), ".id")
 
-  # A joint model needs one column per series, so the series must be named by a
-  # single column. Multi-column keys have no natural column name.
   if (length(key) != 1L) {
     stop(
       "Joint models (", paste(names(models), collapse = ", "),
@@ -90,8 +75,7 @@ forecast_joint <- function(ts, models, h) {
       }
     )
 
-    # fable turns a failed fit into a "null model" whose NA forecasts would
-    # only surface much later, in the quantile math. Stop here instead.
+    # Failed fable fits become null models rather than errors.
     if (any(vapply(fit[[nm]], function(x) inherits(x$fit, "null_mdl"), logical(1L)))) {
       stop(
         "Model ", nm, " failed to fit.\n",
@@ -134,12 +118,10 @@ joint_to_long <- function(fc, nm, key, units) {
   draws <- params$x
 
   out <- dplyr::bind_rows(lapply(seq_along(units), function(j) {
-    # One location gives a plain vector rather than a (draws x series) matrix.
     d <- distributional::dist_sample(
       lapply(draws, function(x) as.numeric(if (is.matrix(x)) x[, j] else x))
     )
-    # fable stamps its own forecasts with the response name; marginals must
-    # match or bind_rows() rejects the mixed column.
+    # Match fable's response name before binding marginal distributions.
     dimnames(d) <- "observation"
 
     res <- dplyr::tibble(

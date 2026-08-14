@@ -8,22 +8,18 @@
 <!-- badges: end -->
 
 `incast` is an R package for infectious disease nowcasting and
-forecasting developed as part of **[Insight
+forecasting. It was developed through **[Insight
 Net](https://www.cdc.gov/insight-net)**, a **[CDC Center for Forecasting
 and Outbreak
 Analytics](https://www.cdc.gov/forecast-outbreak-analytics/index.html)**
-initiative. It provides a unified framework for generating, evaluating,
-and operationalising infectious disease forecasts.
+initiative.
 
-It fetches (`get_data()`) and validates input data (`check_data()`),
-optionally applies nowcasting to adjust for reporting delays
-(`get_ncast()`), evaluates models by cross-validation (`get_cv()`), and
-generates forecasts (`get_fcast()`).
+Use it to fetch or validate data, correct reporting delays, compare
+models and produce forecasts.
 
 ## Installation
 
-You can install the development version of incast from
-[GitHub](https://github.com/) with:
+Install the development version from GitHub:
 
 ``` r
 # install.packages("pak")
@@ -52,13 +48,9 @@ fcast <- example_data |>
   get_ncast() |>
   get_cv(eval_start_date = as.Date("2024-10-01")) |>
   get_fcast()
-#> ℹ Using max_delay = 6 from data
-#> ℹ Truncating from max_delay = 6 to 2.
-#> ℹ Using max_delay = 6 from data
-#> ℹ Truncating from max_delay = 6 to 2.
-#> [2026-08-14 14:15:33.969] get_cv: +3.4360 secs
-#> [2026-08-14 14:15:37.416] get_fcast: +5.3411 secs
+```
 
+``` r
 fcast
 #> <incast_fcast>
 #> Target:   wk inc flu hosp
@@ -71,7 +63,8 @@ fcast |> autoplot()
 
 <img src="man/figures/README-forecast-1.png" alt="" width="100%" />
 
-Save and upload to [myRespiLens](https://www.respilens.com/myrespilens):
+Save a forecast for
+[myRespiLens](https://www.respilens.com/myrespilens):
 
 ``` r
 library(dplyr)
@@ -88,20 +81,19 @@ fcast$hub$model_out_tbl |>
 
 ## Citation
 
-If you use `incast` in your work, please cite the package as follows:
+To cite `incast`:
 
 ``` r
 citation("incast")
 #> To cite package 'incast' in publications use:
 #> 
-#>   Geismar C (2026). _incast: A suite of tools for epidemic
-#>   forecasting_. R package version 0.0.1,
-#>   <https://github.com/ACCIDDA/incast>.
+#>   Geismar C (2026). _incast: Tools for Epidemic Forecasting_. R package
+#>   version 0.0.1, <https://github.com/ACCIDDA/incast>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {incast: A suite of tools for epidemic forecasting},
+#>     title = {incast: Tools for Epidemic Forecasting},
 #>     author = {Cyril Geismar},
 #>     year = {2026},
 #>     note = {R package version 0.0.1},
@@ -111,10 +103,9 @@ citation("incast")
 
 ## Acknowledgements
 
-The package relies on the
+`incast` uses
 [`baselinenowcast`](https://baselinenowcast.epinowcast.org/) and
-[`fable`](https://fable.tidyverts.org/) framework for time series
-nowcasting and forecasting. It produces forecasts in the
-[`hubverse`](https://hubverse.io/) format for submission to the [CDC
-Forecast
-Hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).
+[`fable`](https://fable.tidyverts.org/). It returns forecasts in
+[`hubverse`](https://hubverse.io/) format for submission to [CDC
+forecast
+hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).

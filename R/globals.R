@@ -1,11 +1,6 @@
-#' Global variables used in NSE functions
-#' To avoid R CMD check notes about "no visible binding for global variable"
-#' we declare these variables as global here.
+#' Global variables used in non-standard evaluation
 #'
-#' The urca import is not called directly: fable::ARIMA() needs it for its
-#' unit-root order selection, but only suggests it. Without it every ARIMA
-#' fit in default_models() silently fails.
-#' @importFrom utils head
+#' `fable::ARIMA()` needs the `urca` import for unit-root order selection.
 #' @importFrom urca ur.kpss
 #' @keywords internal
 #' @noRd

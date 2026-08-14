@@ -25,7 +25,9 @@ library(ggplot2)
 
 ## Overview
 
-This vignette replays the 2025--26 US [FluSight forecasting season](https://github.com/cdcepi/FluSight-forecast-hub/tree/v1.2.0) as if `incast` had submitted a forecast each week. 
+This vignette replays the 2025--26 US
+[FluSight season](https://github.com/cdcepi/FluSight-forecast-hub/tree/v1.2.0)
+as if `incast` had submitted each week.
 
 The evaluation covers:
 
@@ -34,13 +36,12 @@ The evaluation covers:
 - 27 forecast rounds from November 22, 2025, through May 23, 2026; and
 - weekly incident influenza hospital admissions at horizons 0--3.
 
-The model fitting is intentionally **not run when this vignette is built**. The
-saved forecasts and score summaries are included with the package, so the result
-plots below are fast and reproducible.
+Model fitting is not run when the vignette is built. Packaged forecasts and
+scores keep the plots fast and reproducible.
 
 ## Use the saved forecasts
 
-The complete backtest is available directly as `flusight_forecasts`:
+The backtest is available as `flusight_forecasts`:
 
 ```{r saved-forecasts}
 flusight_forecasts |>
@@ -48,16 +49,16 @@ flusight_forecasts |>
   head()
 ```
 
-To create a Hubverse-format CSV for [MyRespiLens](https://myrespilens.com):
+Save a Hubverse-format CSV for [myRespiLens](https://myrespilens.com):
 
 ```{r copy-csv, eval = FALSE}
 write.csv(flusight_forecasts, "incast.csv", row.names = FALSE)
 ```
 
-The CSV contains every successfully fitted candidate. For each state and round,
-the forecast from the candidate with the lowest cross-validation weighted
-interval score (WIS) is duplicated with `model_id = "incast"`. Thus, `incast`
-is a dynamically selected single model, not an ensemble.
+The data contain every candidate that fitted successfully. For each state and
+round, the candidate with the lowest cross-validation weighted interval score
+(WIS) is also stored as `model_id = "incast"`. Here, `incast` is a selected
+model rather than an ensemble.
 
 ## Backtest design
 
@@ -73,8 +74,7 @@ uses data released by November 16. This reproduces the revision state available
 before the November 19 submission deadline and prevents future revisions from
 leaking into model selection. No reporting-delay adjustment is applied.
 
-The following code retrieves the required revision history. It is shown for
-reproducibility and is not evaluated during vignette builds.
+This unevaluated code retrieves the revision history:
 
 ```{r surveillance-data, eval = FALSE}
 states <- c("CT", "FL", "MD", "NJ", "NY", "NC", "PA")
@@ -88,7 +88,7 @@ revision_history <- get_data(
 
 ### Select a model independently for each state and round
 
-For each forecast round, the procedure is:
+For each round:
 
 1. Use dates 52, 104, and 156 weeks before the current reference date to
    represent the same period in the three previous seasons.
@@ -100,9 +100,8 @@ For each forecast round, the procedure is:
 5. Refit every candidate to the data available for the current round and save
    all four forecast horizons. Also save the selected candidate as `incast`.
 
-The candidates comprise the four defaults returned by `default_models()` plus
-ARIMA, HHH4, Prophet, neural-network, mechanistic, and foundation models. The
-complete model specification is below.
+The candidates include the four defaults, plus ARIMA, HHH4, Prophet, neural
+network, mechanistic and foundation models:
 
 ```{r models, eval = FALSE}
 library(fable)
@@ -273,7 +272,9 @@ Only the five quantiles available for every model (0.025, 0.25, 0.5, 0.75, and
 models shown here, but it is not the official FluSight evaluation based on the
 Hub's complete quantile grid.
 
-We include the 3 best- and worst-performing individual FluSight models, plus the FluSight ensemble. Ranks are based on pooled scaled relative WIS across 7 states.
+The plot includes the three best and three worst individual FluSight models,
+plus the FluSight ensemble. Ranks use pooled scaled relative WIS across seven
+states.
 
 ```{r score-overall, fig.height = 8}
 plot_scores <- function(x) {
@@ -299,11 +300,11 @@ plot_scores <- function(x) {
 plot_scores(flusight_scores)
 ```
 
-Performance varies by state. In the faceted plot below, points to the left of
-the vertical line outperform the FluSight ensemble within that state. The two
-`odin2` candidates are omitted because they're not well parameterised.
-Note `CHRONOS` and `TIMESFM` are foundation models, they may have seen the FluSight data during training.
-To check that they couldn't be trained on the 2025--26 season you would need to check when the foundation models were trained on huggingface.
+Performance varies by state. Points left of the vertical line outperform the
+FluSight ensemble. The two `odin2` candidates are omitted because they are not
+well parameterised. `CHRONOS` and `TIMESFM` may have seen earlier FluSight data
+during training; their published training cut-off dates should be checked
+before interpreting the comparison.
 
 ```{r score-by-location, fig.width = 11, fig.height = 15}
 plot_scores(flusight_scores_by_location) +
@@ -318,5 +319,5 @@ replacing `data-raw/incast.csv`, run `data-raw/FluSight.R`. The script downloads
 the matching FluSight forecasts and truth and updates the `.rda` files; it does
 not refit any `incast` model.
 
-The model-fitting chunks in this vignette have `eval = FALSE` deliberately.
-Run them manually only when you intend to regenerate the full backtest.
+The model-fitting chunks use `eval = FALSE`. Run them only to regenerate the
+backtest.

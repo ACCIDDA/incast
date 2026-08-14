@@ -29,9 +29,8 @@ FluSight Forecast Hub, version 1.2.0}.
 flusight_scores
 }
 \description{
-Precomputed score summaries comparing forecasts from \code{incast} and selected
-FluSight models. These data let the FluSight vignette display its results
-without refitting the forecasting models or downloading Hub data.
+Score summaries comparing \code{incast} with selected FluSight models. They let
+the FluSight vignette run without refitting models or downloading Hub data.
 }
 \details{
 \code{flusight_scores} contains scores pooled across locations.

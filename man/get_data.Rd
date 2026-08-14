@@ -7,26 +7,26 @@
 get_data(pathogen, geo_value, revisions = FALSE)
 }
 \arguments{
-\item{pathogen}{One of "covid", "flu" or "rsv".}
+\item{pathogen}{One of \code{"covid"}, \code{"flu"} or \code{"rsv"}.}
 
-\item{geo_value}{Geographic value(s) to fetch, as per
-\link[epidatr]{pub_covidcast}.}
+\item{geo_value}{Geographic values accepted by \code{\link[epidatr:pub_covidcast]{epidatr::pub_covidcast()}}.}
 
-\item{revisions}{Logical. If \code{TRUE}, fetch the full revision history
-needed by \code{\link{get_ncast}}. Default \code{FALSE} (latest only).}
+\item{revisions}{Fetch revision history for \code{\link[=get_ncast]{get_ncast()}}. Defaults to
+\code{FALSE}.}
 }
 \value{
 An \code{incast_data} object (see \code{\link{check_data}}).
 }
 \description{
-Fetch confirmed US hospital admissions (COVID-19, influenza or RSV) from
-NHSN via \link[epidatr]{pub_covidcast}.
+Fetch confirmed US hospital admissions for COVID-19, influenza or RSV from
+NHSN through \code{\link[epidatr:pub_covidcast]{epidatr::pub_covidcast()}}.
 }
 \examples{
+\dontrun{
 get_data(pathogen = "covid", geo_value = "ny")
 
-# Revision history for nowcasting
 get_data(pathogen = "covid", geo_value = "ca", revisions = TRUE)
+}
 }
 \author{
 Cyril Geismar

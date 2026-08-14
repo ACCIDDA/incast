@@ -1,7 +1,6 @@
 #' Produce a forward forecast
 #'
-#' Fit forecasting models to the full time series and generate forecasts for the
-#' next \code{h} reporting intervals.
+#' Fit models to the full series and forecast the next `h` reporting intervals.
 #'
 #' When provided with an \code{incast_cv} object, the function forecasts every
 #' successfully evaluated model and uses the cross-validation results to select
@@ -13,8 +12,8 @@
 #' this uncertainty is incorporated into the forecast intervals.
 #'
 #' @author Cyril Geismar
-#' 
-#' @param x An \code{incast_*} object.
+#'
+#' @param x An `incast_*` object.
 #'
 #' @param models Named list of ordinary \code{fable} or joint incast model
 #'   specifications, such as \code{\link{HHH4}}. Defaults to
@@ -22,9 +21,8 @@
 #'   leave unset to forecast its models and use the top-ranked models for the
 #'   ensemble, or provide a custom set of models to forecast and combine.
 #'
-#' @param h Integer giving the forecast horizon in reporting intervals. Defaults
-#'   to \code{4}. When \code{x} is an \code{incast_cv} object, the default is
-#'   the cross-validation horizon.
+#' @param h Forecast horizon in reporting intervals. Defaults to `4`, or the
+#'   cross-validation horizon when `x` is an `incast_cv` object.
 #'
 #' @param top_n Integer giving the number of top-ranked models to combine into
 #'   the ensemble for each series. Used only when \code{x} is an
@@ -60,14 +58,6 @@
 #'
 #' @export
 #'
-#' @importFrom progressr with_progress
-#' @importFrom dplyr filter mutate bind_rows summarise coalesce slice_min
-#'   semi_join select all_of as_tibble
-#' @importFrom fabletools model forecast
-#' @importFrom hubEnsembles simple_ensemble
-#' @importFrom stats median
-#' @importFrom pipetime time_pipe
-
 get_fcast <- function(
   x,
   models = default_models(),
@@ -77,7 +67,6 @@ get_fcast <- function(
 ) {
   ensemble <- match.arg(ensemble)
 
-  # The CV supplies each series' top_n models unless the caller passes `models`.
   use_cv_ranking <- inherits(x, "incast_cv") && missing(models)
 
   if (inherits(x, "incast_cv")) {
@@ -98,13 +87,12 @@ get_fcast <- function(
     )
   }
 
-  validate_positive_scalar(h, "h", "number of forecast steps")
+  validate_integer(h, "h")
 
   key <- meta$key
 
-  # If CV available, select the top_n models per series. Otherwise, validate the provided models.
   if (use_cv_ranking) {
-    validate_positive_scalar(top_n, "top_n", "top-ranked models per series")
+    validate_integer(top_n, "top_n")
     selection <- score |>
       dplyr::slice_min(
         wis,
@@ -119,14 +107,11 @@ get_fcast <- function(
     selection <- NULL
   }
 
-  # Nowcast columns (present when df came from get_ncast)
   has_nowcast <- all(c("ncast_lower", "ncast_upper") %in% names(df))
 
-  # Built once: fitted on below, and the oracle for fable_to_hub.
   ts <- as_model_ts(df, key)
 
   {
-    # --------- Forecast each model on the full series ---------
     progressr::with_progress({
       model_fcast <- if (has_nowcast) {
         pool_nowcast_scenarios(df, key, models, h)
@@ -135,7 +120,6 @@ get_fcast <- function(
       }
     })
 
-    # Keep every component forecast, but ensemble only each series' selection.
     ensemble_fcast <- if (!is.null(selection)) {
       dplyr::semi_join(
         model_fcast,
@@ -147,9 +131,7 @@ get_fcast <- function(
     }
     successful_models <- unique(as.character(model_fcast$.model))
 
-    # --------- Equal-weight ensemble per series ---------
-    # The linear pool mixes the predictive distributions, so it is built
-    # before the quantiles are extracted.
+    # The linear pool mixes the distributions before quantiles are extracted.
     if (ensemble == "linear_pool") {
       pool <- ensemble_fcast |>
         dplyr::summarise(
@@ -171,8 +153,6 @@ get_fcast <- function(
       interval = meta$interval
     )
 
-    # Quantile average: at each quantile level,
-    # take the median of the models' quantiles.
     if (ensemble == "quantile_average") {
       ensemble_tbl <- if (!is.null(selection)) {
         dplyr::semi_join(
@@ -213,10 +193,7 @@ get_fcast <- function(
 }
 
 
-#' Fit and forecast models
-#'
-#' Fit standard \code{fable} models by series and joint incast models across
-#' all series. Both return the same forecast format.
+#' Fit standard models by series and joint models across series
 #'
 #' @param ts A keyed model \code{tsibble} created by \code{as_model_ts}.
 #' @param models A named list of standard or joint model specifications.
@@ -272,9 +249,11 @@ forecast_fable <- function(ts, models, h) {
   fit <- fabletools::model(ts, !!!models)
   failed <- names(models)[vapply(
     names(models),
-    function(m) any(vapply(
-      fit[[m]], function(x) inherits(x$fit, "null_mdl"), logical(1L)
-    )),
+    function(m) {
+      any(vapply(
+        fit[[m]], function(x) inherits(x$fit, "null_mdl"), logical(1L)
+      ))
+    },
     logical(1L)
   )]
 
@@ -286,7 +265,9 @@ forecast_fable <- function(ts, models, h) {
       call. = FALSE
     )
   }
-  if (length(failed) == length(models)) return(NULL)
+  if (length(failed) == length(models)) {
+    return(NULL)
+  }
   fit <- dplyr::select(fit, -dplyr::all_of(failed))
 
   dplyr::as_tibble(fabletools::forecast(fit, h = h))

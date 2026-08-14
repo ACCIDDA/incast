@@ -1,16 +1,11 @@
-#' Internal shared helpers
-#' Internal utility functions used across incast.
+#' Internal helpers
 #' @name incast-utils
 #' @keywords internal
 #' @noRd
 NULL
 
 
-#' Detect the reporting interval
-#'
-#' Determine the regular reporting interval in days from observation dates.
-#' Missing periods that are multiples of the detected interval are allowed,
-#' but irregular date spacing is not.
+#' Detect the reporting interval in days
 #'
 #' @param dates A \code{Date} vector. Duplicate dates are allowed.
 #' @return A positive integer giving the reporting interval in days.
@@ -42,10 +37,7 @@ detect_interval <- function(dates) {
 }
 
 
-#' Extract forecast-ready series data
-#'
-#' Extract the data used for modelling, keeping the latest revision when'
-#' revision history is available.
+#' Extract series data, keeping the latest revision
 #' @param x An \code{incast_data} or \code{incast_ncast} object.
 #' @return A data frame with one row per series per target_end_date.
 #' @keywords internal
@@ -71,18 +63,13 @@ extract_series <- function(x) {
 }
 
 
-#' Create a modelling tsibble
-#'
-#' Convert forecast-ready data into a regular keyed \code{tsibble} suitable
-#' for fitting \code{fable} models.
+#' Create a regular modelling tsibble
 #'
 #' @param df A data frame containing an \code{observation} column.
 #' @param key Character vector of key column names.
 #' @return A keyed \code{tsibble} indexed by \code{target_end_date}.
 #' @keywords internal
 #' @noRd
-#' @importFrom dplyr filter select
-#' @importFrom tsibble as_tsibble fill_gaps
 as_model_ts <- function(df, key) {
   df |>
     dplyr::filter(!is.na(observation)) |>
@@ -92,15 +79,12 @@ as_model_ts <- function(df, key) {
 }
 
 
-#' Truncate count distributions
-#'
-#' Restrict a distribution to non-negative values.
+#' Restrict a distribution to non-negative values
 #'
 #' @param dist A \code{distributional} distribution.
 #' @return A truncated distribution.
 #' @keywords internal
 #' @noRd
-#' @importFrom distributional dist_truncated
 truncate_counts <- function(dist) {
   elements <- unclass(dist)
   is_sample <- vapply(elements, inherits, logical(1L), "dist_sample")
@@ -117,13 +101,10 @@ truncate_counts <- function(dist) {
 
 #' Create an equal-weight mixture distribution
 #'
-#' Combine multiple distributions into a single mixture with equal weights.
-#'
 #' @param dists A vector or list of \code{distributional} distributions.
 #' @return A mixture distribution.
 #' @keywords internal
 #' @noRd
-#' @importFrom distributional dist_mixture
 mix_equally <- function(dists) {
   dists <- as.list(dists)
   n <- length(dists)
@@ -134,27 +115,55 @@ mix_equally <- function(dists) {
 }
 
 
-#' Validate a positive numeric value
-#'
-#' Check that an input is a single positive number.
+#' Validate a scalar integer
 #'
 #' @param x Value to check.
 #' @param name Argument name shown in the error.
-#' @param what Description of the expected value.
+#' @param minimum Smallest allowed value.
 #' @return \code{x}, invisibly.
 #' @keywords internal
 #' @noRd
-validate_positive_scalar <- function(x, name, what) {
-  if (!is.numeric(x) || length(x) != 1L || is.na(x) || x <= 0) {
-    stop("`", name, "` must be a single positive number (", what, ").")
+validate_integer <- function(x, name, minimum = 1L) {
+  if (
+    !is.numeric(x) ||
+      length(x) != 1L ||
+      is.na(x) ||
+      !is.finite(x) ||
+      x != round(x) ||
+      x < minimum
+  ) {
+    expected <- if (minimum == 1L) {
+      "a single positive integer"
+    } else {
+      paste0("a single integer >= ", minimum)
+    }
+    stop("`", name, "` must be ", expected, ".", call. = FALSE)
+  }
+  invisible(x)
+}
+
+
+#' Validate a positive scalar
+#'
+#' @inheritParams validate_integer
+#' @return \code{x}, invisibly.
+#' @keywords internal
+#' @noRd
+validate_positive_number <- function(x, name) {
+  if (
+    !is.numeric(x) ||
+      length(x) != 1L ||
+      is.na(x) ||
+      !is.finite(x) ||
+      x <= 0
+  ) {
+    stop("`", name, "` must be a single positive number.", call. = FALSE)
   }
   invisible(x)
 }
 
 
 #' Validate forecasting models
-#'
-#' Check that model specifications form a non-empty named list.
 #'
 #' @param models A named list of model specifications.
 #' @return \code{models}, invisibly.

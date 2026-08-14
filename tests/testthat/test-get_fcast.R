@@ -10,6 +10,7 @@ test_that("get_fcast validates h", {
 
   expect_error(get_fcast(x, h = -1), "`h` must be")
   expect_error(get_fcast(x, h = c(1, 2)), "`h` must be")
+  expect_error(get_fcast(x, h = 1.5), "positive integer")
 })
 
 test_that("get_fcast builds one flat hub with an ensemble, without cross-validation", {

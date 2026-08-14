@@ -37,7 +37,7 @@ specials_foundation <- fabletools::new_specials(
 #' intervals may be approximate.
 #'
 #' @author Cyril Geismar
-#' 
+#'
 #' @param formula The series to forecast, for example \code{observation}.
 #'   For count data, use \code{log(observation)} if variance stabilisation is
 #'   required. \code{fable} automatically back-transforms forecasts.
@@ -68,9 +68,6 @@ specials_foundation <- fabletools::new_specials(
 #'
 #' @seealso \code{\link{default_models}}
 #' @export
-#' @importFrom fabletools new_model_class new_model_definition
-#' @importFrom tsibble is_regular measured_vars
-#' @importFrom distributional dist_sample
 FOUNDATION <- function(
   formula,
   backend = c("chronos", "timesfm", "sundial", "moirai"),
@@ -84,14 +81,7 @@ FOUNDATION <- function(
   if (is.null(model_id)) {
     model_id <- spec$default_model
   }
-  if (
-    !is.numeric(n_samples) ||
-      length(n_samples) != 1L ||
-      n_samples < 2 ||
-      n_samples != round(n_samples)
-  ) {
-    stop("`n_samples` must be a single integer >= 2.")
-  }
+  validate_integer(n_samples, "n_samples", minimum = 2L)
 
   # Declare this backend's Python deps now, before any forecast starts the Python
   # session, so a run mixing backends resolves one environment that satisfies all
@@ -157,10 +147,6 @@ train_foundation <- function(
   )
 }
 
-
-# ------------------------------------------------------------------------------
-# fabletools S3 methods
-# ------------------------------------------------------------------------------
 
 #' @importFrom fabletools model_sum
 #' @export

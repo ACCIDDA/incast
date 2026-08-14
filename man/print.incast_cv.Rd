@@ -12,6 +12,5 @@
 \item{...}{Ignored.}
 }
 \description{
-Display a summary of the target, series, data window, and
-cross-validation settings.
+Print an \code{incast_cv} object
 }

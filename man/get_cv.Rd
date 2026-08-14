@@ -15,25 +15,20 @@ get_cv(
 )
 }
 \arguments{
-\item{x}{An \code{incast_ncast} object from \code{\link{get_ncast}} or an
-\code{incast_data} object from \code{\link{check_data}} or
-\code{\link{get_data}}.}
+\item{x}{An \code{incast_data} or \code{incast_ncast} object.}
 
 \item{eval_start_date}{Date (or character string coercible to a date) giving
 the first forecast origin to evaluate. Must fall within the data window.
 All earlier observations are used as the initial training period.
 This argument is exclusive with \code{n_origins} and \code{origins}.}
 
-\item{h}{Integer giving the forecast horizon in reporting intervals (for
-example, weeks for weekly data). Defaults to \code{4}.}
+\item{h}{Forecast horizon in reporting intervals. Defaults to \code{4}.}
 
 \item{models}{Named list of \code{fable} or joint incast model
 specifications, such as \code{\link{HHH4}}. Defaults to
 \code{\link{default_models}}.}
 
-\item{step}{Integer giving the number of reporting intervals between
-successive cross-validation origins. Defaults to \code{h}, resulting in
-non-overlapping evaluation periods.}
+\item{step}{Reporting intervals between forecast origins. Defaults to \code{h}.}
 
 \item{n_origins}{Integer giving the number of forecast origins to evaluate,
 as an alternative to \code{eval_start_date}. Origins are placed so that
@@ -42,9 +37,8 @@ the last forecast ends at the last observation:
 where \code{t} is the last observation date.
 This argument is exclusive with \code{eval_start_date} and \code{origins}.}
 
-\item{origins}{Date vector giving explicit dates on which evaluation
-forecasts begin (the first target date in each forecast window). Use this
-for non-contiguous dates, such as corresponding weeks in previous seasons.
+\item{origins}{Explicit forecast origin dates. Use non-contiguous dates to
+evaluate corresponding weeks in previous seasons.
 This argument is exclusive with \code{eval_start_date} and
 \code{n_origins}; \code{step} is ignored.}
 }
@@ -63,9 +57,7 @@ number of origins, series keys, target, and reporting interval.}
 }
 }
 \description{
-Evaluate forecasting models using expanding-window time-series
-cross-validation. Starting from \code{eval_start_date}, models are refitted
-at each forecast origin and evaluated over the next \code{h} time steps.
+Evaluate models using expanding-window time-series cross-validation.
 }
 \details{
 Forecast performance is measured using weighted interval score (WIS) and

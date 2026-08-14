@@ -16,11 +16,8 @@
 A ggplot object.
 }
 \description{
-Plot reported counts alongside nowcast distributions. Nowcasts are shown as
-the median, with 50\% and 95\% credible intervals.
-}
-\details{
-Each panel corresponds to a single time series.
+Plot reported counts with the nowcast median and 50\% and 95\% credible
+intervals.
 }
 \author{
 Cyril Geismar

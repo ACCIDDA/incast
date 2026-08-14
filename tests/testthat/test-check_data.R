@@ -25,6 +25,7 @@ test_that("check_data accepts composite keys", {
 test_that("check_data validates the key argument", {
   expect_error(check_data(make_weekly_df(n = 3), key = 1), "`key` must be")
   expect_error(check_data(make_weekly_df(n = 3), key = character()), "`key` must be")
+  expect_error(check_data(make_weekly_df(n = 3), key = c("location", "location")), "unique")
   expect_error(
     check_data(make_weekly_df(n = 3), key = "age_group"),
     "Missing required columns: age_group"
@@ -49,6 +50,7 @@ test_that("check_data reports missing columns", {
 test_that("check_data coerces column types", {
   df <- make_weekly_df(n = 3)
   df$target_end_date <- as.character(df$target_end_date)
+  df$observation <- factor(df$observation)
   df$location <- factor(df$location)
 
   x <- check_data(df)
@@ -57,6 +59,21 @@ test_that("check_data coerces column types", {
   expect_type(x$data$observation, "double")
   expect_type(x$data$location, "character")
   expect_type(x$data$target, "character")
+  expect_equal(x$data$observation, as.numeric(as.character(df$observation)))
+})
+
+test_that("check_data rejects invalid values", {
+  df <- make_weekly_df(n = 3)
+  df$observation[1] <- Inf
+  expect_error(check_data(df), "finite values")
+
+  df <- make_weekly_df(n = 3)
+  df$location[1] <- NA
+  expect_error(check_data(df), "Key columns")
+
+  df <- make_weekly_df(n = 3)
+  df$target[1] <- ""
+  expect_error(check_data(df), "`target` must not")
 })
 
 test_that("check_data rejects dates that cannot be coerced", {
@@ -99,6 +116,16 @@ test_that("history is FALSE when as_of is constant", {
   df$as_of <- "2023-01-15"
 
   expect_false(check_data(df)$history)
+})
+
+test_that("history requires revisions of the same observation", {
+  df <- make_weekly_df(locations = c("NY", "CA"), n = 3)
+  df$as_of <- rep(as.Date(c("2023-02-01", "2023-02-02")), each = 3)
+
+  expect_false(check_data(df)$history)
+
+  df$as_of[1] <- NA
+  expect_error(check_data(df), "`as_of` contains")
 })
 
 test_that("check_data requires one row per series and date", {

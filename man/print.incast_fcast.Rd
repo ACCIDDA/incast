@@ -12,5 +12,5 @@
 \item{...}{Ignored.}
 }
 \description{
-Display a summary of the target, series, forecast period, and models used.
+Print an \code{incast_fcast} object
 }

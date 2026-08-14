@@ -23,14 +23,13 @@ knitr::opts_chunk$set(
 
 `incast` builds infectious disease forecasts in a few steps:
 
-1. **`get_data()`** or **`check_data()`**: fetch or validate surveillance data.
-2. **`get_ncast()`** *(optional)*: correct recent weeks for reporting delays.
-3. **`get_cv()`** *(optional)*: evaluate candidate models by time series cross-validation.
-4. **`get_fcast()`**: ensemble the best models into a forward-looking forecast.
+1. `get_data()` or `check_data()` fetches or validates surveillance data.
+2. `get_ncast()` optionally corrects recent weeks for reporting delays.
+3. `get_cv()` optionally compares models by time-series cross-validation.
+4. `get_fcast()` produces a forecast and ensemble.
 
-The package follows the standard forecasting workflow described by [Hyndman & Athanasopoulos (2021)](https://otexts.com/fpp3/basic-steps.html). The overall goal is to provide public health professionals with an easily-adoptable approach to generating, evaluating forecasts, and visualising infectious disease forecasts.
-
-To get more information about how to know whether forecasting is the best approach for your task, follow the steps in [this](forecast_planning.html) article.
+See [Planning an infectious disease forecast](forecast_planning.html) before
+starting a new forecasting project.
 
 ```{r, setup}
 library(incast)
@@ -38,9 +37,11 @@ library(incast)
 
 ## Step 1: Get data
 
-We fetch weekly flu hospital admissions for New York and California from the [CDC NHSN](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data) via [`epidatr`](https://cmu-delphi.github.io/epidatr/).
+Fetch weekly influenza hospital admissions for New York and California from the
+[CDC NHSN](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data)
+through [`epidatr`](https://cmu-delphi.github.io/epidatr/).
 
-Setting `revisions = TRUE` retrieves the full revision history (*i.e.* all past versions of the data), which is needed for nowcasting.
+Set `revisions = TRUE` to fetch the history needed for nowcasting.
 
 ```{r, get_data, eval = FALSE}
 # You may need a Delphi API key to run this code.
@@ -48,7 +49,8 @@ Setting `revisions = TRUE` retrieves the full revision history (*i.e.* all past 
 df <- get_data(pathogen = "flu", geo_value = c("ny", "ca"), revisions = TRUE)
 ```
 
-You can also provide **your own data**. Just pass it through `check_data()`. See `vignette("external_data")` for formatting details.
+Pass other data through `check_data()`. See `vignette("external_data")` for the
+required format.
 
 ```{r, check_data}
 tail(example_data)
@@ -56,11 +58,13 @@ df <- check_data(example_data)
 autoplot(df)
 ```
 
-## Step 2: Nowcasting (optional)
+## Step 2: Nowcast (optional)
 
-The most recent weeks of surveillance data are almost always too low because hospitals are still filing late reports (**right truncated**). If you feed these raw counts into a forecaster, predictions will be biased downward.
+Recent surveillance counts may be incomplete because reports arrive late.
+Using them directly can bias forecasts downwards.
 
-`get_ncast()` estimates what the recent counts will look like once all reports arrive. With the default `max_delay = 2`, the last 2 weeks are corrected; everything before that is left untouched.
+`get_ncast()` estimates their final values. By default it corrects the last two
+weeks and leaves earlier observations unchanged.
 
 ```{r, nowcast}
 ncast <- get_ncast(df)
@@ -68,42 +72,43 @@ ncast
 autoplot(ncast)
 ```
 
-The corrected `ncast$data` contains two extra columns: `ncast_lower` and `ncast_upper` (95% CrI) for the corrected weeks. `get_fcast()` detects these automatically and uses them to propagate nowcasting uncertainty into the final forecast.
+For corrected weeks, `ncast$data` contains `ncast_lower` and `ncast_upper` 95%
+credible interval bounds. `get_fcast()` carries this uncertainty into the
+forecast.
 
 ## Step 3: Forecasting
 
-Forecasting is split into two steps:
+The forecast workflow has two steps:
 
-1. **`get_cv()` (model selection)**: performs time series cross-validation on the full (median-corrected). Models are ranked by Weighted Interval Score (WIS).
-2. **`get_fcast()` (final forecast)**: ensembles the best `top_n` models and generates forecasts `h` weeks ahead. When nowcast columns are available, forecasts are generated from the lower, median, and upper nowcast estimates and pooled, so prediction intervals capture both model and nowcast uncertainty.
+1. `get_cv()` evaluates models and ranks them by weighted interval score (WIS).
+2. `get_fcast()` fits the models to all available data, combines the best
+   `top_n` and forecasts `h` reporting intervals ahead.
 
-Default models are:
+The default models are:
 
-* `NAIVE`: Carries the last observed value forward. A simple baseline.
+| Model | Description |
+|---|---|
+| `NAIVE` | Carries the latest value forwards |
+| `ETS` | Exponential smoothing |
+| `THETA` | Theta method |
+| `ARIMA` | Automatically selected ARIMA model |
 
-* `ETS` (Exponential Smoothing): A weighted average where recent weeks matter more than older ones. Adapts to trends and seasonal patterns.
-
-* `THETA`: Splits the data into a long-term trend and short-term fluctuations, forecasts each separately, then combines them.
-
-* `ARIMA`: Models temporal dependence in the series using autoregressive and moving average terms. Parameters are selected automatically.
-
-### Cross Validation
+### Cross-validation
 
 `get_cv()` performs rolling-origin [time series cross-validation](https://otexts.com/fpp3/tscv.html).
 
-Three arguments determine how cross-validation is performed.
+Three arguments set the evaluation period:
 
-- **`h`**: the forecast horizon, that is, the number of reporting intervals to predict ahead.
+- `h`: forecast horizon in reporting intervals.
 
-- **`step`**: the spacing between forecast origins.
+- `step`: spacing between forecast origins.
   - `step = h` (default) produces non-overlapping forecasts and is the fastest option.
-  - `step < h` produces overlapping forecasts, resulting in more evaluation points but requiring more model fits.
+  - `step < h` produces more, overlapping forecasts.
 
-- **`n_origins`**, **`eval_start_date`**, or **`origins`**: supply exactly one:
+- Supply one origin argument:
   - `n_origins`: the number of forecast origins.
   - `eval_start_date`: the date of the first forecast origin.
-  - `origins`: explicit, possibly non-contiguous dates, such as corresponding
-    weeks in previous seasons.
+  - `origins`: explicit dates, including non-contiguous dates.
 
 A forecast origin at time `d` predicts intervals `d` to `d + h - 1`, so `n_origins` origins spaced `step` intervals apart cover the last `h + (n_origins - 1) * step` reporting intervals of the series. For example, with `h = 4`, `step = 4`, and `n_origins = 3`, the evaluation period covers the last 12 intervals:
 
@@ -113,16 +118,20 @@ Forecast 2: [d+4, d+5, d+6,  d+7]
 Forecast 3: [d+8, d+9, d+10, d+11]
 ```
 
-Increasing `n_origins` provides a more reliable comparison of models, but leaves less historical data for training. Ensure that each time series contains enough observations before the first forecast origin to fit the models reliably.
+More origins give a broader comparison but leave less data before the first
+model fit.
 
-The function returns an `incast_cv` object containing the cross-validation results for each model and location.
+The result contains forecasts and scores for each model and series.
+
+```{r, cross-validation-fit, results = "hide"}
+cv <- get_cv(ncast, h = 4, n_origins = 16)
+```
 
 ```{r, cross-validation}
-cv <- get_cv(ncast, h = 4, n_origins = 16)
 cv
 ```
 
-Plot relative WIS by model and location using `autoplot()`. Values of `wis_relative_skill` below 1 indicate better-than-average forecasts (lower WIS), while values above 1 indicate worse-than-average forecasts (higher WIS).
+Plot relative WIS by model and series. Values below 1 are better than average.
 
 ```{r, plot-cv}
 autoplot(cv)
@@ -130,14 +139,18 @@ autoplot(cv)
 
 ### Forecast
 
-`get_fcast()` ensembles the best `top_n` models from cross-validation and forecasts `h` reporting intervals ahead. `h` defaults to the horizon used in `get_cv()`.
+`get_fcast()` combines the best `top_n` models. Its horizon defaults to the
+value used by `get_cv()`.
+
+```{r, final-forecast-fit, results = "hide"}
+fcast <- get_fcast(cv, top_n = 2)
+```
 
 ```{r, final-forecast}
-fcast <- get_fcast(cv, top_n = 2)
 fcast
 ```
 
-Plot the ensemble forecast with `autoplot(fcast)` (pass `model = ` to inspect any single model instead):
+Plot the ensemble, or set `model` to inspect one model:
 
 ```{r, plot-forecast}
 autoplot(fcast)
@@ -146,7 +159,10 @@ autoplot(fcast)
 
 ### Adding custom models
 
-Any model compatible with the [`fable`](https://fable.tidyverts.org/) framework can be passed to `get_cv()`/`get_fcast()` via `models`. Epidemiological transmission models built with `odin2` can be added through [`incast.odin`](https://github.com/ACCIDDA/incast.odin). Compose with `default_models()` to keep the built-ins alongside your own:
+Pass any [`fable`](https://fable.tidyverts.org/) model through `models`.
+[`incast.odin`](https://github.com/ACCIDDA/incast.odin) adds transmission models
+built with `odin2`. Combine custom specifications with `default_models()` to
+retain the defaults:
 
 ```{r, extra-models, eval = FALSE}
 library(fable)
@@ -226,9 +242,10 @@ fcast <- get_fcast(cv, top_n = 3)
 ```
 
 
-## Submit to RespiLens
+## Export to RespiLens
 
-[RespiLens](https://www.respilens.com/) is a platform for sharing respiratory disease forecasts. Drop your forecasts as `.csv` files into the myRespiLens web interface.
+Save the Hubverse output as a CSV, then upload it to
+[myRespiLens](https://www.respilens.com/myrespilens):
 
 ```{r, respilens, eval = FALSE}
 write.csv(fcast$hub$model_out_tbl, "respilens.csv", row.names = FALSE)

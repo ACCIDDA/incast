@@ -5,9 +5,9 @@ ggplot2::autoplot
 
 #' Plot surveillance data
 #'
-#' Observed counts over time, one panel per series. When revision history is
-#' present, the latest reported value per week is shown.
-#' 
+#' Plot observed counts by series. If revisions are present, use the latest
+#' reported value for each date.
+#'
 #' @author Cyril Geismar
 #'
 #' @param object An \code{incast_data} from \code{\link{check_data}}.
@@ -27,7 +27,7 @@ autoplot.incast_data <- function(object, ...) {
 }
 
 
-#' Median line with 50\% (dark) and 95\% (light) bands, one panel per series
+#' Median line with 50% (dark) and 95% (light) bands, one panel per series
 #' @param bands A data frame with `lower`, `q25`, `median`, `q75`, `upper`.
 #' @param x The date column, unquoted.
 #' @param key Key column name(s), one facet per series.
@@ -47,11 +47,9 @@ plot_bands <- function(bands, x, key, target) {
 
 #' Plot a nowcast
 #'
-#' Plot reported counts alongside nowcast distributions. Nowcasts are shown as
-#' the median, with 50% and 95% credible intervals.
+#' Plot reported counts with the nowcast median and 50% and 95% credible
+#' intervals.
 #'
-#' Each panel corresponds to a single time series.
-#' 
 #' @author Cyril Geismar
 #'
 #' @param object An \code{incast_ncast} object returned by
@@ -74,13 +72,9 @@ autoplot.incast_ncast <- function(object, ...) {
 
 #' Plot cross-validation model rankings
 #'
-#' Plot model performance across time series using the weighted interval score
-#' (WIS). By default, models are ranked using relative WIS, where values below
-#' 1 indicate better-than-average performance and values above 1 indicate
-#' worse-than-average performance. If only one model is present, raw WIS
-#' values are displayed instead.
-#'
-#' Each panel corresponds to a single time series.
+#' Plot model performance using weighted interval score (WIS). Relative WIS is
+#' shown for multiple models; values below 1 are better than average. Raw WIS is
+#' shown for one model.
 #'
 #' @author Cyril Geismar
 #'
@@ -120,14 +114,11 @@ autoplot.incast_cv <- function(object, ...) {
 
 #' Plot a forecast
 #'
-#' Plot observed values alongside forecast distributions for a selected model.
-#' Forecasts are shown as the median, with 50% and 95% prediction intervals.
-#' By default, the ensemble forecast is displayed.
-#'
-#' Each panel corresponds to a single time series.
+#' Plot observed values with a model's median and 50% and 95% prediction
+#' intervals. The ensemble is shown by default.
 #'
 #' @author Cyril Geismar
-#' 
+#'
 #' @param object An \code{incast_fcast} object returned by
 #' \code{\link{get_fcast}}.
 #' @param model The model to plot. Defaults to \code{"ENSEMBLE"}.

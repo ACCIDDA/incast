@@ -7,7 +7,7 @@
 #' task ID columns in the output tables alongside \code{target}.
 #'
 #' @author Cyril Geismar
-#' 
+#'
 #' @param fcast A \code{fable} forecast object containing an \code{.id} origin
 #' column.
 #' @param ts The keyed \code{tsibble} containing observed values, used to
@@ -22,9 +22,6 @@
 #'
 #' @return A list containing \code{model_out_tbl} and \code{oracle_output}.
 #'
-#' @importFrom dplyr as_tibble mutate reframe filter
-#' @importFrom tidyr unnest
-#' @importFrom stats quantile
 #' @keywords internal
 #' @noRd
 fable_to_hub <- function(

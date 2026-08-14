@@ -88,6 +88,10 @@ test_that("get_ncast validates max_delay", {
   x <- check_data(make_weekly_df(n = 8, revisions = TRUE))
 
   expect_error(get_ncast(x, max_delay = 0), "max_delay")
+  expect_error(get_ncast(x, max_delay = 1.5), "positive integer")
+  expect_error(get_ncast(x, draws = 1), "integer >= 2")
+  expect_error(get_ncast(x, prop_delay = 1), "between 0 and 1")
+  expect_error(get_ncast(x, scale_factor = Inf), "positive number")
 })
 
 test_that("get_ncast rejects non-weekly data", {

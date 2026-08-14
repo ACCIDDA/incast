@@ -19,7 +19,7 @@ A data frame with 52,500 rows and 9 columns:
 }
 }
 \source{
-Generated with \code{incast} from CDC NHSN influenza hospitalization
+Generated with \code{incast} from CDC NHSN influenza hospital admission
 data for the 2025--26 FluSight season.
 }
 \usage{

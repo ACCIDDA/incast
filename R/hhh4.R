@@ -56,9 +56,6 @@
 #'
 #' @seealso `vignette("hhh4")`, [surveillance::hhh4()]
 #' @export
-#' @importFrom fabletools new_model_class
-#' @importFrom tsibble is_regular measured_vars index_var
-#' @importFrom distributional dist_sample
 HHH4 <- function(
   formula,
   control,
@@ -101,7 +98,7 @@ HHH4 <- function(
       call. = FALSE
     )
   }
-  validate_hhh4_integer(n_sim, "n_sim", minimum = 2L)
+  validate_integer(n_sim, "n_sim", minimum = 2L)
 
   new_joint_model(
     model_hhh4,
@@ -110,31 +107,6 @@ HHH4 <- function(
     population = population,
     n_sim = as.integer(n_sim)
   )
-}
-
-
-#' Validate a scalar integer used by HHH4
-#' @keywords internal
-#' @noRd
-validate_hhh4_integer <- function(x, name, minimum = 1L) {
-  if (
-    !is.numeric(x) ||
-      length(x) != 1L ||
-      is.na(x) ||
-      !is.finite(x) ||
-      x != round(x) ||
-      x < minimum
-  ) {
-    stop(
-      "`",
-      name,
-      "` must be a single integer >= ",
-      minimum,
-      ".",
-      call. = FALSE
-    )
-  }
-  invisible(x)
 }
 
 
@@ -390,7 +362,7 @@ hhh4_lags <- function(control) {
     if (is.null(lag)) {
       lag <- 1L
     }
-    validate_hhh4_integer(lag, paste0("control$", component, "$lag"), minimum)
+    validate_integer(lag, paste0("control$", component, "$lag"), minimum)
     as.integer(lag)
   }
   c(ar = get_lag("ar", 1L), ne = get_lag("ne", 0L))
@@ -407,7 +379,7 @@ train_hhh4 <- function(
   horizon,
   ...
 ) {
-  validate_hhh4_integer(horizon, "horizon")
+  validate_integer(horizon, "horizon")
 
   idx <- as.Date(.data[[tsibble::index_var(.data)]])
   units <- tsibble::measured_vars(.data)

@@ -1,45 +1,37 @@
 #' Cross-validate forecasting models
 #'
-#' Evaluate forecasting models using expanding-window time-series
-#' cross-validation. Starting from \code{eval_start_date}, models are refitted
-#' at each forecast origin and evaluated over the next \code{h} time steps.
+#' Evaluate models using expanding-window time-series cross-validation.
 #'
 #' Forecast performance is measured using weighted interval score (WIS) and
 #' interval coverage. Models are ranked separately for each series, and the
 #' resulting rankings are used by \code{\link{get_fcast}}.
 #'
 #' @author Cyril Geismar
-#' 
-#' @param x An \code{incast_ncast} object from \code{\link{get_ncast}} or an
-#'   \code{incast_data} object from \code{\link{check_data}} or
-#'   \code{\link{get_data}}.
+#'
+#' @param x An `incast_data` or `incast_ncast` object.
 #'
 #' @param eval_start_date Date (or character string coercible to a date) giving
 #'   the first forecast origin to evaluate. Must fall within the data window.
-#'   All earlier observations are used as the initial training period. 
+#'   All earlier observations are used as the initial training period.
 #'   This argument is exclusive with \code{n_origins} and \code{origins}.
 #'
-#' @param h Integer giving the forecast horizon in reporting intervals (for
-#'   example, weeks for weekly data). Defaults to \code{4}.
+#' @param h Forecast horizon in reporting intervals. Defaults to `4`.
 #'
 #' @param models Named list of \code{fable} or joint incast model
 #'   specifications, such as \code{\link{HHH4}}. Defaults to
 #'   \code{\link{default_models}}.
 #'
-#' @param step Integer giving the number of reporting intervals between
-#'   successive cross-validation origins. Defaults to \code{h}, resulting in
-#'   non-overlapping evaluation periods.
+#' @param step Reporting intervals between forecast origins. Defaults to `h`.
 #'
 #' @param n_origins Integer giving the number of forecast origins to evaluate,
 #'   as an alternative to \code{eval_start_date}. Origins are placed so that
 #'   the last forecast ends at the last observation:
 #'   \code{eval_start_date = t - ((h - 1) + (n_origins - 1) * step) * interval},
-#'   where \code{t} is the last observation date. 
+#'   where \code{t} is the last observation date.
 #'   This argument is exclusive with \code{eval_start_date} and \code{origins}.
 #'
-#' @param origins Date vector giving explicit dates on which evaluation
-#'   forecasts begin (the first target date in each forecast window). Use this
-#'   for non-contiguous dates, such as corresponding weeks in previous seasons.
+#' @param origins Explicit forecast origin dates. Use non-contiguous dates to
+#'   evaluate corresponding weeks in previous seasons.
 #'   This argument is exclusive with \code{eval_start_date} and
 #'   \code{n_origins}; \code{step} is ignored.
 #'
@@ -72,13 +64,6 @@
 #'
 #' @export
 #'
-#' @importFrom progressr with_progress progressor
-#' @importFrom dplyr filter mutate arrange across all_of as_tibble summarise
-#' @importFrom tidyr expand_grid
-#' @importFrom tsibble as_tsibble key_vars
-#' @importFrom hubEvals score_model_out
-#' @importFrom pipetime time_pipe
-
 get_cv <- function(
   x,
   eval_start_date = NULL,
@@ -88,7 +73,7 @@ get_cv <- function(
   n_origins = NULL,
   origins = NULL
 ) {
-  df <- extract_series(x) # errors unless x is an incast_data / incast_ncast
+  df <- extract_series(x)
   meta <- incast_meta(x)
 
   explicit_origins <- !is.null(origins)
@@ -99,9 +84,9 @@ get_cv <- function(
   )) != 1L) {
     stop("Supply exactly one of `eval_start_date`, `n_origins`, or `origins`.")
   }
-  validate_positive_scalar(h, "h", "number of forecast steps")
+  validate_integer(h, "h")
   if (!explicit_origins) {
-    validate_positive_scalar(step, "step", "periods between CV origins")
+    validate_integer(step, "step")
   }
   validate_models(models)
 
@@ -115,7 +100,7 @@ get_cv <- function(
     }
     eval_start_date <- min(origins)
   } else if (!is.null(n_origins)) {
-    validate_positive_scalar(n_origins, "n_origins", "number of forecast origins")
+    validate_integer(n_origins, "n_origins")
     eval_start_date <- to - ((h - 1) + (n_origins - 1) * step) * meta$interval
     if (eval_start_date <= from) {
       stop(
@@ -132,7 +117,6 @@ get_cv <- function(
     }
   }
 
-  # eval_start_date must sit inside the observed window.
   if (eval_start_date <= from || eval_start_date > to) {
     stop(
       "`eval_start_date` (",
@@ -165,14 +149,12 @@ get_cv <- function(
   }
   cv_ts <- make_cv_origins(ts, origins, h, meta$interval)
 
-  # Time the cross-validation (fit + score) with pipetime.
   {
     progressr::with_progress({
       fcast <- forecast_final(cv_ts, models, h)
       successful_models <- unique(as.character(fcast$.model))
       models <- models[intersect(names(models), successful_models)]
 
-      # Build the hub once; reused for both the stored forecasts and the score.
       hub <- fable_to_hub(
         fcast,
         ts,
@@ -187,7 +169,6 @@ get_cv <- function(
         model_out_tbl = hub$model_out_tbl,
         oracle_output = hub$oracle_output,
         metrics = c("wis", "interval_coverage_50", "interval_coverage_95"),
-        # Relative WIS compares models, so it needs at least two.
         relative_metrics = if (length(models) > 1) "wis",
         by = c("model_id", meta$key)
       ) |>
@@ -216,9 +197,7 @@ get_cv <- function(
 }
 
 
-#' Expanding-window cross-validation origins
-#'
-#' Generate forecast origins for expanding-window cross-validation.
+#' Create expanding-window cross-validation origins
 #'
 #' Origins are dates spaced by \code{step * interval} days starting from
 #' \code{eval_start_date}. For each origin, observations before that date are
@@ -257,7 +236,7 @@ make_cv_origins <- function(ts, origins, h, interval) {
     series <- do.call(paste, c(too_new[key_cols], sep = "/"))
     stop(
       "`eval_start_date` leaves too little training data: series ",
-      paste(head(series, 6L), collapse = ", "),
+      paste(utils::head(series, 6L), collapse = ", "),
       if (length(series) > 6L) ", ..." else "",
       if (length(series) > 1L) " have" else " has",
       " fewer than 2 observations before ",
