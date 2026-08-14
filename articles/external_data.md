@@ -1,33 +1,33 @@
 # Preparing External Data
 
-## Bringing your own data
-
-You can use any surveillance dataset with `incast` — just pass it
-through
-[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
-to validate and enter the pipeline.
-
 ## Required columns
 
-Your data frame must have these 4 columns:
+Pass external surveillance data to
+[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+before nowcasting or forecasting.
 
-| Column | Type | Description |
-|----|----|----|
-| `target_end_date` | Date | The date for which an observation is recorded |
-| `observation` | numeric | The observed value |
-| `location` | character | A single location identifier |
-| `target` | character | A single target identifier (e.g., “inc hosp influenza”) |
+The data frame needs four columns:
 
-To enable **nowcasting** (correcting for reporting delays), add a 5th
-column:
+| Column            | Type      | Description                         |
+|-------------------|-----------|-------------------------------------|
+| `target_end_date` | Date      | Date represented by the observation |
+| `observation`     | numeric   | Observed value                      |
+| `location`        | character | Series identifier                   |
+| `target`          | character | Target identifier                   |
 
-| Column  | Type | Description                                   |
-|---------|------|-----------------------------------------------|
-| `as_of` | Date | The date the observation was reported/revised |
+Add `as_of` to nowcast reporting delays:
 
-With `as_of`, the same `target_end_date` can appear multiple times (one
-row per revision). Without it, each `target_end_date` should appear
-once.
+| Column  | Type | Description                    |
+|---------|------|--------------------------------|
+| `as_of` | Date | Date this version was reported |
+
+Use one row per series and `target_end_date`, or one row per revision
+when `as_of` is present. Keep one target per call. All series must use
+the same reporting interval, calendar and end date, although they may
+start on different dates.
+
+`location` is the default series key. Name other key columns with `key`,
+for example `check_data(df, key = c("location", "age_group"))`.
 
 ## Example
 
@@ -55,3 +55,10 @@ checked
     ## Target:   inc hosp influenza
     ## Series:   1 (location)
     ## Window:   2024-01-01 to 2024-12-23 (7-day interval)
+
+Use the result directly with
+[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md) or
+[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md).
+Use
+[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+first when revision history is available.

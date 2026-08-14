@@ -1,7 +1,7 @@
 # Produce a forward forecast
 
-Fit forecasting models to the full time series and generate forecasts
-for the next `h` reporting intervals.
+Fit models to the full series and forecast the next `h` reporting
+intervals.
 
 ## Usage
 
@@ -27,14 +27,14 @@ get_fcast(
   such as [`HHH4`](https://accidda.github.io/incast/reference/HHH4.md).
   Defaults to
   [`default_models`](https://accidda.github.io/incast/reference/default_models.md).
-  When `x` is an `incast_cv` object, leave unset to use the top-ranked
-  models from cross-validation, or provide a custom set of models.
+  When `x` is an `incast_cv` object, leave unset to forecast its models
+  and use the top-ranked models for the ensemble, or provide a custom
+  set of models to forecast and combine.
 
 - h:
 
-  Integer giving the forecast horizon in reporting intervals. Defaults
-  to `4`. When `x` is an `incast_cv` object, the default is the
-  cross-validation horizon.
+  Forecast horizon in reporting intervals. Defaults to `4`, or the
+  cross-validation horizon when `x` is an `incast_cv` object.
 
 - top_n:
 
@@ -68,16 +68,13 @@ An `incast_fcast` object containing:
   horizon, series keys, target, reporting interval, nowcast information,
   and evaluation date.
 
-Forecast outputs can be exported with
-[`to_respilens`](https://accidda.github.io/incast/reference/to_respilens.md).
-
 ## Details
 
-When provided with an `incast_cv` object, the function uses the
-cross-validation results to select the best-performing models for each
-series and combines them into an equal-weight ensemble. For
-`incast_data` or `incast_ncast` objects, all models in `models` are
-fitted and forecast.
+When provided with an `incast_cv` object, the function forecasts every
+successfully evaluated model and uses the cross-validation results to
+select the best-performing models for each series for the equal-weight
+ensemble. For `incast_data` or `incast_ncast` objects, all models in
+`models` are fitted, forecast, and combined.
 
 If the input contains nowcast uncertainty from
 [`get_ncast`](https://accidda.github.io/incast/reference/get_ncast.md),

@@ -1,7 +1,7 @@
 # Plot a nowcast
 
-Plot reported counts alongside nowcast distributions. Nowcasts are shown
-as the median, with 50% and 95% credible intervals.
+Plot reported counts with the nowcast median and 50% and 95% credible
+intervals.
 
 ## Usage
 
@@ -24,10 +24,6 @@ autoplot(object, ...)
 ## Value
 
 A ggplot object.
-
-## Details
-
-Each panel corresponds to a single time series.
 
 ## Author
 

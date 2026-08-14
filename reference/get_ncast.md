@@ -1,12 +1,10 @@
 # Nowcast right-truncated surveillance data
 
-Recent weeks of surveillance data are incomplete because of reporting
-delays (right truncation). `get_ncast` estimates their final counts with
-[baselinenowcast](https://baselinenowcast.epinowcast.org/), replacing
-the last `max_delay` weeks of every series and leaving earlier weeks
-untouched. Downward revisions are redistributed across earlier delays
-via
-[`preprocess_negative_values`](https://baselinenowcast.epinowcast.org/reference/preprocess_negative_values.html).
+Estimate final counts for recent, incomplete weeks using
+[baselinenowcast](https://baselinenowcast.epinowcast.org/). The last
+`max_delay` weeks are replaced; earlier observations are unchanged.
+Downward revisions are redistributed with
+[`baselinenowcast::preprocess_negative_values()`](https://baselinenowcast.epinowcast.org/reference/preprocess_negative_values.html).
 
 ## Usage
 
@@ -18,29 +16,25 @@ get_ncast(x, max_delay = 2, draws = 1000, prop_delay = 0.5, scale_factor = 3)
 
 - x:
 
-  An `incast_data`
-  ([`get_data`](https://accidda.github.io/incast/reference/get_data.md)
-  /
-  [`check_data`](https://accidda.github.io/incast/reference/check_data.md))
-  with revision history; use `get_data(revisions = TRUE)`.
+  An `incast_data` object with revision history.
 
 - max_delay:
 
-  Integer. Number of recent weeks treated as right-truncated. Default 2.
+  Number of recent weeks to nowcast. Defaults to `2`.
 
 - draws:
 
-  Integer. Number of posterior samples. Default 1000.
+  Number of posterior samples. Defaults to `1000`.
 
 - prop_delay:
 
-  Numeric in (0, 1). Proportion of reference times used for delay
-  estimation. Default 0.5.
+  Proportion of reference times used to estimate delays. Must be between
+  0 and 1. Defaults to `0.5`.
 
 - scale_factor:
 
-  Numeric. Multiplier on `max_delay` for the estimation window. Default
-  3.
+  Multiplier applied to `max_delay` to set the estimation window.
+  Defaults to `3`.
 
 ## Value
 
@@ -49,17 +43,12 @@ An `incast_ncast` object with the shared backbone (`key`, `target`,
 
 - data:
 
-  Corrected series. `observation` holds the nowcast median for corrected
-  weeks; `ncast_lower` / `ncast_upper` (95\\ propagate nowcast
-  uncertainty.
+  Corrected series with `ncast_lower` and `ncast_upper` 95% credible
+  interval bounds.
 
 - meta:
 
-  The nowcast settings (`max_delay`, `draws`, `prop_delay`,
-  `scale_factor`) and `ncast_summary`, one tidy table of per-series
-  weekly nowcasts (median, CrI bounds and the reported-so-far `observed`
-  count) plotted by
-  [`autoplot`](https://ggplot2.tidyverse.org/reference/autoplot.html).
+  Nowcast settings and a per-series `ncast_summary`.
 
 ## Details
 

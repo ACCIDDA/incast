@@ -1,28 +1,23 @@
-# Ebola 2026
+# Forecasting the 2026 Ebola Outbreak
 
 ## Overview
 
-In May 2026, the Democratic Republic of the Congo (DRC) reported an
-Ebola outbreak caused by the Bundibugyo strain, five months after the
-previous epidemic. By July 2026, 2,423 cases and 967 deaths had been
-reported. Rapid forecasting is critical for guiding public health
-response and resource allocation. This vignette demonstrates how to use
-`incast` to forecast Ebola incidence using surveillance data from the
-[Institut National de Recherche Biomédicale
-(INRB)](https://github.com/INRB-UMIE/BDBV2026-Data).
+In May 2026, the Democratic Republic of the Congo reported an Ebola
+outbreak caused by the Bundibugyo strain. By July, 2,423 cases and 967
+deaths had been reported. This example forecasts incidence using
+surveillance data from the [Institut National de Recherche
+Biomédicale](https://github.com/INRB-UMIE/BDBV2026-Data).
 
-The vignette is not executed because the models are computationally
-expensive. Running the code locally may take several minutes.
+The vignette loads precomputed data, cross-validation and forecast
+objects. Model-fitting chunks are disabled, but all plots are generated
+when the article is built.
 
 ## Data
 
-We model the six locations with the highest cumulative confirmed cases.
-For each location, we create a daily time series up to the latest
-reporting date, filling missing days by carrying forward cumulative
-counts and removing downward corrections. Leading zeros before the first
-reported case are removed because the models use log-transformed
-incidence; locations with later introductions therefore have shorter
-time series.
+The example uses the six locations with the most confirmed cases.
+Missing days carry the previous cumulative count forwards, and downward
+revisions are removed. Leading zeros are dropped before log
+transformation.
 
 ``` r
 
@@ -55,21 +50,19 @@ ebola <- ebola |>
       by = "day"
     )
   ) |>
-  fill(observation, .direction = "down") |> # carry cumulative over gaps
-  mutate(observation = cummax(coalesce(observation, 0))) |> # monotonic, per location
-  filter(cumsum(observation > 0) > 0) |> # drop pre-first-case zeros; log() needs > 0
+  fill(observation, .direction = "down") |>
+  mutate(observation = cummax(coalesce(observation, 0))) |>
+  filter(cumsum(observation > 0) > 0) |>
   ungroup() |>
   mutate(target = "insp_sitrep__cumulative_confirmed_cases__daily")
 ```
 
-## `incast` Workflow
+## `incast` workflow
 
-### Data Validation
+### Validate the data
 
 [`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
-validates the Ebola data and returns an `incast_data` object. The
-function checks for missing values, ensures that the data is in the
-correct format, and verifies that the necessary columns are present.
+standardises the columns and returns an `incast_data` object.
 
 ``` r
 
@@ -87,22 +80,18 @@ data
 data |> autoplot()
 ```
 
-![](ebola_2026_files/figure-html/show-data-1.png)
+![Daily cumulative confirmed cases by
+location.](ebola_2026_files/figure-html/show-data-1.png)
 
-Revised history of cumulative confirmed cases is not available for this
-outbreak, so we will skip
-[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
-and proceed directly to cross-validation and forecasting.
+Daily cumulative confirmed cases by location.
 
-### Cross Validation
+Revision history is unavailable, so the workflow skips
+[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md).
 
-[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)
-performs rolling-origin time series cross-validation and returns an
-`incast_cv` object containing the results for each model and location.
+### Cross-validation
 
-First we define a list of models to test. We will use the default models
-provided by `incast` from `fable` and add some custom models, including
-ARIMA, a neural network, and several foundation models.
+Compare the default models with a custom ARIMA model, a neural network,
+Prophet and four foundation models:
 
 ``` r
 
@@ -115,7 +104,6 @@ models <- c(
     CUSTOM_ARIMA = ARIMA(log(observation) ~ pdq(1, 1, 0)),
     NNETAR = NNETAR(log(observation), n_networks = 10),
     PROPHET = prophet(log(observation)),
-    # you will need a python environment (see reticulate)
     CHRONOS = FOUNDATION(log(observation), "chronos"),
     TIMESFM = FOUNDATION(log(observation), "timesfm"),
     SUNDIAL = FOUNDATION(log(observation), "sundial"),
@@ -124,15 +112,15 @@ models <- c(
 )
 ```
 
-Here we forecast 7 days ahead with 16 origins spaced 1 day apart, so the
-evaluation period spans 22 days.
+Forecast seven days ahead from 16 daily origins. The evaluation covers
+22 days.
 
 ``` r
 
 cv <- data |>
   get_cv(
-    h = 7, # forecast horizon
-    step = 1, # one origin per day
+    h = 7,
+    step = 1,
     n_origins = 16,
     models = models
   )
@@ -151,21 +139,18 @@ cv |>
   ggplot2::scale_x_continuous(transform = "log2")
 ```
 
-![](ebola_2026_files/figure-html/show-cv-1.png)
+![Cross-validation performance by model and
+location.](ebola_2026_files/figure-html/show-cv-1.png)
+
+Cross-validation performance by model and location.
 
 [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
-summarises cross-validation performance using relative WIS
-(`wis_relative_skill` in `cv$score`). Raw WIS depends on the scale of
-the observed data and is therefore not directly comparable across
-locations. Relative WIS normalises scores within each location, allowing
-performance to be compared across locations.
+shows relative WIS from `cv$score`. Raw WIS depends on the scale of each
+series; relative WIS supports comparison across locations. On the log
+scale, 0.5 and 2 are equally far from the reference value of 1.
 
-The log scale makes relative differences easier to interpret: values of
-0.5 and 2 indicate half and double the reference WIS, respectively, and
-are equally distant from the reference value of 1 on the log scale.
-
-You can also build your own summaries from `cv$score`. For example, raw
-WIS per model and location.
+Use `cv$score` for custom summaries, such as raw WIS by model and
+location:
 
 ``` r
 
@@ -185,11 +170,9 @@ cv$score |>
 
 ### Forecasting
 
-By default
+By default,
 [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
-will use the best 3 model for each location based on the
-cross-validation results. The function returns a `incast_fcast` object
-containing the forecasts for each location.
+combines the three best models for each location.
 
 ``` r
 
@@ -229,20 +212,21 @@ fcast$meta$selection
 ```
 
 [`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html)
-visualizes the ensemble forecasts for each location, including the
-median, 50% and 95% prediction intervals.
+shows the median and 50% and 95% prediction intervals.
 
 ``` r
 
 fcast |> autoplot()
 ```
 
-![](ebola_2026_files/figure-html/fcast-plot-1.png)
+![Ensemble forecast by
+location.](ebola_2026_files/figure-html/fcast-plot-1.png)
 
-You can also build your own plot using
+Ensemble forecast by location.
+
+Use
 [`as_tibble()`](https://tibble.tidyverse.org/reference/as_tibble.html)
-to extract the forecast data and `ggplot2` to create a custom
-visualization.
+to build a custom plot:
 
 ``` r
 
@@ -259,12 +243,11 @@ fcast |>
     show.legend = TRUE
   ) +
   facet_wrap(~location, scales = "free") +
-  # ground truth
   geom_line(
     data = fcast$hub$oracle_output |>
       filter(target_end_date >= as.Date("2026-07-01")),
     aes(x = target_end_date, y = oracle_value),
-    color = "black"
+    colour = "black"
   ) +
   theme_classic() +
   theme(
@@ -273,4 +256,7 @@ fcast |>
   )
 ```
 
-![](ebola_2026_files/figure-html/fcast-custom-plot-1.png)
+![Forecasts by model with observed values in
+black.](ebola_2026_files/figure-html/fcast-custom-plot-1.png)
+
+Forecasts by model with observed values in black.

@@ -1,7 +1,6 @@
 # Print an `incast_ncast` object
 
-Display a summary of the target, series, data window, and nowcast
-period.
+Print an `incast_ncast` object
 
 ## Usage
 

@@ -1,8 +1,6 @@
 # Cross-validate forecasting models
 
-Evaluate forecasting models using expanding-window time-series
-cross-validation. Starting from `eval_start_date`, models are refitted
-at each forecast origin and evaluated over the next `h` time steps.
+Evaluate models using expanding-window time-series cross-validation.
 
 ## Usage
 
@@ -13,7 +11,8 @@ get_cv(
   h = 4,
   models = default_models(),
   step = h,
-  n_origins = NULL
+  n_origins = NULL,
+  origins = NULL
 )
 ```
 
@@ -21,24 +20,18 @@ get_cv(
 
 - x:
 
-  An `incast_ncast` object from
-  [`get_ncast`](https://accidda.github.io/incast/reference/get_ncast.md)
-  or an `incast_data` object from
-  [`check_data`](https://accidda.github.io/incast/reference/check_data.md)
-  or
-  [`get_data`](https://accidda.github.io/incast/reference/get_data.md).
+  An `incast_data` or `incast_ncast` object.
 
 - eval_start_date:
 
   Date (or character string coercible to a date) giving the first
   forecast origin to evaluate. Must fall within the data window. All
   earlier observations are used as the initial training period. This
-  argument is exclusive with `n_origins`.
+  argument is exclusive with `n_origins` and `origins`.
 
 - h:
 
-  Integer giving the forecast horizon in reporting intervals (for
-  example, weeks for weekly data). Defaults to `4`.
+  Forecast horizon in reporting intervals. Defaults to `4`.
 
 - models:
 
@@ -49,9 +42,7 @@ get_cv(
 
 - step:
 
-  Integer giving the number of reporting intervals between successive
-  cross-validation origins. Defaults to `h`, resulting in
-  non-overlapping evaluation periods.
+  Reporting intervals between forecast origins. Defaults to `h`.
 
 - n_origins:
 
@@ -60,7 +51,13 @@ get_cv(
   forecast ends at the last observation:
   `eval_start_date = t - ((h - 1) + (n_origins - 1) * step) * interval`,
   where `t` is the last observation date. This argument is exclusive
-  with `eval_start_date`.
+  with `eval_start_date` and `origins`.
+
+- origins:
+
+  Explicit forecast origin dates. Use non-contiguous dates to evaluate
+  corresponding weeks in previous seasons. This argument is exclusive
+  with `eval_start_date` and `n_origins`; `step` is ignored.
 
 ## Value
 

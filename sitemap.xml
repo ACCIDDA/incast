@@ -2,6 +2,7 @@
 <url><loc>https://accidda.github.io/incast/404.html</loc></url>
 <url><loc>https://accidda.github.io/incast/LICENSE-text.html</loc></url>
 <url><loc>https://accidda.github.io/incast/LICENSE.html</loc></url>
+<url><loc>https://accidda.github.io/incast/articles/FluSight.html</loc></url>
 <url><loc>https://accidda.github.io/incast/articles/ebola_2026.html</loc></url>
 <url><loc>https://accidda.github.io/incast/articles/external_data.html</loc></url>
 <url><loc>https://accidda.github.io/incast/articles/forecast_planning.html</loc></url>
@@ -21,6 +22,9 @@
 <url><loc>https://accidda.github.io/incast/reference/check_data.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/default_models.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/example_data.html</loc></url>
+<url><loc>https://accidda.github.io/incast/reference/flusight_forecasts.html</loc></url>
+<url><loc>https://accidda.github.io/incast/reference/flusight_scores.html</loc></url>
+<url><loc>https://accidda.github.io/incast/reference/flusight_scores_by_location.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/get_cv.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/get_data.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/get_fcast.html</loc></url>
@@ -31,6 +35,5 @@
 <url><loc>https://accidda.github.io/incast/reference/print.incast_fcast.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/print.incast_ncast.html</loc></url>
 <url><loc>https://accidda.github.io/incast/reference/reexports.html</loc></url>
-<url><loc>https://accidda.github.io/incast/reference/to_respilens.html</loc></url>
 </urlset>
 

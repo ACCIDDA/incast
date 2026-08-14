@@ -1,11 +1,8 @@
 # Weekly influenza hospital admissions for New York and California
 
 Weekly confirmed influenza hospital admissions for New York and
-California (CDC NHSN), with revision history, fetched via
-[`get_data`](https://accidda.github.io/incast/reference/get_data.md);
-pass through
-[`check_data`](https://accidda.github.io/incast/reference/check_data.md)
-to use it.
+California, with revision history, fetched from CDC NHSN through
+[`get_data()`](https://accidda.github.io/incast/reference/get_data.md).
 
 ## Usage
 
@@ -31,7 +28,7 @@ A data frame with 5 columns:
 
 - target_end_date:
 
-  End date of the epiweek.
+  End date of the epidemiological week.
 
 - observation:
 
@@ -44,16 +41,18 @@ CDC NHSN via
 
 ## Details
 
-The archive is pinned to the 14 December 2025 history, so the most
-recent weeks are still right-truncated and
-[`get_ncast`](https://accidda.github.io/incast/reference/get_ncast.md)
-has reporting delay to model. To regenerate with
-`data-raw/example_data.R`.
+The archive is pinned to 14 December 2025 so the latest weeks remain
+incomplete. Pass it to
+[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+before use. Regenerate it with `data-raw/example_data.R`.
 
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
 example_data |> check_data()
-} # }
+#> <incast_data>
+#> Target:   wk inc flu hosp
+#> Series:   2 (location)
+#> Window:   2022-06-04 to 2025-12-13 (7-day interval)
+#> History:  2024-11-17 to 2025-12-14
 ```

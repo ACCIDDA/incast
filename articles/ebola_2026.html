@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Ebola 2026 • incast</title>
+<title>Forecasting the 2026 Ebola Outbreak • incast</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Ebola 2026">
+<script src="../extra.js"></script><meta property="og:title" content="Forecasting the 2026 Ebola Outbreak">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -40,9 +40,10 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/ebola_2026.html">Ebola 2026</a></li>
+<li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Disease Forecast Planning for Public Health</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
   </ul>
 </li>
@@ -64,7 +65,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Ebola 2026</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Forecasting the 2026 Ebola Outbreak</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ACCIDDA/incast/blob/main/vignettes/ebola_2026.Rmd" class="external-link"><code>vignettes/ebola_2026.Rmd</code></a></small>
@@ -76,27 +77,22 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>In May 2026, the Democratic Republic of the Congo (DRC) reported an
-Ebola outbreak caused by the Bundibugyo strain, five months after the
-previous epidemic. By July 2026, 2,423 cases and 967 deaths had been
-reported. Rapid forecasting is critical for guiding public health
-response and resource allocation. This vignette demonstrates how to use
-<code>incast</code> to forecast Ebola incidence using surveillance data
-from the <a href="https://github.com/INRB-UMIE/BDBV2026-Data" class="external-link">Institut
-National de Recherche Biomédicale (INRB)</a>.</p>
-<p>The vignette is not executed because the models are computationally
-expensive. Running the code locally may take several minutes.</p>
+<p>In May 2026, the Democratic Republic of the Congo reported an Ebola
+outbreak caused by the Bundibugyo strain. By July, 2,423 cases and 967
+deaths had been reported. This example forecasts incidence using
+surveillance data from the <a href="https://github.com/INRB-UMIE/BDBV2026-Data" class="external-link">Institut National de
+Recherche Biomédicale</a>.</p>
+<p>The vignette loads precomputed data, cross-validation and forecast
+objects. Model-fitting chunks are disabled, but all plots are generated
+when the article is built.</p>
 </div>
 <div class="section level2">
 <h2 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h2>
-<p>We model the six locations with the highest cumulative confirmed
-cases. For each location, we create a daily time series up to the latest
-reporting date, filling missing days by carrying forward cumulative
-counts and removing downward corrections. Leading zeros before the first
-reported case are removed because the models use log-transformed
-incidence; locations with later introductions therefore have shorter
-time series.</p>
+<p>The example uses the six locations with the most confirmed cases.
+Missing days carry the previous cumulative count forwards, and downward
+revisions are removed. Leading zeros are dropped before log
+transformation.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
@@ -127,23 +123,21 @@ time series.</p>
 <span>      by <span class="op">=</span> <span class="st">"day"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/fill.html" class="external-link">fill</a></span><span class="op">(</span><span class="va">observation</span>, .direction <span class="op">=</span> <span class="st">"down"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># carry cumulative over gaps</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>observation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cummax</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/coalesce.html" class="external-link">coalesce</a></span><span class="op">(</span><span class="va">observation</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># monotonic, per location</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">observation</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># drop pre-first-case zeros; log() needs &gt; 0</span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/fill.html" class="external-link">fill</a></span><span class="op">(</span><span class="va">observation</span>, .direction <span class="op">=</span> <span class="st">"down"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>observation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cummax</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/coalesce.html" class="external-link">coalesce</a></span><span class="op">(</span><span class="va">observation</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cumsum.html" class="external-link">cumsum</a></span><span class="op">(</span><span class="va">observation</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>target <span class="op">=</span> <span class="st">"insp_sitrep__cumulative_confirmed_cases__daily"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="incast-workflow">
-<code>incast</code> Workflow<a class="anchor" aria-label="anchor" href="#incast-workflow"></a>
+<code>incast</code> workflow<a class="anchor" aria-label="anchor" href="#incast-workflow"></a>
 </h2>
 <div class="section level3">
-<h3 id="data-validation">Data Validation<a class="anchor" aria-label="anchor" href="#data-validation"></a>
+<h3 id="validate-the-data">Validate the data<a class="anchor" aria-label="anchor" href="#validate-the-data"></a>
 </h3>
-<p><code><a href="../reference/check_data.html">check_data()</a></code> validates the Ebola data and returns an
-<code>incast_data</code> object. The function checks for missing values,
-ensures that the data is in the correct format, and verifies that the
-necessary columns are present.</p>
+<p><code><a href="../reference/check_data.html">check_data()</a></code> standardises the columns and returns an
+<code>incast_data</code> object.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/incast" class="external-link">incast</a></span><span class="op">)</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="va">ebola</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/check_data.html">check_data</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -154,21 +148,19 @@ necessary columns are present.</p>
 <span><span class="co">#&gt; Series:   6 (location)</span></span>
 <span><span class="co">#&gt; Window:   2026-05-15 to 2026-07-26 (1-day interval)</span></span>
 <span><span class="va">data</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ebola_2026_files/figure-html/show-data-1.png" class="r-plt" alt="" width="2100"></p>
-<p>Revised history of cumulative confirmed cases is not available for
-this outbreak, so we will skip <code><a href="../reference/get_ncast.html">get_ncast()</a></code> and proceed
-directly to cross-validation and forecasting.</p>
+<div class="figure">
+<img src="ebola_2026_files/figure-html/show-data-1.png" class="r-plt" alt="Daily cumulative confirmed cases by location." width="2100"><p class="caption">
+Daily cumulative confirmed cases by location.
+</p>
+</div>
+<p>Revision history is unavailable, so the workflow skips
+<code><a href="../reference/get_ncast.html">get_ncast()</a></code>.</p>
 </div>
 <div class="section level3">
-<h3 id="cross-validation">Cross Validation<a class="anchor" aria-label="anchor" href="#cross-validation"></a>
+<h3 id="cross-validation">Cross-validation<a class="anchor" aria-label="anchor" href="#cross-validation"></a>
 </h3>
-<p><code><a href="../reference/get_cv.html">get_cv()</a></code> performs rolling-origin time series
-cross-validation and returns an <code>incast_cv</code> object containing
-the results for each model and location.</p>
-<p>First we define a list of models to test. We will use the default
-models provided by <code>incast</code> from <code>fable</code> and add
-some custom models, including ARIMA, a neural network, and several
-foundation models.</p>
+<p>Compare the default models with a custom ARIMA model, a neural
+network, Prophet and four foundation models:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fable.tidyverts.org" class="external-link">fable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/fable.prophet/" class="external-link">fable.prophet</a></span><span class="op">)</span></span>
@@ -179,20 +171,19 @@ foundation models.</p>
 <span>    CUSTOM_ARIMA <span class="op">=</span> <span class="fu"><a href="https://fable.tidyverts.org/reference/ARIMA.html" class="external-link">ARIMA</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span> <span class="op">~</span> <span class="fu">pdq</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    NNETAR <span class="op">=</span> <span class="fu"><a href="https://fable.tidyverts.org/reference/NNETAR.html" class="external-link">NNETAR</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, n_networks <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>,</span>
 <span>    PROPHET <span class="op">=</span> <span class="fu"><a href="https://pkg.mitchelloharawild.com/fable.prophet/reference/prophet.html" class="external-link">prophet</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    <span class="co"># you will need a python environment (see reticulate)</span></span>
 <span>    CHRONOS <span class="op">=</span> <span class="fu"><a href="../reference/FOUNDATION.html">FOUNDATION</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, <span class="st">"chronos"</span><span class="op">)</span>,</span>
 <span>    TIMESFM <span class="op">=</span> <span class="fu"><a href="../reference/FOUNDATION.html">FOUNDATION</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, <span class="st">"timesfm"</span><span class="op">)</span>,</span>
 <span>    SUNDIAL <span class="op">=</span> <span class="fu"><a href="../reference/FOUNDATION.html">FOUNDATION</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, <span class="st">"sundial"</span><span class="op">)</span>,</span>
 <span>    MOIRAI <span class="op">=</span> <span class="fu"><a href="../reference/FOUNDATION.html">FOUNDATION</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, <span class="st">"moirai"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>Here we forecast 7 days ahead with 16 origins spaced 1 day apart, so
-the evaluation period spans 22 days.</p>
+<p>Forecast seven days ahead from 16 daily origins. The evaluation
+covers 22 days.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/get_cv.html">get_cv</a></span><span class="op">(</span></span>
-<span>    h <span class="op">=</span> <span class="fl">7</span>, <span class="co"># forecast horizon</span></span>
-<span>    step <span class="op">=</span> <span class="fl">1</span>, <span class="co"># one origin per day</span></span>
+<span>    h <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>    step <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>    n_origins <span class="op">=</span> <span class="fl">16</span>,</span>
 <span>    models <span class="op">=</span> <span class="va">models</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
@@ -206,19 +197,17 @@ the evaluation period spans 22 days.</p>
 <span><span class="va">cv</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>transform <span class="op">=</span> <span class="st">"log2"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ebola_2026_files/figure-html/show-cv-1.png" class="r-plt" alt="" width="2100"></p>
-<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> summarises cross-validation performance using
-relative WIS (<code>wis_relative_skill</code> in <code>cv$score</code>).
-Raw WIS depends on the scale of the observed data and is therefore not
-directly comparable across locations. Relative WIS normalises scores
-within each location, allowing performance to be compared across
-locations.</p>
-<p>The log scale makes relative differences easier to interpret: values
-of 0.5 and 2 indicate half and double the reference WIS, respectively,
-and are equally distant from the reference value of 1 on the log
-scale.</p>
-<p>You can also build your own summaries from <code>cv$score</code>. For
-example, raw WIS per model and location.</p>
+<div class="figure">
+<img src="ebola_2026_files/figure-html/show-cv-1.png" class="r-plt" alt="Cross-validation performance by model and location." width="2100"><p class="caption">
+Cross-validation performance by model and location.
+</p>
+</div>
+<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> shows relative WIS from
+<code>cv$score</code>. Raw WIS depends on the scale of each series;
+relative WIS supports comparison across locations. On the log scale, 0.5
+and 2 are equally far from the reference value of 1.</p>
+<p>Use <code>cv$score</code> for custom summaries, such as raw WIS by
+model and location:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv</span><span class="op">$</span><span class="va">score</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -235,10 +224,8 @@ example, raw WIS per model and location.</p>
 <div class="section level3">
 <h3 id="forecasting">Forecasting<a class="anchor" aria-label="anchor" href="#forecasting"></a>
 </h3>
-<p>By default <code><a href="../reference/get_fcast.html">get_fcast()</a></code> will use the best 3 model for
-each location based on the cross-validation results. The function
-returns a <code>incast_fcast</code> object containing the forecasts for
-each location.</p>
+<p>By default, <code><a href="../reference/get_fcast.html">get_fcast()</a></code> combines the three best models
+for each location.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fcast</span> <span class="op">&lt;-</span> <span class="va">cv</span> <span class="op">|&gt;</span> <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -270,14 +257,16 @@ each location.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> Rwampara  SUNDIAL     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> Rwampara  TIMESFM     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> Rwampara  NNETAR</span></span></code></pre></div>
-<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> visualizes the ensemble forecasts for each
-location, including the median, 50% and 95% prediction intervals.</p>
+<p><code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code> shows the median and 50% and 95% prediction
+intervals.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fcast</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="ebola_2026_files/figure-html/fcast-plot-1.png" class="r-plt" alt="" width="2100"></p>
-<p>You can also build your own plot using <code><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble()</a></code> to
-extract the forecast data and <code>ggplot2</code> to create a custom
-visualization.</p>
+<div class="figure">
+<img src="ebola_2026_files/figure-html/fcast-plot-1.png" class="r-plt" alt="Ensemble forecast by location." width="2100"><p class="caption">
+Ensemble forecast by location.
+</p>
+</div>
+<p>Use <code><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble()</a></code> to build a custom plot:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fcast</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -292,19 +281,22 @@ visualization.</p>
 <span>    show.legend <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">location</span>, scales <span class="op">=</span> <span class="st">"free"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="co"># ground truth</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">fcast</span><span class="op">$</span><span class="va">hub</span><span class="op">$</span><span class="va">oracle_output</span> <span class="op">|&gt;</span></span>
 <span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">target_end_date</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2026-07-01"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">target_end_date</span>, y <span class="op">=</span> <span class="va">oracle_value</span><span class="op">)</span>,</span>
-<span>    color <span class="op">=</span> <span class="st">"black"</span></span>
+<span>    colour <span class="op">=</span> <span class="st">"black"</span></span>
 <span>  <span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_classic</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span></span>
 <span>    legend.position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
 <span>    legend.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="ebola_2026_files/figure-html/fcast-custom-plot-1.png" class="r-plt" alt="" width="2100"></p>
+<div class="figure">
+<img src="ebola_2026_files/figure-html/fcast-custom-plot-1.png" class="r-plt" alt="Forecasts by model with observed values in black." width="2100"><p class="caption">
+Forecasts by model with observed values in black.
+</p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

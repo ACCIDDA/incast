@@ -12,14 +12,15 @@ for building custom plots:
 - `incast_ncast`:
 
   Weekly nowcast summary, one row per series and reporting week
-  (`reference_date`): `median`, 50\\ `q75`) and 95\\ and the
-  reported-so-far `observed` count.
+  (`reference_date`): `median`, 50% (`q25`, `q75`) and 95% (`lower`,
+  `upper`) credible intervals, and the reported-so-far `observed` count.
 
 - `incast_fcast`:
 
   Forecast quantiles per model, one row per `model_id`, series and
-  `target_end_date`: `median`, 50\\ (`q25`, `q75`) and 95\\ prediction
-  intervals. Observed counts for context are in `x$hub$oracle_output`.
+  `target_end_date`: `median`, 50% (`q25`, `q75`) and 95% (`lower`,
+  `upper`) prediction intervals. Observed counts for context are in
+  `x$hub$oracle_output`.
 
 ## Usage
 

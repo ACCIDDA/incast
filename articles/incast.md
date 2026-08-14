@@ -4,29 +4,20 @@
 
 `incast` builds infectious disease forecasts in a few steps:
 
-1.  **[`get_data()`](https://accidda.github.io/incast/reference/get_data.md)**
+1.  [`get_data()`](https://accidda.github.io/incast/reference/get_data.md)
     or
-    **[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)**:
-    fetch or validate surveillance data.
-2.  **[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)**
-    *(optional)*: correct recent weeks for reporting delays.
-3.  **[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)**
-    *(optional)*: evaluate candidate models by time series
-    cross-validation.
-4.  **[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)**:
-    ensemble the best models into a forward-looking forecast.
+    [`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+    fetches or validates surveillance data.
+2.  [`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+    optionally corrects recent weeks for reporting delays.
+3.  [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)
+    optionally compares models by time-series cross-validation.
+4.  [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
+    produces a forecast and ensemble.
 
-The package follows the standard forecasting workflow described by
-[Hyndman & Athanasopoulos
-(2021)](https://otexts.com/fpp3/basic-steps.html). The overall goal is
-to provide public health professionals with an easily-adoptable approach
-to generating, evaluating forecasts, and visualising infectious disease
-forecasts.
-
-To get more information about how to know whether forecasting is the
-best approach for your task, follow the steps in
-[this](https://accidda.github.io/incast/articles/forecast_planning.md)
-article.
+See [Planning an infectious disease
+forecast](https://accidda.github.io/incast/articles/forecast_planning.md)
+before starting a new forecasting project.
 
 ``` r
 
@@ -35,13 +26,12 @@ library(incast)
 
 ## Step 1: Get data
 
-We fetch weekly flu hospital admissions for New York and California from
-the [CDC
+Fetch weekly influenza hospital admissions for New York and California
+from the [CDC
 NHSN](https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data)
-via [`epidatr`](https://cmu-delphi.github.io/epidatr/).
+through [`epidatr`](https://cmu-delphi.github.io/epidatr/).
 
-Setting `revisions = TRUE` retrieves the full revision history (*i.e.*
-all past versions of the data), which is needed for nowcasting.
+Set `revisions = TRUE` to fetch the history needed for nowcasting.
 
 ``` r
 
@@ -50,11 +40,11 @@ all past versions of the data), which is needed for nowcasting.
 df <- get_data(pathogen = "flu", geo_value = c("ny", "ca"), revisions = TRUE)
 ```
 
-You can also provide **your own data**. Just pass it through
+Pass other data through
 [`check_data()`](https://accidda.github.io/incast/reference/check_data.md).
 See
 [`vignette("external_data")`](https://accidda.github.io/incast/articles/external_data.md)
-for formatting details.
+for the required format.
 
 ``` r
 
@@ -74,17 +64,14 @@ autoplot(df)
 
 ![](incast_files/figure-html/check_data-1.png)
 
-## Step 2: Nowcasting (optional)
+## Step 2: Nowcast (optional)
 
-The most recent weeks of surveillance data are almost always too low
-because hospitals are still filing late reports (**right truncated**).
-If you feed these raw counts into a forecaster, predictions will be
-biased downward.
+Recent surveillance counts may be incomplete because reports arrive
+late. Using them directly can bias forecasts downwards.
 
 [`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
-estimates what the recent counts will look like once all reports arrive.
-With the default `max_delay = 2`, the last 2 weeks are corrected;
-everything before that is left untouched.
+estimates their final values. By default it corrects the last two weeks
+and leaves earlier observations unchanged.
 
 ``` r
 
@@ -100,63 +87,51 @@ autoplot(ncast)
 
 ![](incast_files/figure-html/nowcast-1.png)
 
-The corrected `ncast$data` contains two extra columns: `ncast_lower` and
-`ncast_upper` (95% CrI) for the corrected weeks.
+For corrected weeks, `ncast$data` contains `ncast_lower` and
+`ncast_upper` 95% credible interval bounds.
 [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
-detects these automatically and uses them to propagate nowcasting
-uncertainty into the final forecast.
+carries this uncertainty into the forecast.
 
 ## Step 3: Forecasting
 
-Forecasting is split into two steps:
+The forecast workflow has two steps:
 
-1.  **[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)
-    (model selection)**: performs time series cross-validation on the
-    full (median-corrected). Models are ranked by Weighted Interval
-    Score (WIS).
-2.  **[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
-    (final forecast)**: ensembles the best `top_n` models and generates
-    forecasts `h` weeks ahead. When nowcast columns are available,
-    forecasts are generated from the lower, median, and upper nowcast
-    estimates and pooled, so prediction intervals capture both model and
-    nowcast uncertainty.
+1.  [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)
+    evaluates models and ranks them by weighted interval score (WIS).
+2.  [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
+    fits the models to all available data, combines the best `top_n` and
+    forecasts `h` reporting intervals ahead.
 
-Default models are:
+The default models are:
 
-- `NAIVE`: Carries the last observed value forward. A simple baseline.
+| Model   | Description                        |
+|---------|------------------------------------|
+| `NAIVE` | Carries the latest value forwards  |
+| `ETS`   | Exponential smoothing              |
+| `THETA` | Theta method                       |
+| `ARIMA` | Automatically selected ARIMA model |
 
-- `ETS` (Exponential Smoothing): A weighted average where recent weeks
-  matter more than older ones. Adapts to trends and seasonal patterns.
-
-- `THETA`: Splits the data into a long-term trend and short-term
-  fluctuations, forecasts each separately, then combines them.
-
-- `ARIMA`: Models temporal dependence in the series using autoregressive
-  and moving average terms. Parameters are selected automatically.
-
-### Cross Validation
+### Cross-validation
 
 [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)
 performs rolling-origin [time series
 cross-validation](https://otexts.com/fpp3/tscv.html).
 
-Three arguments determine how cross-validation is performed.
+Three arguments set the evaluation period:
 
-- **`h`**: the forecast horizon, that is, the number of reporting
-  intervals to predict ahead.
+- `h`: forecast horizon in reporting intervals.
 
-- **`step`**: the spacing between forecast origins.
+- `step`: spacing between forecast origins.
 
   - `step = h` (default) produces non-overlapping forecasts and is the
     fastest option.
-  - `step < h` produces overlapping forecasts, resulting in more
-    evaluation points but requiring more model fits.
+  - `step < h` produces more, overlapping forecasts.
 
-- **`n_origins`** or **`eval_start_date`**: where the evaluation period
-  starts. Supply exactly one:
+- Supply one origin argument:
 
   - `n_origins`: the number of forecast origins.
   - `eval_start_date`: the date of the first forecast origin.
+  - `origins`: explicit dates, including non-contiguous dates.
 
 A forecast origin at time `d` predicts intervals `d` to `d + h - 1`, so
 `n_origins` origins spaced `step` intervals apart cover the last
@@ -170,17 +145,18 @@ Forecast 2: [d+4, d+5, d+6,  d+7]
 Forecast 3: [d+8, d+9, d+10, d+11]
 ```
 
-Increasing `n_origins` provides a more reliable comparison of models,
-but leaves less historical data for training. Ensure that each time
-series contains enough observations before the first forecast origin to
-fit the models reliably.
+More origins give a broader comparison but leave less data before the
+first model fit.
 
-The function returns an `incast_cv` object containing the
-cross-validation results for each model and location.
+The result contains forecasts and scores for each model and series.
 
 ``` r
 
 cv <- get_cv(ncast, h = 4, n_origins = 16)
+```
+
+``` r
+
 cv
 #> <incast_cv>
 #> Target:   wk inc flu hosp
@@ -189,11 +165,8 @@ cv
 #> CV:       4 models x 16 origins (h = 4)
 ```
 
-Plot relative WIS by model and location using
-[`autoplot()`](https://ggplot2.tidyverse.org/reference/autoplot.html).
-Values of `wis_relative_skill` below 1 indicate better-than-average
-forecasts (lower WIS), while values above 1 indicate worse-than-average
-forecasts (higher WIS).
+Plot relative WIS by model and series. Values below 1 are better than
+average.
 
 ``` r
 
@@ -205,23 +178,25 @@ autoplot(cv)
 ### Forecast
 
 [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
-ensembles the best `top_n` models from cross-validation and forecasts
-`h` reporting intervals ahead. `h` defaults to the horizon used in
-[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md).
+combines the best `top_n` models. Its horizon defaults to the value used
+by [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md).
 
 ``` r
 
 fcast <- get_fcast(cv, top_n = 2)
+```
+
+``` r
+
 fcast
 #> <incast_fcast>
 #> Target:   wk inc flu hosp
 #> Series:   2 (location)
 #> Forecast: 2025-12-20 to 2026-01-10 (h = 4)
-#> Models:   3 + ENSEMBLE
+#> Models:   4 + ENSEMBLE
 ```
 
-Plot the ensemble forecast with `autoplot(fcast)` (pass `model =` to
-inspect any single model instead):
+Plot the ensemble, or set `model` to inspect one model:
 
 ``` r
 
@@ -232,12 +207,12 @@ autoplot(fcast)
 
 ### Adding custom models
 
-Any model compatible with the [`fable`](https://fable.tidyverts.org/)
-framework can be passed to
-[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md)/[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
-via `models`. Compose with
+Pass any [`fable`](https://fable.tidyverts.org/) model through `models`.
+[`incast.odin`](https://github.com/ACCIDDA/incast.odin) adds
+transmission models built with `odin2`. Combine custom specifications
+with
 [`default_models()`](https://accidda.github.io/incast/reference/default_models.md)
-to keep the built-ins alongside your own:
+to retain the defaults:
 
 ``` r
 
@@ -245,13 +220,64 @@ library(fable)
 library(fable.prophet)
 library(EpiEstim)
 library(projections)
+library(incast.odin)
+
+# Illustrative inputs for the joint HHH4 models. Replace the connections with
+# ones appropriate to your application; rows are sources and columns recipients.
+adjacency <- rbind(
+  CA = c(CA = 0, NY = 1),
+  NY = c(CA = 1, NY = 0)
+)
+population <- c(CA = 39.4e6, NY = 20.0e6)
+population <- population / sum(population)
+annual_seasonality <- surveillance::addSeason2formula(
+  f = ~1,
+  S = 1,
+  period = round(365.25 / ncast$interval)
+)
+
 my_models <- c(
   default_models(),
   list(
+    # Statistical models
     CUSTOM_ARIMA = ARIMA(observation ~ pdq(1, 1, 0)),
+
+    # Epidemiological models
+    EPIESTIM = EPIESTIM(
+      observation,
+      mean_si = 3.5,
+      std_si = 2.1,
+      rt_window = ncast$interval
+    ),
+    ODIN2_SIR = odin_sir(observation),
+    ODIN2_SEIR = odin_seir(observation),
+    HHH4_AR_END = HHH4(
+      observation,
+      control = list(
+        ar = list(f = ~1, lag = 1),
+        ne = list(f = ~ -1),
+        end = list(f = annual_seasonality),
+        family = "NegBin1"
+      ),
+      population = population
+    ),
+    HHH4_FULL = HHH4(
+      observation,
+      control = list(
+        ar = list(f = ~1, lag = 1),
+        ne = list(f = ~1, lag = 1, normalize = TRUE),
+        end = list(f = annual_seasonality),
+        family = "NegBin1"
+      ),
+      neighbourhood = adjacency,
+      population = population
+    ),
+
+    # Machine learning models
     PROPHET = prophet(observation ~ season("year")),
     NNETAR = NNETAR(observation),
-    EPIESTIM = EPIESTIM(observation, mean_si = 3, std_si = 2, rt_window = 7),
+
+    # Foundation models
     CHRONOS = FOUNDATION(log(observation), "chronos"),
     TIMESFM = FOUNDATION(log(observation), "timesfm")
   )
@@ -266,15 +292,12 @@ cv <- get_cv(
 fcast <- get_fcast(cv, top_n = 3)
 ```
 
-## Submit to RespiLens
+## Export to RespiLens
 
-[RespiLens](https://www.respilens.com/) is a platform for sharing
-respiratory disease forecasts. Use
-[`to_respilens()`](https://accidda.github.io/incast/reference/to_respilens.md)
-to export the forecast as JSON for upload to
-[MyRespiLens](https://www.respilens.com/myrespilens).
+Save the Hubverse output as a CSV, then upload it to
+[myRespiLens](https://www.respilens.com/myrespilens):
 
 ``` r
 
-to_respilens(fcast, "respilens.json")
+write.csv(fcast$hub$model_out_tbl, "respilens.csv", row.names = FALSE)
 ```

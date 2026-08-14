@@ -1,8 +1,7 @@
 # Validate surveillance data
 
-Validate and standardise surveillance data for use throughout the
-package. The returned `incast_data` object can be passed directly to
-forecasting and nowcasting functions.
+Validate and standardise surveillance data for nowcasting and
+forecasting.
 
 ## Usage
 
@@ -14,20 +13,14 @@ check_data(data, key = "location")
 
 - data:
 
-  A data frame containing `target_end_date` (`Date`), `observation`
-  (numeric), `target` (character), and one or more key columns. An
-  optional `as_of` (`Date`) column enables nowcasting with
-  [`get_ncast`](https://accidda.github.io/incast/reference/get_ncast.md).
-  If `data` is already an `incast_data` object, it is returned
-  unchanged.
+  A data frame with `target_end_date` (`Date`), `observation` (numeric),
+  `target` (character) and the key columns. Add `as_of` (`Date`) for
+  revision history. An `incast_data` object is returned unchanged.
 
 - key:
 
-  Character vector giving the column name(s) that uniquely identify each
-  time series, equivalent to the key of a
-  [`tsibble`](https://tsibble.tidyverts.org/reference/tsibble.html).
-  Each unique combination of key values is treated as a separate series.
-  Defaults to `"location"`.
+  Character vector naming the columns that identify a series. Defaults
+  to `"location"`.
 
 ## Value
 
@@ -51,11 +44,11 @@ An `incast_data` object containing:
 
 - interval:
 
-  Reporting interval in days (for example, 7 for weekly data).
+  Reporting interval in days.
 
 - history:
 
-  Logical indicating whether revision history (`as_of`) is available.
+  Logical indicating whether multiple revisions are available.
 
 ## Details
 

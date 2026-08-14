@@ -37,6 +37,15 @@
 - [`example_data`](https://accidda.github.io/incast/reference/example_data.md)
   : Weekly influenza hospital admissions for New York and California
 
+- [`flusight_forecasts`](https://accidda.github.io/incast/reference/flusight_forecasts.md)
+  : Forecasts from the 2025–26 FluSight backtest
+
+- [`flusight_scores`](https://accidda.github.io/incast/reference/flusight_scores.md)
+  : Scores from the 2025–26 FluSight backtest
+
+- [`flusight_scores_by_location`](https://accidda.github.io/incast/reference/flusight_scores_by_location.md)
+  : Scores from the 2025–26 FluSight backtest by location
+
 - [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md) :
   Cross-validate forecasting models
 
@@ -68,6 +77,3 @@
   :
 
   Print an `incast_ncast` object
-
-- [`to_respilens()`](https://accidda.github.io/incast/reference/to_respilens.md)
-  : Convert a forecast to RespiLens format

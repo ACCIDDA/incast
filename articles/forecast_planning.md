@@ -1,198 +1,100 @@
-# Disease Forecast Planning for Public Health
+# Planning an Infectious Disease Forecast
 
-## Introduction
+## Define the decision
 
-Disease forecasting is an invaluable tool for the field public health,
-however, clearly defining the parameters of the problems you want to
-solve is often more difficult than the forecasting itself. The `incast`
-pakcage provides a comprehensive toolkit for generating forecasts with
-the expectation that users already have a concrete idea of what they
-would like to forecast. In this vignette, we provide a series of
-questions to aid forecasters in the discovery of the “why”, “what”,
-“where” and “how” for their question. This package and its documentation
-is still actively under development, and we welcome [contributions and
-feedback](https://github.com/ACCIDDA/incast/issues/new) from the
-community.
+Start with the decision the forecast will support:
 
-## Step 1: Why are we interested in forecasting?
+1.  What question must it answer?
+2.  Who will use the result?
+3.  What action could change because of it?
+4.  How far ahead must the forecast remain useful?
 
-First, there needs to be a clearly defined project to get started. Here
-are a set of questions to consider to begin this process:
+A forecast needs a clear user and time horizon. If the result would not
+change a decision, an analysis of past data may be more useful.
 
-1.  What is the question that you are attempting to answer? Or what
-    insights do you hope to gain?
+## Choose a forecast or scenario
 
-    - Determine what you are trying to gain from the forecasting
-      project. Specificity at this stage makes future stages easier!
+| Approach | Question | Example |
+|----|----|----|
+| Forecast | What is likely under current conditions? | How many influenza hospital admissions are likely over the next four weeks? |
+| Scenario | What could happen under a stated assumption? | How would admissions differ under 30% and 50% vaccine coverage? |
 
-2.  Who is the audience, or, who will benefit from the insights?
+Use a forecast for short-term operational planning. Use a scenario when
+the result depends on an intervention, policy or other explicit
+assumption. The [Scenario Modeling
+Hub](https://scenariomodelinghub.org/) provides examples of longer-term
+scenario projections.
 
-    - Determine who will use the forecasts, and who the interpretation
-      of them will benefit.
+## Define the target
 
-3.  How far into the future are you interested in forecasting? How far
-    into the future do these insights need to be to be useful?
+Specify three elements:
 
-    - \<7 days? 1-4 weeks? Full seasonal projections\*?
-      - \*full seasonsal projections are known as “scenarios” and are
-        different from forecasts.
-    - The time frame associated with your question determines whether or
-      not forecasting is the best tool. Read more in Step 2…
+- **Pathogen:** for example, influenza, COVID-19 or RSV.
+- **Target:** the quantity to predict, such as hospital admissions,
+  deaths or emergency department visits.
+- **Spatial unit:** for example, country, state, county or hospital
+  system.
 
-STOP! Have you defined your forecasting problem using the questions
-above?
+Use the finest spatial unit that has stable, timely data. Forecast
+locations together when they share one target and cadence. Run separate
+workflows for different pathogens or targets.
 
-- YES → Proceed to next step
-- NO → Continue defining the approach
+## Check existing forecasts
 
-## Step 2: Forecast vs. scenario?
+An existing forecast hub may already answer the question. These hubs
+publish standardised forecasts and observed target data:
 
-Determine if your central question is strictly a forecast, or if it is
-more aligned with a scenario projection.
+- [RSV Forecast Hub](https://github.com/CDCgov/rsv-forecast-hub)
+- [COVID-19 Forecast
+  Hub](https://github.com/CDCgov/covid19-forecast-hub)
+- [FluSight Forecast
+  Hub](https://github.com/cdcepi/FluSight-forecast-hub)
+- [Flu MetroCast](https://github.com/reichlab/flu-metrocast) for
+  sub-state influenza forecasts
 
-- Forecasts
-  - Forecasts are concerned with what will happen in the future under
-    current conditions/regardless of what interventions take place. From
-    this, we can determine actionables or deploy resources, but our
-    starting point is based off of “real life” and not an assumption
-    (i.e., an unconditional projection).
-  - e.g., I want advanced notice on the influenza hospitalization burden
-    in the coming weeks.
-- Scenarios
-  - Scenarios are concerned with what will happen if we take action *X*?
-    Or, how will the future differe if *X* happens instead of *Y*?
-    Often, with scenarios, you are comparing different outcomes on the
-    basis of different assumptions (i.e., a conditional projection).  
-  - e.g., I want to know what the predicted burden will be if 50% of the
-    population is vaccinated against flu vs. only 30%.
+See the [hubverse hub list](https://hubverse.io/community/hubs.html) for
+other projects. Use [RespiLens](https://www.respilens.com/) to view
+respiratory forecasts.
 
-If you want to produce projections of the future more than a few weeks
-at a time, your question is likely better suited for a scenario
-projection rather than a forecast (forecasts give us a look 1-4 weeks
-ahead of any given start date, scenarios show us entire seasons at a
-time). For more information on scenario projections, visit the [Scenario
-Modeling Hub](https://scenariomodelinghub.org/).
+## Check the data
 
-STOP! Have you confirmed that your question is best answered with a
-forecast?
+The observed data must match the pathogen, target, spatial unit and
+cadence of the forecast. Before modelling, check that:
 
-- YES → Proceed to next step
-- NO → Consider checking out scenario projections instead!
+- reporting dates follow a regular cadence;
+- each series uses the same reporting calendar and end date;
+- enough history is available before the first evaluation date;
+- historical snapshots or revisions are retained; and
+- recent observations are complete enough to use directly.
 
-## Step 3: Define Your Data
+Use
+[`get_data()`](https://accidda.github.io/incast/reference/get_data.md)
+for supported US respiratory hospital data. For other sources, use
+[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+and follow
+[`vignette("external_data")`](https://accidda.github.io/incast/articles/external_data.md).
 
-Next, define what **pathogen**, **target** (data stream), and **spatial
-unit** are involved in forecasting project.
+If recent observations are revised as reports arrive, retain the full
+revision history and use
+[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+before forecasting.
 
-1.  What **pathogen** are you interested in forecasting?
+## Start the workflow
 
-    - e.g., influenza, COVID-19, RSV, etc.
+Once the question and data are suitable:
 
-2.  What data stream are you interested in forecasting (also known as
-    your **target**)?
+1.  Fetch or validate the data with
+    [`get_data()`](https://accidda.github.io/incast/reference/get_data.md)
+    or
+    [`check_data()`](https://accidda.github.io/incast/reference/check_data.md).
+2.  Correct reporting delays with
+    [`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+    when revision history is available.
+3.  Compare models with
+    [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md).
+4.  Produce the forecast with
+    [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md).
 
-    - Examples of common forecasting targets are “incidence of
-      hospitalization” (of patients with a certain hospitalization),
-      “percent of emergency department visits” (attributable to a
-      certain pathogen), “deaths” (due to a certain pathogen), “hospital
-      bed occupancy” (by patients with a certain pathogen). All of these
-      targets are measures of disease burden that give public health
-      professionals an idea of how much disease a population bears at a
-      given time. The most common forecasting target for respiratory
-      illnesses is “incidence of hospitalization”, which makes it the
-      easiest to find data on. Presently, `incast` only forecasts
-      targets “incidence of hospitalization” and “death”.
-
-3.  What **spatial unit** will provide the best insight? Is there data
-    available at that scale?
-
-    - e.g., national, state, county, city, health jurisdiction, hospital
-      system, or even facility (e.g., hospital). The more granular the
-      spatial unit, the more difficult it is to find data, so there is
-      often a trade-off between data specificity and availability.
-
-Note that you can forecast multiple locations (e.g., multiple states or
-health jurisdictions) at once, but if you want forecast multiple
-pathogens or targets, it is best to separate those into their own
-distinct forecasts.
-
-STOP! Have you defined your pathogen, target, and spatial unit?
-
-- YES → Proceed to next step
-- NO → Continue defining these data elements
-
-## Step 4: Data Availability & Limitations
-
-In our context, forecasts are mathematical predictions of a few weeks
-ahead given a starting point of “ground truth” data (i.e, information on
-what has already happened). Because of this, you need to provide
-forecasting models with ground truth data that matches the resolution of
-your forecasting question (i.e., same pathogen, same target, same
-locations). Data availability is often a limiting factor when
-considering a forecasting question. In this step, we provide a decision
-tree approach to determine if you can forecast with ground truth data
-that already exists, if you need to provide specialized data to complete
-your forecast, or if there is already forecasting infrastructure that
-answers your forecasting question.
-
-An easy way to find either ground truth data or forecasts is via a
-*forecast hub*. Forecasting hubs (organized by the
-[hubverse](https://hubverse.io/)) are standardized repositories for
-disease forecasts and ground truth data where all data follows
-structured guidelines. Ground truth data found in forecasting hubs is
-forecast-ready, and in fact, the forecasts themselves may answer your
-forecasting question(s) without any further action from you. For
-example, if you are forecasting RSV, COVID-19, or influenza at a U.S.
-national or state level\*, your forecasting question is likely already
-answered by a forecasting hub:
-
-- RSV: [GitHub repository](https://github.com/CDCgov/rsv-forecast-hub)
-  \| [RespiLens
-  visualization](https://www.respilens.com/?view=rsv_forecasts)
-- COVID-19: [GitHub
-  repository](https://github.com/CDCgov/covid19-forecast-hub) \|
-  [RespiLens
-  visualization](https://www.respilens.com/?view=covid_forecasts)
-- Influenza: [GitHub
-  repository](https://github.com/cdcepi/FluSight-forecast-hub) \|
-  [RespiLens
-  visualization](https://www.respilens.com/?view=flu_forecasts)
-  - \*There is also a hub for sub-state level influenza forecasts
-    ([GitHub repository](https://github.com/reichlab/flu-metrocast) \|
-    [RespiLens
-    visualization](https://www.respilens.com/?view=metrocast_forecasts))
-
-For a complete list of hubverse forecast hubs, [see
-here](https://hubverse.io/community/hubs.html).
-
-### Finding your data
-
-After you decide to create your own forecasts and find a suitable ground
-truth data, you must confirm that your ground truth data stream is
-stable enough to support a repeatable workflow.
-
-If you are pulling ground truth data from a hubverse hub, this data is
-likely released on a weekly cadence and is mostly complete. You can find
-this data in the `target-data/` directory of the hub’s GitHub
-repository. Alternatively, `incast` has a built-in function
-(**[`get_data()`](https://accidda.github.io/incast/reference/get_data.md)**)
-that will handle the collection + formatting of state level respiratory
-data. If you want to use another ground truth data source, you will
-first have to validate it with
-**[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)**.
-Please see the [external
-data](https://accidda.github.io/incast/articles/external_data.md)
-article for information on external data source formatting.
-
-If there are reporting delays in your data stream, or inconsistencies
-that are often fixed later but you cannot wait on, use the
-**[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)**
-function to correct recent weeks for reporting delays.
-
-### Confirming your data
-
-## Next steps:
-
-When you are ready to begin, visit the [**GET
-STARTED**](https://accidda.github.io/incast/articles/incast.md) page to
-use `incast` for your forecasting needs!
+See
+[`vignette("incast")`](https://accidda.github.io/incast/articles/incast.md)
+for a complete example.

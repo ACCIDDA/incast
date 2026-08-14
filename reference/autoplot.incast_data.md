@@ -1,7 +1,7 @@
 # Plot surveillance data
 
-Observed counts over time, one panel per series. When revision history
-is present, the latest reported value per week is shown.
+Plot observed counts by series. If revisions are present, use the latest
+reported value for each date.
 
 ## Usage
 

@@ -1,8 +1,7 @@
 # Plot a forecast
 
-Plot observed values alongside forecast distributions for a selected
-model. Forecasts are shown as the median, with 50% and 95% prediction
-intervals. By default, the ensemble forecast is displayed.
+Plot observed values with a model's median and 50% and 95% prediction
+intervals. The ensemble is shown by default.
 
 ## Usage
 
@@ -29,10 +28,6 @@ autoplot(object, model = "ENSEMBLE", ...)
 ## Value
 
 A ggplot object.
-
-## Details
-
-Each panel corresponds to a single time series.
 
 ## Author
 

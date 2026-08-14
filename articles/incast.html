@@ -40,9 +40,10 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/ebola_2026.html">Ebola 2026</a></li>
+<li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Disease Forecast Planning for Public Health</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
   </ul>
 </li>
@@ -80,44 +81,36 @@
 steps:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong><code><a href="../reference/get_data.html">get_data()</a></code></strong> or
-<strong><code><a href="../reference/check_data.html">check_data()</a></code></strong>: fetch or validate
-surveillance data.</li>
+<code><a href="../reference/get_data.html">get_data()</a></code> or <code><a href="../reference/check_data.html">check_data()</a></code> fetches or
+validates surveillance data.</li>
 <li>
-<strong><code><a href="../reference/get_ncast.html">get_ncast()</a></code></strong> <em>(optional)</em>:
-correct recent weeks for reporting delays.</li>
+<code><a href="../reference/get_ncast.html">get_ncast()</a></code> optionally corrects recent weeks for
+reporting delays.</li>
 <li>
-<strong><code><a href="../reference/get_cv.html">get_cv()</a></code></strong> <em>(optional)</em>: evaluate
-candidate models by time series cross-validation.</li>
+<code><a href="../reference/get_cv.html">get_cv()</a></code> optionally compares models by time-series
+cross-validation.</li>
 <li>
-<strong><code><a href="../reference/get_fcast.html">get_fcast()</a></code></strong>: ensemble the best models
-into a forward-looking forecast.</li>
+<code><a href="../reference/get_fcast.html">get_fcast()</a></code> produces a forecast and ensemble.</li>
 </ol>
-<p>The package follows the standard forecasting workflow described by <a href="https://otexts.com/fpp3/basic-steps.html" class="external-link">Hyndman &amp;
-Athanasopoulos (2021)</a>. The overall goal is to provide public health
-professionals with an easily-adoptable approach to generating,
-evaluating forecasts, and visualising infectious disease forecasts.</p>
-<p>To get more information about how to know whether forecasting is the
-best approach for your task, follow the steps in <a href="forecast_planning.html">this</a> article.</p>
+<p>See <a href="forecast_planning.html">Planning an infectious disease
+forecast</a> before starting a new forecasting project.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/incast" class="external-link">incast</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="step-1-get-data">Step 1: Get data<a class="anchor" aria-label="anchor" href="#step-1-get-data"></a>
 </h2>
-<p>We fetch weekly flu hospital admissions for New York and California
-from the <a href="https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data" class="external-link">CDC
-NHSN</a> via <a href="https://cmu-delphi.github.io/epidatr/" class="external-link"><code>epidatr</code></a>.</p>
-<p>Setting <code>revisions = TRUE</code> retrieves the full revision
-history (<em>i.e.</em> all past versions of the data), which is needed
-for nowcasting.</p>
+<p>Fetch weekly influenza hospital admissions for New York and
+California from the <a href="https://data.cdc.gov/Public-Health-Surveillance/Weekly-Hospital-Respiratory-Data-HRD-Metrics-by-Ju/mpgq-jmmr/about_data" class="external-link">CDC
+NHSN</a> through <a href="https://cmu-delphi.github.io/epidatr/" class="external-link"><code>epidatr</code></a>.</p>
+<p>Set <code>revisions = TRUE</code> to fetch the history needed for
+nowcasting.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># You may need a Delphi API key to run this code.</span></span>
 <span><span class="co"># See `?epidatr::get_api_key()` for details.</span></span>
 <span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span>pathogen <span class="op">=</span> <span class="st">"flu"</span>, geo_value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ny"</span>, <span class="st">"ca"</span><span class="op">)</span>, revisions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>You can also provide <strong>your own data</strong>. Just pass it
-through <code><a href="../reference/check_data.html">check_data()</a></code>. See
-<code><a href="../articles/external_data.html">vignette("external_data")</a></code> for formatting details.</p>
+<p>Pass other data through <code><a href="../reference/check_data.html">check_data()</a></code>. See
+<code><a href="../articles/external_data.html">vignette("external_data")</a></code> for the required format.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 5</span></span></span>
@@ -134,16 +127,13 @@ through <code><a href="../reference/check_data.html">check_data()</a></code>. Se
 <p><img src="incast_files/figure-html/check_data-1.png" class="r-plt" alt="" width="2100"></p>
 </div>
 <div class="section level2">
-<h2 id="step-2-nowcasting-optional">Step 2: Nowcasting (optional)<a class="anchor" aria-label="anchor" href="#step-2-nowcasting-optional"></a>
+<h2 id="step-2-nowcast-optional">Step 2: Nowcast (optional)<a class="anchor" aria-label="anchor" href="#step-2-nowcast-optional"></a>
 </h2>
-<p>The most recent weeks of surveillance data are almost always too low
-because hospitals are still filing late reports (<strong>right
-truncated</strong>). If you feed these raw counts into a forecaster,
-predictions will be biased downward.</p>
-<p><code><a href="../reference/get_ncast.html">get_ncast()</a></code> estimates what the recent counts will look
-like once all reports arrive. With the default
-<code>max_delay = 2</code>, the last 2 weeks are corrected; everything
-before that is left untouched.</p>
+<p>Recent surveillance counts may be incomplete because reports arrive
+late. Using them directly can bias forecasts downwards.</p>
+<p><code><a href="../reference/get_ncast.html">get_ncast()</a></code> estimates their final values. By default it
+corrects the last two weeks and leaves earlier observations
+unchanged.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ncast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_ncast.html">get_ncast</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="va">ncast</span></span>
@@ -154,74 +144,78 @@ before that is left untouched.</p>
 <span><span class="co">#&gt; Nowcast:  2025-12-06 to 2025-12-13</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">ncast</span><span class="op">)</span></span></code></pre></div>
 <p><img src="incast_files/figure-html/nowcast-1.png" class="r-plt" alt="" width="2100"></p>
-<p>The corrected <code>ncast$data</code> contains two extra columns:
-<code>ncast_lower</code> and <code>ncast_upper</code> (95% CrI) for the
-corrected weeks. <code><a href="../reference/get_fcast.html">get_fcast()</a></code> detects these automatically
-and uses them to propagate nowcasting uncertainty into the final
-forecast.</p>
+<p>For corrected weeks, <code>ncast$data</code> contains
+<code>ncast_lower</code> and <code>ncast_upper</code> 95% credible
+interval bounds. <code><a href="../reference/get_fcast.html">get_fcast()</a></code> carries this uncertainty into
+the forecast.</p>
 </div>
 <div class="section level2">
 <h2 id="step-3-forecasting">Step 3: Forecasting<a class="anchor" aria-label="anchor" href="#step-3-forecasting"></a>
 </h2>
-<p>Forecasting is split into two steps:</p>
+<p>The forecast workflow has two steps:</p>
 <ol style="list-style-type: decimal">
 <li>
-<strong><code><a href="../reference/get_cv.html">get_cv()</a></code> (model selection)</strong>: performs
-time series cross-validation on the full (median-corrected). Models are
-ranked by Weighted Interval Score (WIS).</li>
+<code><a href="../reference/get_cv.html">get_cv()</a></code> evaluates models and ranks them by weighted
+interval score (WIS).</li>
 <li>
-<strong><code><a href="../reference/get_fcast.html">get_fcast()</a></code> (final forecast)</strong>:
-ensembles the best <code>top_n</code> models and generates forecasts
-<code>h</code> weeks ahead. When nowcast columns are available,
-forecasts are generated from the lower, median, and upper nowcast
-estimates and pooled, so prediction intervals capture both model and
-nowcast uncertainty.</li>
+<code><a href="../reference/get_fcast.html">get_fcast()</a></code> fits the models to all available data,
+combines the best <code>top_n</code> and forecasts <code>h</code>
+reporting intervals ahead.</li>
 </ol>
-<p>Default models are:</p>
-<ul>
-<li><p><code>NAIVE</code>: Carries the last observed value forward. A
-simple baseline.</p></li>
-<li><p><code>ETS</code> (Exponential Smoothing): A weighted average
-where recent weeks matter more than older ones. Adapts to trends and
-seasonal patterns.</p></li>
-<li><p><code>THETA</code>: Splits the data into a long-term trend and
-short-term fluctuations, forecasts each separately, then combines
-them.</p></li>
-<li><p><code>ARIMA</code>: Models temporal dependence in the series
-using autoregressive and moving average terms. Parameters are selected
-automatically.</p></li>
-</ul>
+<p>The default models are:</p>
+<table class="table">
+<thead><tr class="header">
+<th>Model</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>NAIVE</code></td>
+<td>Carries the latest value forwards</td>
+</tr>
+<tr class="even">
+<td><code>ETS</code></td>
+<td>Exponential smoothing</td>
+</tr>
+<tr class="odd">
+<td><code>THETA</code></td>
+<td>Theta method</td>
+</tr>
+<tr class="even">
+<td><code>ARIMA</code></td>
+<td>Automatically selected ARIMA model</td>
+</tr>
+</tbody>
+</table>
 <div class="section level3">
-<h3 id="cross-validation">Cross Validation<a class="anchor" aria-label="anchor" href="#cross-validation"></a>
+<h3 id="cross-validation">Cross-validation<a class="anchor" aria-label="anchor" href="#cross-validation"></a>
 </h3>
 <p><code><a href="../reference/get_cv.html">get_cv()</a></code> performs rolling-origin <a href="https://otexts.com/fpp3/tscv.html" class="external-link">time series
 cross-validation</a>.</p>
-<p>Three arguments determine how cross-validation is performed.</p>
+<p>Three arguments set the evaluation period:</p>
 <ul>
-<li><p><strong><code>h</code></strong>: the forecast horizon, that is,
-the number of reporting intervals to predict ahead.</p></li>
+<li><p><code>h</code>: forecast horizon in reporting intervals.</p></li>
 <li>
-<p><strong><code>step</code></strong>: the spacing between forecast
-origins.</p>
+<p><code>step</code>: spacing between forecast origins.</p>
 <ul>
 <li>
 <code>step = h</code> (default) produces non-overlapping forecasts
 and is the fastest option.</li>
 <li>
-<code>step &lt; h</code> produces overlapping forecasts, resulting
-in more evaluation points but requiring more model fits.</li>
+<code>step &lt; h</code> produces more, overlapping forecasts.</li>
 </ul>
 </li>
 <li>
-<p><strong><code>n_origins</code></strong> or
-<strong><code>eval_start_date</code></strong>: where the evaluation
-period starts. Supply exactly one:</p>
+<p>Supply one origin argument:</p>
 <ul>
 <li>
 <code>n_origins</code>: the number of forecast origins.</li>
 <li>
 <code>eval_start_date</code>: the date of the first forecast
 origin.</li>
+<li>
+<code>origins</code>: explicit dates, including non-contiguous
+dates.</li>
 </ul>
 </li>
 </ul>
@@ -235,68 +229,116 @@ intervals:</p>
 <pre class="text"><code>Forecast 1: [d,   d+1, d+2,  d+3]
 Forecast 2: [d+4, d+5, d+6,  d+7]
 Forecast 3: [d+8, d+9, d+10, d+11]</code></pre>
-<p>Increasing <code>n_origins</code> provides a more reliable comparison
-of models, but leaves less historical data for training. Ensure that
-each time series contains enough observations before the first forecast
-origin to fit the models reliably.</p>
-<p>The function returns an <code>incast_cv</code> object containing the
-cross-validation results for each model and location.</p>
+<p>More origins give a broader comparison but leave less data before the
+first model fit.</p>
+<p>The result contains forecasts and scores for each model and
+series.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_cv.html">get_cv</a></span><span class="op">(</span><span class="va">ncast</span>, h <span class="op">=</span> <span class="fl">4</span>, n_origins <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span>
-<span><span class="va">cv</span></span>
+<code class="sourceCode R"><span><span class="va">cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_cv.html">get_cv</a></span><span class="op">(</span><span class="va">ncast</span>, h <span class="op">=</span> <span class="fl">4</span>, n_origins <span class="op">=</span> <span class="fl">16</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cv</span></span>
 <span><span class="co">#&gt; &lt;incast_cv&gt;</span></span>
 <span><span class="co">#&gt; Target:   wk inc flu hosp</span></span>
 <span><span class="co">#&gt; Series:   2 (location)</span></span>
 <span><span class="co">#&gt; Window:   2022-06-04 to 2025-12-13 (7-day interval)</span></span>
 <span><span class="co">#&gt; CV:       4 models x 16 origins (h = 4)</span></span></code></pre></div>
-<p>Plot relative WIS by model and location using
-<code><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot()</a></code>. Values of <code>wis_relative_skill</code> below
-1 indicate better-than-average forecasts (lower WIS), while values above
-1 indicate worse-than-average forecasts (higher WIS).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<p>Plot relative WIS by model and series. Values below 1 are better than
+average.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">cv</span><span class="op">)</span></span></code></pre></div>
 <p><img src="incast_files/figure-html/plot-cv-1.png" class="r-plt" alt="" width="2100"></p>
 </div>
 <div class="section level3">
 <h3 id="forecast">Forecast<a class="anchor" aria-label="anchor" href="#forecast"></a>
 </h3>
-<p><code><a href="../reference/get_fcast.html">get_fcast()</a></code> ensembles the best <code>top_n</code> models
-from cross-validation and forecasts <code>h</code> reporting intervals
-ahead. <code>h</code> defaults to the horizon used in
-<code><a href="../reference/get_cv.html">get_cv()</a></code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fcast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, top_n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">fcast</span></span>
+<p><code><a href="../reference/get_fcast.html">get_fcast()</a></code> combines the best <code>top_n</code> models.
+Its horizon defaults to the value used by <code><a href="../reference/get_cv.html">get_cv()</a></code>.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fcast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, top_n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fcast</span></span>
 <span><span class="co">#&gt; &lt;incast_fcast&gt;</span></span>
 <span><span class="co">#&gt; Target:   wk inc flu hosp</span></span>
 <span><span class="co">#&gt; Series:   2 (location)</span></span>
 <span><span class="co">#&gt; Forecast: 2025-12-20 to 2026-01-10 (h = 4)</span></span>
-<span><span class="co">#&gt; Models:   3 + ENSEMBLE</span></span></code></pre></div>
-<p>Plot the ensemble forecast with <code>autoplot(fcast)</code> (pass
-<code>model =</code> to inspect any single model instead):</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt; Models:   4 + ENSEMBLE</span></span></code></pre></div>
+<p>Plot the ensemble, or set <code>model</code> to inspect one
+model:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span><span class="op">)</span></span></code></pre></div>
 <p><img src="incast_files/figure-html/plot-forecast-1.png" class="r-plt" alt="" width="2100"></p>
 </div>
 <div class="section level3">
 <h3 id="adding-custom-models">Adding custom models<a class="anchor" aria-label="anchor" href="#adding-custom-models"></a>
 </h3>
-<p>Any model compatible with the <a href="https://fable.tidyverts.org/" class="external-link"><code>fable</code></a> framework can
-be passed to <code><a href="../reference/get_cv.html">get_cv()</a></code>/<code><a href="../reference/get_fcast.html">get_fcast()</a></code> via
-<code>models</code>. Compose with <code><a href="../reference/default_models.html">default_models()</a></code> to keep
-the built-ins alongside your own:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>Pass any <a href="https://fable.tidyverts.org/" class="external-link"><code>fable</code></a> model through
+<code>models</code>. <a href="https://github.com/ACCIDDA/incast.odin" class="external-link"><code>incast.odin</code></a>
+adds transmission models built with <code>odin2</code>. Combine custom
+specifications with <code><a href="../reference/default_models.html">default_models()</a></code> to retain the
+defaults:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fable.tidyverts.org" class="external-link">fable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/fable.prophet/" class="external-link">fable.prophet</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mrc-ide/EpiEstim" class="external-link">EpiEstim</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.repidemicsconsortium.org/projections/" class="external-link">projections</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/incast.odin" class="external-link">incast.odin</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Illustrative inputs for the joint HHH4 models. Replace the connections with</span></span>
+<span><span class="co"># ones appropriate to your application; rows are sources and columns recipients.</span></span>
+<span><span class="va">adjacency</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  CA <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CA <span class="op">=</span> <span class="fl">0</span>, NY <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  NY <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CA <span class="op">=</span> <span class="fl">1</span>, NY <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">population</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CA <span class="op">=</span> <span class="fl">39.4e6</span>, NY <span class="op">=</span> <span class="fl">20.0e6</span><span class="op">)</span></span>
+<span><span class="va">population</span> <span class="op">&lt;-</span> <span class="va">population</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span></span>
+<span><span class="va">annual_seasonality</span> <span class="op">&lt;-</span> <span class="fu">surveillance</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/surveillance/man/addSeason2formula.html" class="external-link">addSeason2formula</a></span><span class="op">(</span></span>
+<span>  f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
+<span>  S <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">365.25</span> <span class="op">/</span> <span class="va">ncast</span><span class="op">$</span><span class="va">interval</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">my_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/default_models.html">default_models</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>    <span class="co"># Statistical models</span></span>
 <span>    CUSTOM_ARIMA <span class="op">=</span> <span class="fu"><a href="https://fable.tidyverts.org/reference/ARIMA.html" class="external-link">ARIMA</a></span><span class="op">(</span><span class="va">observation</span> <span class="op">~</span> <span class="fu">pdq</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span></span>
+<span>    <span class="co"># Epidemiological models</span></span>
+<span>    EPIESTIM <span class="op">=</span> <span class="fu"><a href="../reference/EPIESTIM.html">EPIESTIM</a></span><span class="op">(</span></span>
+<span>      <span class="va">observation</span>,</span>
+<span>      mean_si <span class="op">=</span> <span class="fl">3.5</span>,</span>
+<span>      std_si <span class="op">=</span> <span class="fl">2.1</span>,</span>
+<span>      rt_window <span class="op">=</span> <span class="va">ncast</span><span class="op">$</span><span class="va">interval</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    ODIN2_SIR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/incast.odin/man/odin_sir.html" class="external-link">odin_sir</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
+<span>    ODIN2_SEIR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/incast.odin/man/odin_seir.html" class="external-link">odin_seir</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
+<span>    HHH4_AR_END <span class="op">=</span> <span class="fu"><a href="../reference/HHH4.html">HHH4</a></span><span class="op">(</span></span>
+<span>      <span class="va">observation</span>,</span>
+<span>      control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        ar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, lag <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>        ne <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
+<span>        end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="va">annual_seasonality</span><span class="op">)</span>,</span>
+<span>        family <span class="op">=</span> <span class="st">"NegBin1"</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>      population <span class="op">=</span> <span class="va">population</span></span>
+<span>    <span class="op">)</span>,</span>
+<span>    HHH4_FULL <span class="op">=</span> <span class="fu"><a href="../reference/HHH4.html">HHH4</a></span><span class="op">(</span></span>
+<span>      <span class="va">observation</span>,</span>
+<span>      control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>        ar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, lag <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>        ne <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, lag <span class="op">=</span> <span class="fl">1</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>        end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="va">annual_seasonality</span><span class="op">)</span>,</span>
+<span>        family <span class="op">=</span> <span class="st">"NegBin1"</span></span>
+<span>      <span class="op">)</span>,</span>
+<span>      neighbourhood <span class="op">=</span> <span class="va">adjacency</span>,</span>
+<span>      population <span class="op">=</span> <span class="va">population</span></span>
+<span>    <span class="op">)</span>,</span>
+<span></span>
+<span>    <span class="co"># Machine learning models</span></span>
 <span>    PROPHET <span class="op">=</span> <span class="fu"><a href="https://pkg.mitchelloharawild.com/fable.prophet/reference/prophet.html" class="external-link">prophet</a></span><span class="op">(</span><span class="va">observation</span> <span class="op">~</span> <span class="fu">season</span><span class="op">(</span><span class="st">"year"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    NNETAR <span class="op">=</span> <span class="fu"><a href="https://fable.tidyverts.org/reference/NNETAR.html" class="external-link">NNETAR</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
-<span>    EPIESTIM <span class="op">=</span> <span class="fu"><a href="../reference/EPIESTIM.html">EPIESTIM</a></span><span class="op">(</span><span class="va">observation</span>, mean_si <span class="op">=</span> <span class="fl">3</span>, std_si <span class="op">=</span> <span class="fl">2</span>, rt_window <span class="op">=</span> <span class="fl">7</span><span class="op">)</span>,</span>
+<span></span>
+<span>    <span class="co"># Foundation models</span></span>
 <span>    CHRONOS <span class="op">=</span> <span class="fu"><a href="../reference/FOUNDATION.html">FOUNDATION</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, <span class="st">"chronos"</span><span class="op">)</span>,</span>
 <span>    TIMESFM <span class="op">=</span> <span class="fu"><a href="../reference/FOUNDATION.html">FOUNDATION</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>, <span class="st">"timesfm"</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
@@ -312,13 +354,11 @@ the built-ins alongside your own:</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="submit-to-respilens">Submit to RespiLens<a class="anchor" aria-label="anchor" href="#submit-to-respilens"></a>
+<h2 id="export-to-respilens">Export to RespiLens<a class="anchor" aria-label="anchor" href="#export-to-respilens"></a>
 </h2>
-<p><a href="https://www.respilens.com/" class="external-link">RespiLens</a> is a platform for
-sharing respiratory disease forecasts. Use <code><a href="../reference/to_respilens.html">to_respilens()</a></code>
-to export the forecast as JSON for upload to <a href="https://www.respilens.com/myrespilens" class="external-link">MyRespiLens</a>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/to_respilens.html">to_respilens</a></span><span class="op">(</span><span class="va">fcast</span>, <span class="st">"respilens.json"</span><span class="op">)</span></span></code></pre></div>
+<p>Save the Hubverse output as a CSV, then upload it to <a href="https://www.respilens.com/myrespilens" class="external-link">myRespiLens</a>:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">fcast</span><span class="op">$</span><span class="va">hub</span><span class="op">$</span><span class="va">model_out_tbl</span>, <span class="st">"respilens.csv"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

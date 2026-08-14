@@ -40,9 +40,10 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/ebola_2026.html">Ebola 2026</a></li>
+<li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Disease Forecast Planning for Public Health</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
   </ul>
 </li>
@@ -74,22 +75,12 @@
     
     
 <div class="section level2">
-<h2 id="bringing-your-own-data">Bringing your own data<a class="anchor" aria-label="anchor" href="#bringing-your-own-data"></a>
-</h2>
-<p>You can use any surveillance dataset with <code>incast</code> — just
-pass it through <code><a href="../reference/check_data.html">check_data()</a></code> to validate and enter the
-pipeline.</p>
-</div>
-<div class="section level2">
 <h2 id="required-columns">Required columns<a class="anchor" aria-label="anchor" href="#required-columns"></a>
 </h2>
-<p>Your data frame must have these 4 columns:</p>
+<p>Pass external surveillance data to <code><a href="../reference/check_data.html">check_data()</a></code> before
+nowcasting or forecasting.</p>
+<p>The data frame needs four columns:</p>
 <table class="table">
-<colgroup>
-<col width="29%">
-<col width="22%">
-<col width="48%">
-</colgroup>
 <thead><tr class="header">
 <th>Column</th>
 <th>Type</th>
@@ -99,27 +90,26 @@ pipeline.</p>
 <tr class="odd">
 <td><code>target_end_date</code></td>
 <td>Date</td>
-<td>The date for which an observation is recorded</td>
+<td>Date represented by the observation</td>
 </tr>
 <tr class="even">
 <td><code>observation</code></td>
 <td>numeric</td>
-<td>The observed value</td>
+<td>Observed value</td>
 </tr>
 <tr class="odd">
 <td><code>location</code></td>
 <td>character</td>
-<td>A single location identifier</td>
+<td>Series identifier</td>
 </tr>
 <tr class="even">
 <td><code>target</code></td>
 <td>character</td>
-<td>A single target identifier (e.g., “inc hosp influenza”)</td>
+<td>Target identifier</td>
 </tr>
 </tbody>
 </table>
-<p>To enable <strong>nowcasting</strong> (correcting for reporting
-delays), add a 5th column:</p>
+<p>Add <code>as_of</code> to nowcast reporting delays:</p>
 <table class="table">
 <thead><tr class="header">
 <th>Column</th>
@@ -129,12 +119,16 @@ delays), add a 5th column:</p>
 <tbody><tr class="odd">
 <td><code>as_of</code></td>
 <td>Date</td>
-<td>The date the observation was reported/revised</td>
+<td>Date this version was reported</td>
 </tr></tbody>
 </table>
-<p>With <code>as_of</code>, the same <code>target_end_date</code> can
-appear multiple times (one row per revision). Without it, each
-<code>target_end_date</code> should appear once.</p>
+<p>Use one row per series and <code>target_end_date</code>, or one row
+per revision when <code>as_of</code> is present. Keep one target per
+call. All series must use the same reporting interval, calendar and end
+date, although they may start on different dates.</p>
+<p><code>location</code> is the default series key. Name other key
+columns with <code>key</code>, for example
+<code>check_data(df, key = c("location", "age_group"))</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -156,6 +150,9 @@ appear multiple times (one row per revision). Without it, each
 <span><span class="co">## Target:   inc hosp influenza</span></span>
 <span><span class="co">## Series:   1 (location)</span></span>
 <span><span class="co">## Window:   2024-01-01 to 2024-12-23 (7-day interval)</span></span></code></pre>
+<p>Use the result directly with <code><a href="../reference/get_cv.html">get_cv()</a></code> or
+<code><a href="../reference/get_fcast.html">get_fcast()</a></code>. Use <code><a href="../reference/get_ncast.html">get_ncast()</a></code> first when
+revision history is available.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

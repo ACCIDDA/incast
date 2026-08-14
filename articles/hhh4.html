@@ -40,9 +40,10 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/ebola_2026.html">Ebola 2026</a></li>
+<li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Disease Forecast Planning for Public Health</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
   </ul>
 </li>
@@ -76,12 +77,12 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Most <code>incast</code> models forecast each series separately. HHH4
-fits all series together, allowing recent counts in one series to help
-predict another.</p>
-<p>A <strong>unit</strong> is one value of the series key, such as one
-state when <code>key = "location"</code>. HHH4 requires a single key
-column and a meaningful set of connected units.</p>
+<p>Most <code>incast</code> models fit each series separately. HHH4 fits
+them jointly, so recent counts in one series can help predict
+another.</p>
+<p>A <strong>unit</strong> is one key value, such as a state when
+<code>key = "location"</code>. HHH4 requires one key column and a
+meaningful set of connected units.</p>
 </div>
 <div class="section level2">
 <h2 id="model-components">Model components<a class="anchor" aria-label="anchor" href="#model-components"></a>
@@ -161,9 +162,10 @@ cycle.</p>
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>This example forecasts weekly influenza hospital admissions in
-Connecticut, New Jersey, New York, and Pennsylvania. The code is not run
-when the vignette is built because <code><a href="../reference/get_data.html">get_data()</a></code> uses a live
-API.</p>
+Connecticut, New Jersey, New York and Pennsylvania. The vignette loads
+objects fitted to data available on 8 August 2026. Data collection and
+model fitting remain disabled; the saved plots are rebuilt with the
+article.</p>
 <div class="section level3">
 <h3 id="data">Data<a class="anchor" aria-label="anchor" href="#data"></a>
 </h3>
@@ -173,9 +175,19 @@ API.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://surveillance.R-Forge.R-project.org/" class="external-link">surveillance</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">states</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ct"</span>, <span class="st">"nj"</span>, <span class="st">"ny"</span>, <span class="st">"pa"</span><span class="op">)</span></span>
-<span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span>pathogen <span class="op">=</span> <span class="st">"flu"</span>, geo_value <span class="op">=</span> <span class="va">states</span><span class="op">)</span></span>
-<span></span>
+<span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_data.html">get_data</a></span><span class="op">(</span>pathogen <span class="op">=</span> <span class="st">"flu"</span>, geo_value <span class="op">=</span> <span class="va">states</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">flu</span></span>
+<span><span class="co">#&gt; &lt;incast_data&gt;</span></span>
+<span><span class="co">#&gt; Target:   wk inc flu hosp</span></span>
+<span><span class="co">#&gt; Series:   4 (location)</span></span>
+<span><span class="co">#&gt; Window:   2020-08-08 to 2026-08-08 (7-day interval)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">flu</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="hhh4_files/figure-html/show-data-1.png" class="r-plt" alt="Weekly influenza hospital admissions by state." width="768"><p class="caption">
+Weekly influenza hospital admissions by state.
+</p>
+</div>
 <p>HHH4 needs one count target, one series key, and aligned reporting
 dates. For external data, use
 <code>check_data(data, key = "location")</code>.</p>
@@ -185,7 +197,7 @@ dates. For external data, use
 </h3>
 <p>Rows of the connection matrix are sources and columns are receiving
 units. Here, <code>1</code> means that two states share a border.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">adjacency</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
 <span>  CT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CT <span class="op">=</span> <span class="fl">0</span>, NJ <span class="op">=</span> <span class="fl">0</span>, NY <span class="op">=</span> <span class="fl">1</span>, PA <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  NJ <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>CT <span class="op">=</span> <span class="fl">0</span>, NJ <span class="op">=</span> <span class="fl">0</span>, NY <span class="op">=</span> <span class="fl">1</span>, PA <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
@@ -208,13 +220,13 @@ exactly.</p>
 <h3 id="model-specifications">Model specifications<a class="anchor" aria-label="anchor" href="#model-specifications"></a>
 </h3>
 <p>First define one annual cycle for the endemic component:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annual_seasonality</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/surveillance/man/addSeason2formula.html" class="external-link">addSeason2formula</a></span><span class="op">(</span></span>
 <span>  f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
 <span>  S <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  period <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fl">365.25</span> <span class="op">/</span> <span class="va">flu</span><span class="op">$</span><span class="va">interval</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>We will compare four component structures:</p>
+<p>Compare four component structures:</p>
 <table class="table">
 <thead><tr class="header">
 <th>Model</th>
@@ -249,28 +261,24 @@ exactly.</p>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Endemic only.</span></span>
-<span><span class="va">end_control</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">end_control</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  ar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>  ne <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>  end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="va">annual_seasonality</span><span class="op">)</span>,</span>
 <span>  family <span class="op">=</span> <span class="st">"NegBin1"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Autoregressive + endemic.</span></span>
 <span><span class="va">ar_end_control</span> <span class="op">&lt;-</span> <span class="va">end_control</span></span>
 <span><span class="va">ar_end_control</span><span class="op">$</span><span class="va">ar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, lag <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Neighbour + endemic.</span></span>
 <span><span class="va">ne_end_control</span> <span class="op">&lt;-</span> <span class="va">end_control</span></span>
 <span><span class="va">ne_end_control</span><span class="op">$</span><span class="va">ne</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>f <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, lag <span class="op">=</span> <span class="fl">1</span>, normalize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Full HHH4.</span></span>
 <span><span class="va">full_control</span> <span class="op">&lt;-</span> <span class="va">ar_end_control</span></span>
 <span><span class="va">full_control</span><span class="op">$</span><span class="va">ne</span> <span class="op">&lt;-</span> <span class="va">ne_end_control</span><span class="op">$</span><span class="va">ne</span></span></code></pre></div>
-<p>Create the four <code>incast</code> model specifications:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Create the model specifications:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hhh4_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  HHH4_END <span class="op">=</span> <span class="fu"><a href="../reference/HHH4.html">HHH4</a></span><span class="op">(</span></span>
 <span>    <span class="va">observation</span>,</span>
@@ -302,39 +310,63 @@ exactly.</p>
 </h2>
 <p>Compare the HHH4 specifications with the default <code>incast</code>
 models using the same forecast origins:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">models</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="../reference/default_models.html">default_models</a></span><span class="op">(</span><span class="op">)</span>, <span class="va">hhh4_models</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span>
 <span><span class="va">cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_cv.html">get_cv</a></span><span class="op">(</span></span>
 <span>  <span class="va">flu</span>,</span>
 <span>  h <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  eval_start_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-09-01"</span><span class="op">)</span>,</span>
+<span>  n_origins <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  models <span class="op">=</span> <span class="va">models</span></span>
-<span><span class="op">)</span></span>
-<span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cv</span></span>
+<span><span class="co">#&gt; &lt;incast_cv&gt;</span></span>
+<span><span class="co">#&gt; Target:   wk inc flu hosp</span></span>
+<span><span class="co">#&gt; Series:   4 (location)</span></span>
+<span><span class="co">#&gt; Window:   2020-08-08 to 2026-08-08 (7-day interval)</span></span>
+<span><span class="co">#&gt; CV:       8 models x 12 origins (h = 4)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">cv</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="hhh4_files/figure-html/show-cv-1.png" class="r-plt" alt="Cross-validation performance by model and state." width="768"><p class="caption">
+Cross-validation performance by model and state.
+</p>
+</div>
 <p>Passing <code>hhh4_models</code> to <code><a href="../reference/get_fcast.html">get_fcast()</a></code> refits
-and forecasts all four specifications. The default plot shows their
-ensemble; use <code>model</code> to inspect each specification.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+all four specifications. The default plot shows their ensemble; set
+<code>model</code> to inspect one specification.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span>
-<span><span class="va">fcast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, models <span class="op">=</span> <span class="va">hhh4_models</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span>, model <span class="op">=</span> <span class="st">"HHH4_END"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span>, model <span class="op">=</span> <span class="st">"HHH4_AR_END"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span>, model <span class="op">=</span> <span class="st">"HHH4_NE_END"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span>, model <span class="op">=</span> <span class="st">"HHH4_FULL"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">fcast</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, models <span class="op">=</span> <span class="va">hhh4_models</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fcast</span></span>
+<span><span class="co">#&gt; &lt;incast_fcast&gt;</span></span>
+<span><span class="co">#&gt; Target:   wk inc flu hosp</span></span>
+<span><span class="co">#&gt; Series:   4 (location)</span></span>
+<span><span class="co">#&gt; Forecast: 2026-08-15 to 2026-09-05 (h = 4)</span></span>
+<span><span class="co">#&gt; Models:   4 + ENSEMBLE</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="hhh4_files/figure-html/show-forecast-1.png" class="r-plt" alt="Ensemble forecast from the four HHH4 specifications." width="768"><p class="caption">
+Ensemble forecast from the four HHH4 specifications.
+</p>
+</div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/autoplot.html" class="external-link">autoplot</a></span><span class="op">(</span><span class="va">fcast</span>, model <span class="op">=</span> <span class="st">"HHH4_FULL"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="hhh4_files/figure-html/show-full-1.png" class="r-plt" alt="Forecast from the full endemic, autoregressive and neighbour model." width="768"><p class="caption">
+Forecast from the full endemic, autoregressive and neighbour model.
+</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="add-a-covariate">Add a covariate<a class="anchor" aria-label="anchor" href="#add-a-covariate"></a>
 </h2>
-<p>HHH4 has a separate formula for each component, so add the covariate
-to the component it affects and supply its values in
-<code>control$data</code>. For example, school holidays may affect
-background incidence, so add them to the endemic component:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<p>Add a covariate to the component it affects and supply its values in
+<code>control$data</code>. For example, school holidays may affect the
+endemic component:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">h</span> <span class="op">&lt;-</span> <span class="fl">4L</span></span>
 <span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">flu</span><span class="op">$</span><span class="va">data</span><span class="op">$</span><span class="va">target_end_date</span><span class="op">)</span>,</span>
@@ -357,11 +389,9 @@ background incidence, so add them to the endemic component:</p>
 <span>  neighbourhood <span class="op">=</span> <span class="va">adjacency</span>,</span>
 <span>  population <span class="op">=</span> <span class="va">population</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>This simple example treats July and August as school holidays.
-Time-varying covariates must cover the observed history and forecast
-horizon. See <code><a href="https://rdrr.io/pkg/surveillance/man/hhh4.html" class="external-link">?surveillance::hhh4</a></code> for component formulas,
-lags, covariates, distributions, weights, random effects, and optimizer
-options.</p>
+<p>This example treats July and August as school holidays. Time-varying
+covariates must cover the observed history and forecast horizon. See
+<code><a href="https://rdrr.io/pkg/surveillance/man/hhh4.html" class="external-link">?surveillance::hhh4</a></code> for other controls.</p>
 </div>
 <div class="section level2">
 <h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>

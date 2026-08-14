@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Disease Forecast Planning for Public Health • incast</title>
+<title>Planning an Infectious Disease Forecast • incast</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Disease Forecast Planning for Public Health">
+<script src="../extra.js"></script><meta property="og:title" content="Planning an Infectious Disease Forecast">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -40,9 +40,10 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/ebola_2026.html">Ebola 2026</a></li>
+<li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Disease Forecast Planning for Public Health</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
   </ul>
 </li>
@@ -61,12 +62,10 @@
 
 
 
-<link href="forecast_planning_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
-<script src="forecast_planning_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="forecast_planning_files/d3-3.3.8/d3.min.js"></script><script src="forecast_planning_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="forecast_planning_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="forecast_planning_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="forecast_planning_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="forecast_planning_files/chromatography-0.1/chromatography.js"></script><script src="forecast_planning_files/DiagrammeR-binding-1.0.12/DiagrammeR.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Disease Forecast Planning for Public Health</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Planning an Infectious Disease Forecast</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/ACCIDDA/incast/blob/main/vignettes/forecast_planning.Rmd" class="external-link"><code>vignettes/forecast_planning.Rmd</code></a></small>
@@ -76,304 +75,123 @@
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="define-the-decision">Define the decision<a class="anchor" aria-label="anchor" href="#define-the-decision"></a>
 </h2>
-<p>Disease forecasting is an invaluable tool for the field public
-health, however, clearly defining the parameters of the problems you
-want to solve is often more difficult than the forecasting itself. The
-<code>incast</code> pakcage provides a comprehensive toolkit for
-generating forecasts with the expectation that users already have a
-concrete idea of what they would like to forecast. In this vignette, we
-provide a series of questions to aid forecasters in the discovery of the
-“why”, “what”, “where” and “how” for their question. This package and
-its documentation is still actively under development, and we welcome <a href="https://github.com/ACCIDDA/incast/issues/new" class="external-link">contributions and
-feedback</a> from the community.</p>
-</div>
-<div class="section level2">
-<h2 id="step-1-why-are-we-interested-in-forecasting">Step 1: Why are we interested in forecasting?<a class="anchor" aria-label="anchor" href="#step-1-why-are-we-interested-in-forecasting"></a>
-</h2>
-<p>First, there needs to be a clearly defined project to get started.
-Here are a set of questions to consider to begin this process:</p>
+<p>Start with the decision the forecast will support:</p>
 <ol style="list-style-type: decimal">
-<li>
-<p>What is the question that you are attempting to answer? Or what
-insights do you hope to gain?</p>
-<ul>
-<li>Determine what you are trying to gain from the forecasting project.
-Specificity at this stage makes future stages easier!</li>
-</ul>
-</li>
-<li>
-<p>Who is the audience, or, who will benefit from the insights?</p>
-<ul>
-<li>Determine who will use the forecasts, and who the interpretation of
-them will benefit.</li>
-</ul>
-</li>
-<li>
-<p>How far into the future are you interested in forecasting? How
-far into the future do these insights need to be to be useful?</p>
-<ul>
-<li>&lt;7 days? 1-4 weeks? Full seasonal projections*?
-<ul>
-<li>*full seasonsal projections are known as “scenarios” and are
-different from forecasts.</li>
-</ul>
-</li>
-<li>The time frame associated with your question determines whether or
-not forecasting is the best tool. Read more in Step 2…</li>
-</ul>
-</li>
+<li>What question must it answer?</li>
+<li>Who will use the result?</li>
+<li>What action could change because of it?</li>
+<li>How far ahead must the forecast remain useful?</li>
 </ol>
-<div class="planning-note">
-<p>STOP! Have you defined your forecasting problem using the questions
-above?</p>
-<ul>
-<li>YES → Proceed to next step</li>
-<li>NO → Continue defining the approach</li>
-</ul>
-</div>
+<p>A forecast needs a clear user and time horizon. If the result would
+not change a decision, an analysis of past data may be more useful.</p>
 </div>
 <div class="section level2">
-<h2 id="step-2-forecast-vs--scenario">Step 2: Forecast vs. scenario?<a class="anchor" aria-label="anchor" href="#step-2-forecast-vs--scenario"></a>
+<h2 id="choose-a-forecast-or-scenario">Choose a forecast or scenario<a class="anchor" aria-label="anchor" href="#choose-a-forecast-or-scenario"></a>
 </h2>
-<p>Determine if your central question is strictly a forecast, or if it
-is more aligned with a scenario projection.</p>
-<ul>
-<li>Forecasts
-<ul>
-<li>Forecasts are concerned with what will happen in the future under
-current conditions/regardless of what interventions take place. From
-this, we can determine actionables or deploy resources, but our starting
-point is based off of “real life” and not an assumption (i.e., an
-unconditional projection).</li>
-<li>e.g., I want advanced notice on the influenza hospitalization burden
-in the coming weeks.</li>
-</ul>
-</li>
-<li>Scenarios
-<ul>
-<li>Scenarios are concerned with what will happen if we take action
-<em>X</em>? Or, how will the future differe if <em>X</em> happens
-instead of <em>Y</em>? Often, with scenarios, you are comparing
-different outcomes on the basis of different assumptions (i.e., a
-conditional projection).<br>
-</li>
-<li>e.g., I want to know what the predicted burden will be if 50% of the
-population is vaccinated against flu vs. only 30%.</li>
-</ul>
-</li>
-</ul>
-<p>If you want to produce projections of the future more than a few
-weeks at a time, your question is likely better suited for a scenario
-projection rather than a forecast (forecasts give us a look 1-4 weeks
-ahead of any given start date, scenarios show us entire seasons at a
-time). For more information on scenario projections, visit the <a href="https://scenariomodelinghub.org/" class="external-link">Scenario Modeling Hub</a>.</p>
-<div class="planning-note">
-<p>STOP! Have you confirmed that your question is best answered with a
-forecast?</p>
-<ul>
-<li>YES → Proceed to next step</li>
-<li>NO → Consider checking out scenario projections instead!</li>
-</ul>
-</div>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th>Approach</th>
+<th>Question</th>
+<th>Example</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Forecast</td>
+<td>What is likely under current conditions?</td>
+<td>How many influenza hospital admissions are likely over the next four
+weeks?</td>
+</tr>
+<tr class="even">
+<td>Scenario</td>
+<td>What could happen under a stated assumption?</td>
+<td>How would admissions differ under 30% and 50% vaccine coverage?</td>
+</tr>
+</tbody>
+</table>
+<p>Use a forecast for short-term operational planning. Use a scenario
+when the result depends on an intervention, policy or other explicit
+assumption. The <a href="https://scenariomodelinghub.org/" class="external-link">Scenario
+Modeling Hub</a> provides examples of longer-term scenario
+projections.</p>
 </div>
 <div class="section level2">
-<h2 id="step-3-define-your-data">Step 3: Define Your Data<a class="anchor" aria-label="anchor" href="#step-3-define-your-data"></a>
+<h2 id="define-the-target">Define the target<a class="anchor" aria-label="anchor" href="#define-the-target"></a>
 </h2>
-<p>Next, define what <strong>pathogen</strong>, <strong>target</strong>
-(data stream), and <strong>spatial unit</strong> are involved in
-forecasting project.</p>
+<p>Specify three elements:</p>
+<ul>
+<li>
+<strong>Pathogen:</strong> for example, influenza, COVID-19 or
+RSV.</li>
+<li>
+<strong>Target:</strong> the quantity to predict, such as hospital
+admissions, deaths or emergency department visits.</li>
+<li>
+<strong>Spatial unit:</strong> for example, country, state, county
+or hospital system.</li>
+</ul>
+<p>Use the finest spatial unit that has stable, timely data. Forecast
+locations together when they share one target and cadence. Run separate
+workflows for different pathogens or targets.</p>
+</div>
+<div class="section level2">
+<h2 id="check-existing-forecasts">Check existing forecasts<a class="anchor" aria-label="anchor" href="#check-existing-forecasts"></a>
+</h2>
+<p>An existing forecast hub may already answer the question. These hubs
+publish standardised forecasts and observed target data:</p>
+<ul>
+<li><a href="https://github.com/CDCgov/rsv-forecast-hub" class="external-link">RSV Forecast
+Hub</a></li>
+<li><a href="https://github.com/CDCgov/covid19-forecast-hub" class="external-link">COVID-19
+Forecast Hub</a></li>
+<li><a href="https://github.com/cdcepi/FluSight-forecast-hub" class="external-link">FluSight
+Forecast Hub</a></li>
+<li>
+<a href="https://github.com/reichlab/flu-metrocast" class="external-link">Flu
+MetroCast</a> for sub-state influenza forecasts</li>
+</ul>
+<p>See the <a href="https://hubverse.io/community/hubs.html" class="external-link">hubverse
+hub list</a> for other projects. Use <a href="https://www.respilens.com/" class="external-link">RespiLens</a> to view respiratory
+forecasts.</p>
+</div>
+<div class="section level2">
+<h2 id="check-the-data">Check the data<a class="anchor" aria-label="anchor" href="#check-the-data"></a>
+</h2>
+<p>The observed data must match the pathogen, target, spatial unit and
+cadence of the forecast. Before modelling, check that:</p>
+<ul>
+<li>reporting dates follow a regular cadence;</li>
+<li>each series uses the same reporting calendar and end date;</li>
+<li>enough history is available before the first evaluation date;</li>
+<li>historical snapshots or revisions are retained; and</li>
+<li>recent observations are complete enough to use directly.</li>
+</ul>
+<p>Use <code><a href="../reference/get_data.html">get_data()</a></code> for supported US respiratory hospital
+data. For other sources, use <code><a href="../reference/check_data.html">check_data()</a></code> and follow
+<code><a href="../articles/external_data.html">vignette("external_data")</a></code>.</p>
+<p>If recent observations are revised as reports arrive, retain the full
+revision history and use <code><a href="../reference/get_ncast.html">get_ncast()</a></code> before
+forecasting.</p>
+</div>
+<div class="section level2">
+<h2 id="start-the-workflow">Start the workflow<a class="anchor" aria-label="anchor" href="#start-the-workflow"></a>
+</h2>
+<p>Once the question and data are suitable:</p>
 <ol style="list-style-type: decimal">
-<li>
-<p>What <strong>pathogen</strong> are you interested in
-forecasting?</p>
-<ul>
-<li>e.g., influenza, COVID-19, RSV, etc.</li>
-</ul>
-</li>
-<li>
-<p>What data stream are you interested in forecasting (also known as
-your <strong>target</strong>)?</p>
-<ul>
-<li>Examples of common forecasting targets are “incidence of
-hospitalization” (of patients with a certain hospitalization), “percent
-of emergency department visits” (attributable to a certain pathogen),
-“deaths” (due to a certain pathogen), “hospital bed occupancy” (by
-patients with a certain pathogen). All of these targets are measures of
-disease burden that give public health professionals an idea of how much
-disease a population bears at a given time. The most common forecasting
-target for respiratory illnesses is “incidence of hospitalization”,
-which makes it the easiest to find data on. Presently,
-<code>incast</code> only forecasts targets “incidence of
-hospitalization” and “death”.</li>
-</ul>
-</li>
-<li>
-<p>What <strong>spatial unit</strong> will provide the best insight?
-Is there data available at that scale?</p>
-<ul>
-<li>e.g., national, state, county, city, health jurisdiction, hospital
-system, or even facility (e.g., hospital). The more granular the spatial
-unit, the more difficult it is to find data, so there is often a
-trade-off between data specificity and availability.</li>
-</ul>
-</li>
+<li>Fetch or validate the data with <code><a href="../reference/get_data.html">get_data()</a></code> or
+<code><a href="../reference/check_data.html">check_data()</a></code>.</li>
+<li>Correct reporting delays with <code><a href="../reference/get_ncast.html">get_ncast()</a></code> when revision
+history is available.</li>
+<li>Compare models with <code><a href="../reference/get_cv.html">get_cv()</a></code>.</li>
+<li>Produce the forecast with <code><a href="../reference/get_fcast.html">get_fcast()</a></code>.</li>
 </ol>
-<p>Note that you can forecast multiple locations (e.g., multiple states
-or health jurisdictions) at once, but if you want forecast multiple
-pathogens or targets, it is best to separate those into their own
-distinct forecasts.</p>
-<div class="planning-note">
-<p>STOP! Have you defined your pathogen, target, and spatial unit?</p>
-<ul>
-<li>YES → Proceed to next step</li>
-<li>NO → Continue defining these data elements</li>
-</ul>
-</div>
-</div>
-<div class="section level2">
-<h2 id="step-4-data-availability-limitations">Step 4: Data Availability &amp; Limitations<a class="anchor" aria-label="anchor" href="#step-4-data-availability-limitations"></a>
-</h2>
-<p>In our context, forecasts are mathematical predictions of a few weeks
-ahead given a starting point of “ground truth” data (i.e, information on
-what has already happened). Because of this, you need to provide
-forecasting models with ground truth data that matches the resolution of
-your forecasting question (i.e., same pathogen, same target, same
-locations). Data availability is often a limiting factor when
-considering a forecasting question. In this step, we provide a decision
-tree approach to determine if you can forecast with ground truth data
-that already exists, if you need to provide specialized data to complete
-your forecast, or if there is already forecasting infrastructure that
-answers your forecasting question.</p>
-<p>An easy way to find either ground truth data or forecasts is via a
-<em>forecast hub</em>. Forecasting hubs (organized by the <a href="https://hubverse.io/" class="external-link">hubverse</a>) are standardized repositories
-for disease forecasts and ground truth data where all data follows
-structured guidelines. Ground truth data found in forecasting hubs is
-forecast-ready, and in fact, the forecasts themselves may answer your
-forecasting question(s) without any further action from you. For
-example, if you are forecasting RSV, COVID-19, or influenza at a U.S.
-national or state level*, your forecasting question is likely already
-answered by a forecasting hub:</p>
-<ul>
-<li>RSV: <a href="https://github.com/CDCgov/rsv-forecast-hub" class="external-link">GitHub
-repository</a> | <a href="https://www.respilens.com/?view=rsv_forecasts" class="external-link">RespiLens
-visualization</a>
-</li>
-<li>COVID-19: <a href="https://github.com/CDCgov/covid19-forecast-hub" class="external-link">GitHub
-repository</a> | <a href="https://www.respilens.com/?view=covid_forecasts" class="external-link">RespiLens
-visualization</a>
-</li>
-<li>Influenza: <a href="https://github.com/cdcepi/FluSight-forecast-hub" class="external-link">GitHub
-repository</a> | <a href="https://www.respilens.com/?view=flu_forecasts" class="external-link">RespiLens
-visualization</a>
-<ul>
-<li>*There is also a hub for sub-state level influenza forecasts (<a href="https://github.com/reichlab/flu-metrocast" class="external-link">GitHub repository</a> |
-<a href="https://www.respilens.com/?view=metrocast_forecasts" class="external-link">RespiLens
-visualization</a>)</li>
-</ul>
-</li>
-</ul>
-<p>For a complete list of hubverse forecast hubs, <a href="https://hubverse.io/community/hubs.html" class="external-link">see here</a>.</p>
-<style>
-.planning-flowchart {
-  margin: 1.5rem 0;
-  padding: 1rem;
-  border: 1px solid #d9e3ec;
-  border-radius: 1rem;
-  background: linear-gradient(180deg, #fbfdff 0%, #f4f8fb 100%);
-  box-shadow: 0 10px 30px rgba(22, 40, 59, 0.06);
-}
-
-.planning-lead {
-  margin: 0 0 1rem 0;
-  font-size: 1.05rem;
-  color: #35516b;
-}
-
-.planning-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin: 1.25rem 0 1.75rem 0;
-}
-
-.planning-card {
-  padding: 1rem 1.1rem;
-  border: 1px solid #d9e3ec;
-  border-radius: 1rem;
-  background: #ffffff;
-  box-shadow: 0 8px 24px rgba(22, 40, 59, 0.05);
-}
-
-.planning-card h4 {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-  color: #17324d;
-}
-
-.planning-card p:last-child,
-.planning-card ul:last-child {
-  margin-bottom: 0;
-}
-
-.planning-card ul {
-  padding-left: 1.1rem;
-}
-
-.planning-note {
-  padding: 0.9rem 1rem;
-  border-left: 4px solid #0d6efd;
-  border-radius: 0.75rem;
-  background: #eef6ff;
-  color: #28435c;
-}
-
-.planning-flowchart .nodeLabel,
-.planning-flowchart .nodeLabel p,
-.planning-flowchart .label text,
-.planning-flowchart foreignObject div {
-  text-align: center !important;
-}
-</style>
-<div class="section level3">
-<h3 id="finding-your-data">Finding your data<a class="anchor" aria-label="anchor" href="#finding-your-data"></a>
-</h3>
-<div class="planning-flowchart">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:100%;height:768px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"\ngraph TB\n\n    A[You are here!] --> B{Are you forecasting<br/>respiratory illness at a<br/>national, state, or<br/>county/metro area resolution?}\n\n    B -->|Yes| D[Review the main<br/>forecasting hubs]\n    B -->|No| E{Do you have a ground truth<br/>data stream that matches<br/>your forecasting question?}\n\n    D --> F{Does an existing forecast hub<br/>meet your forecasting needs?}\n    F -->|Yes| I[Use those forecasts!<br/>You do not need to<br/>create your own.]\n    F -->|No| K\n\n    E -->|Yes| G{Is there enough data to<br/>generate forecasts?}\n    E -->|No| H{Does the data exist,<br/>but you just don't<br/>have access to it?}\n\n    G -->|Yes| K[Proceed to next step:<br/>confirming your data]\n    H -->|Yes| K\n    G -->|No| L[Return to Step 1<br/>and re-evaluate your<br/>forecasting question]\n    H -->|No| L\n\n    classDef question fill:#fff7db,stroke:#c99600,color:#533f03,stroke-width:2px;\n    classDef action fill:#eef6ff,stroke:#6ea8fe,color:#17324d,stroke-width:2px;\n    classDef outcome fill:#edf8ee,stroke:#3e8f55,color:#1e4d2b,stroke-width:2px;\n    classDef caution fill:#fff0f0,stroke:#c45b5b,color:#6b1f1f,stroke-width:2px;\n    class A,B,E,F,G,H question;\n    class D,I action;\n    class K outcome;\n    class L caution;\n"},"evals":[],"jsHooks":[]}</script>
-</div>
-<p>After you decide to create your own forecasts and find a suitable
-ground truth data, you must confirm that your ground truth data stream
-is stable enough to support a repeatable workflow.</p>
-<p>If you are pulling ground truth data from a hubverse hub, this data
-is likely released on a weekly cadence and is mostly complete. You can
-find this data in the <code>target-data/</code> directory of the hub’s
-GitHub repository. Alternatively, <code>incast</code> has a built-in
-function (<strong><code><a href="../reference/get_data.html">get_data()</a></code></strong>) that will handle the
-collection + formatting of state level respiratory data. If you want to
-use another ground truth data source, you will first have to validate it
-with <strong><code><a href="../reference/check_data.html">check_data()</a></code></strong>. Please see the <a href="external_data.html">external data</a> article for information on
-external data source formatting.</p>
-<p>If there are reporting delays in your data stream, or inconsistencies
-that are often fixed later but you cannot wait on, use the
-<strong><code><a href="../reference/get_ncast.html">get_ncast()</a></code></strong> function to correct recent
-weeks for reporting delays.</p>
-</div>
-<div class="section level3">
-<h3 id="confirming-your-data">Confirming your data<a class="anchor" aria-label="anchor" href="#confirming-your-data"></a>
-</h3>
-<div class="planning-flowchart">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-e5c8c404fe174e4c81bd" style="width:100%;height:768px;"></div>
-<script type="application/json" data-for="htmlwidget-e5c8c404fe174e4c81bd">{"x":{"diagram":"\ngraph TB\n\n    START[You are here!] --> CONSIST{Is the data reported<br/>consistently?<br/>For example, on a regular<br/>reporting cadence?}\n\n    CONSIST -->|No| FIX[Identify inconsistencies in<br/>reporting patterns]\n    FIX --> CONSIST\n\n    CONSIST -->|Yes| TIMELINE[Define a reporting timeline<br/>that best matches the<br/>data frequency]\n    TIMELINE --> PIPE[Download the full dataset<br/>regularly, not only for<br/>the current period]\n\n    PIPE --> DELAY{Are there reporting delays<br/>or completeness issues?}\n    DELAY -->|Yes| NOWCAST[Plan for nowcasting]\n    DELAY -->|No| READY[Proceed to using<br/>incast for forecasting]\n    NOWCAST --> READY\n\n    classDef question fill:#fff7db,stroke:#c99600,color:#533f03,stroke-width:2px;\n    classDef action fill:#eef6ff,stroke:#6ea8fe,color:#17324d,stroke-width:2px;\n    classDef outcome fill:#edf8ee,stroke:#3e8f55,color:#1e4d2b,stroke-width:2px;\n    class START,CONSIST,DELAY question;\n    class STEP1,FIX,TIMELINE,PIPE,NOWCAST action;\n    class READY outcome;\n"},"evals":[],"jsHooks":[]}</script>
-</div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="next-steps">Next steps:<a class="anchor" aria-label="anchor" href="#next-steps"></a>
-</h2>
-<p>When you are ready to begin, visit the <a href="incast.html"><strong>GET STARTED</strong></a> page to use
-<code>incast</code> for your forecasting needs!</p>
+<p>See <code><a href="../articles/incast.html">vignette("incast")</a></code> for a complete example.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
