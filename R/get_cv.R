@@ -17,7 +17,7 @@
 #' @param eval_start_date Date (or character string coercible to a date) giving
 #'   the first forecast origin to evaluate. Must fall within the data window.
 #'   All earlier observations are used as the initial training period. 
-#'   This argument is exclusive with \code{n_origins}.
+#'   This argument is exclusive with \code{n_origins} and \code{origins}.
 #'
 #' @param h Integer giving the forecast horizon in reporting intervals (for
 #'   example, weeks for weekly data). Defaults to \code{4}.
@@ -35,7 +35,13 @@
 #'   the last forecast ends at the last observation:
 #'   \code{eval_start_date = t - ((h - 1) + (n_origins - 1) * step) * interval},
 #'   where \code{t} is the last observation date. 
-#'   This argument is exclusive with \code{eval_start_date}.
+#'   This argument is exclusive with \code{eval_start_date} and \code{origins}.
+#'
+#' @param origins Date vector giving explicit dates on which evaluation
+#'   forecasts begin (the first target date in each forecast window). Use this
+#'   for non-contiguous dates, such as corresponding weeks in previous seasons.
+#'   This argument is exclusive with \code{eval_start_date} and
+#'   \code{n_origins}; \code{step} is ignored.
 #'
 #' @return An \code{incast_cv} object containing:
 #' \describe{
@@ -79,22 +85,36 @@ get_cv <- function(
   h = 4,
   models = default_models(),
   step = h,
-  n_origins = NULL
+  n_origins = NULL,
+  origins = NULL
 ) {
   df <- extract_series(x) # errors unless x is an incast_data / incast_ncast
   meta <- incast_meta(x)
 
-  if (is.null(eval_start_date) == is.null(n_origins)) {
-    stop("Supply either `eval_start_date` or `n_origins`.")
+  explicit_origins <- !is.null(origins)
+  if (sum(!vapply(
+    list(eval_start_date, n_origins, origins),
+    is.null,
+    logical(1L)
+  )) != 1L) {
+    stop("Supply exactly one of `eval_start_date`, `n_origins`, or `origins`.")
   }
   validate_positive_scalar(h, "h", "number of forecast steps")
-  validate_positive_scalar(step, "step", "periods between CV origins")
+  if (!explicit_origins) {
+    validate_positive_scalar(step, "step", "periods between CV origins")
+  }
   validate_models(models)
 
   from <- meta$window[["from"]]
   to <- meta$window[["to"]]
 
-  if (!is.null(n_origins)) {
+  if (explicit_origins) {
+    origins <- sort(unique(as.Date(origins)))
+    if (length(origins) == 0L || anyNA(origins)) {
+      stop("`origins` must contain valid dates.")
+    }
+    eval_start_date <- min(origins)
+  } else if (!is.null(n_origins)) {
     validate_positive_scalar(n_origins, "n_origins", "number of forecast origins")
     eval_start_date <- to - ((h - 1) + (n_origins - 1) * step) * meta$interval
     if (eval_start_date <= from) {
@@ -126,12 +146,31 @@ get_cv <- function(
   }
 
   ts <- as_model_ts(df, meta$key)
-  cv_ts <- make_cv_origins(ts, eval_start_date, h, step, meta$interval)
+  last_origin <- max(ts$target_end_date) - (h - 1) * meta$interval
+  if (!explicit_origins) {
+    if (eval_start_date > last_origin) {
+      stop(sprintf(
+        "`eval_start_date` leaves too little to score: %s is the last origin with a full %d-step window.",
+        last_origin,
+        h
+      ))
+    }
+    origins <- seq(
+      eval_start_date,
+      last_origin,
+      by = step * meta$interval
+    )
+  } else if (any(!origins %in% unique(ts$target_end_date))) {
+    stop("Every `origins` date must match a reporting date in the data.")
+  }
+  cv_ts <- make_cv_origins(ts, origins, h, meta$interval)
 
   # Time the cross-validation (fit + score) with pipetime.
   {
     progressr::with_progress({
       fcast <- forecast_final(cv_ts, models, h)
+      successful_models <- unique(as.character(fcast$.model))
+      models <- models[intersect(names(models), successful_models)]
 
       # Build the hub once; reused for both the stored forecasts and the score.
       hub <- fable_to_hub(
@@ -164,7 +203,7 @@ get_cv <- function(
       meta = list(
         eval_start_date = eval_start_date,
         h = h,
-        step = step,
+        step = if (explicit_origins) NULL else step,
         n_origins = dplyr::n_distinct(cv_ts$.id),
         key = meta$key,
         target = meta$target,
@@ -187,9 +226,8 @@ get_cv <- function(
 #' evaluation period are retained.
 #'
 #' @param ts A keyed \code{tsibble} containing the observation series.
-#' @param eval_start_date Date of the first forecast origin.
+#' @param origins Dates of the forecast origins.
 #' @param h Forecast horizon in reporting intervals.
-#' @param step Number of reporting intervals between successive origins.
 #' @param interval Reporting interval in days.
 #'
 #' @return A \code{tsibble} containing the input data repeated for each origin
@@ -197,20 +235,21 @@ get_cv <- function(
 #'
 #' @keywords internal
 #' @noRd
-make_cv_origins <- function(ts, eval_start_date, h, step, interval) {
+make_cv_origins <- function(ts, origins, h, interval) {
   last_origin <- max(ts$target_end_date) - (h - 1) * interval
-  if (eval_start_date > last_origin) {
+  if (any(origins > last_origin)) {
     stop(sprintf(
-      "`eval_start_date` leaves too little to score: %s is the last origin with a full %d-step window.",
+      "An origin leaves too little to score: %s is the last origin with a full %d-step window.",
       last_origin,
       h
     ))
   }
 
   key_cols <- tsibble::key_vars(ts)
+  first_origin <- min(origins)
   n_before <- dplyr::as_tibble(ts) |>
     dplyr::summarise(
-      n = sum(target_end_date < eval_start_date & !is.na(observation)),
+      n = sum(target_end_date < first_origin & !is.na(observation)),
       .by = dplyr::all_of(key_cols)
     )
   too_new <- n_before[n_before$n < 2L, ]
@@ -222,12 +261,10 @@ make_cv_origins <- function(ts, eval_start_date, h, step, interval) {
       if (length(series) > 6L) ", ..." else "",
       if (length(series) > 1L) " have" else " has",
       " fewer than 2 observations before ",
-      eval_start_date,
+      first_origin,
       "."
     )
   }
-
-  origins <- seq(eval_start_date, last_origin, by = step * interval)
 
   tidyr::expand_grid(.id = seq_along(origins), dplyr::as_tibble(ts)) |>
     dplyr::filter(target_end_date < origins[.id]) |>

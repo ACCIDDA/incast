@@ -24,13 +24,13 @@ utils::globalVariables(c(
   "wis",
   "wis_relative_skill",
   "model_id",
-  # fable_to_hub / forecasts_key
+  # fable_to_hub
   "reference_date",
   "horizon",
   "output_type",
-  # ground_truth_key
+  # fable_to_hub / autoplot.incast_fcast
   "oracle_value",
-  # forecasts_key / to_respilens / metadata_key
+  # package data transformations
   "target",
   # get_ncast
   "as_of",

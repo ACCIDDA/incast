@@ -12,6 +12,5 @@
 ^ebola\.R$
 ^logo\.png$
 ^respi\.json$
-^respilens\.json$
 ^LICENSE\.md$
 ^data-raw$

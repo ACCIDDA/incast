@@ -102,7 +102,16 @@ as_model_ts <- function(df, key) {
 #' @noRd
 #' @importFrom distributional dist_truncated
 truncate_counts <- function(dist) {
-  distributional::dist_truncated(dist, lower = 0, upper = Inf)
+  elements <- unclass(dist)
+  is_sample <- vapply(elements, inherits, logical(1L), "dist_sample")
+
+  out <- distributional::dist_truncated(dist, lower = 0, upper = Inf)
+  if (any(is_sample)) {
+    out[is_sample] <- distributional::dist_sample(
+      lapply(elements[is_sample], function(x) pmax(x$x, 0))
+    )
+  }
+  out
 }
 
 

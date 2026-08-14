@@ -23,28 +23,35 @@ Imports:
     hubEnsembles,
     hubEvals,
     incidence,
-    jsonlite,
     baselinenowcast (>= 0.2.0),
     pipetime,
     urca,
     feasts,
     rlang
 Suggests:
+    data.table,
     EpiEstim,
     projections,
     surveillance,
     DiagrammeR,
+    hubData,
+    igraph,
+    incast.odin,
     knitr,
     rmarkdown,
     devtools,
     fable.prophet,
+    future,
+    furrr,
     reticulate,
     testthat (>= 3.0.0)
 Remotes:
+    ACCIDDA/incast.odin,
+    hubverse-org/hubData,
     hubverse-org/hubEvals
 VignetteBuilder: knitr
 Depends: 
-    R (>= 3.5)
+    R (>= 4.1.0)
 LazyData: true
 URL: https://github.com/ACCIDDA/incast, https://accidda.github.io/incast/
 Config/testthat/edition: 3

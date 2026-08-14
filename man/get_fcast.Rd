@@ -18,8 +18,8 @@ get_fcast(
 \item{models}{Named list of ordinary \code{fable} or joint incast model
 specifications, such as \code{\link{HHH4}}. Defaults to
 \code{\link{default_models}}. When \code{x} is an \code{incast_cv} object,
-leave unset to use the top-ranked models from cross-validation, or provide
-a custom set of models.}
+leave unset to forecast its models and use the top-ranked models for the
+ensemble, or provide a custom set of models to forecast and combine.}
 
 \item{h}{Integer giving the forecast horizon in reporting intervals. Defaults
 to \code{4}. When \code{x} is an \code{incast_cv} object, the default is
@@ -48,19 +48,17 @@ An \code{incast_fcast} object containing:
 ensemble method, horizon, series keys, target, reporting
 interval, nowcast information, and evaluation date.}
 }
-
-Forecast outputs can be exported with \code{\link{to_respilens}}.
 }
 \description{
 Fit forecasting models to the full time series and generate forecasts for the
 next \code{h} reporting intervals.
 }
 \details{
-When provided with an \code{incast_cv} object, the function uses the
-cross-validation results to select the best-performing models for each series
-and combines them into an equal-weight ensemble. For \code{incast_data} or
-\code{incast_ncast} objects, all models in \code{models} are fitted and
-forecast.
+When provided with an \code{incast_cv} object, the function forecasts every
+successfully evaluated model and uses the cross-validation results to select
+the best-performing models for each series for the equal-weight ensemble.
+For \code{incast_data} or \code{incast_ncast} objects, all models in
+\code{models} are fitted, forecast, and combined.
 
 If the input contains nowcast uncertainty from \code{\link{get_ncast}},
 this uncertainty is incorporated into the forecast intervals.

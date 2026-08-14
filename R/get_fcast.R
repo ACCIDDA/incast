@@ -3,11 +3,11 @@
 #' Fit forecasting models to the full time series and generate forecasts for the
 #' next \code{h} reporting intervals.
 #'
-#' When provided with an \code{incast_cv} object, the function uses the
-#' cross-validation results to select the best-performing models for each series
-#' and combines them into an equal-weight ensemble. For \code{incast_data} or
-#' \code{incast_ncast} objects, all models in \code{models} are fitted and
-#' forecast.
+#' When provided with an \code{incast_cv} object, the function forecasts every
+#' successfully evaluated model and uses the cross-validation results to select
+#' the best-performing models for each series for the equal-weight ensemble.
+#' For \code{incast_data} or \code{incast_ncast} objects, all models in
+#' \code{models} are fitted, forecast, and combined.
 #'
 #' If the input contains nowcast uncertainty from \code{\link{get_ncast}},
 #' this uncertainty is incorporated into the forecast intervals.
@@ -19,8 +19,8 @@
 #' @param models Named list of ordinary \code{fable} or joint incast model
 #'   specifications, such as \code{\link{HHH4}}. Defaults to
 #'   \code{\link{default_models}}. When \code{x} is an \code{incast_cv} object,
-#'   leave unset to use the top-ranked models from cross-validation, or provide
-#'   a custom set of models.
+#'   leave unset to forecast its models and use the top-ranked models for the
+#'   ensemble, or provide a custom set of models to forecast and combine.
 #'
 #' @param h Integer giving the forecast horizon in reporting intervals. Defaults
 #'   to \code{4}. When \code{x} is an \code{incast_cv} object, the default is
@@ -48,9 +48,6 @@
 #'   ensemble method, horizon, series keys, target, reporting
 #'   interval, nowcast information, and evaluation date.}
 #' }
-#'
-#' Forecast outputs can be exported with \code{\link{to_respilens}}.
-#'
 #' @examples
 #' \dontrun{
 #' ncast <- get_data("covid", "ny", revisions = TRUE) |> get_ncast()
@@ -116,7 +113,7 @@ get_fcast <- function(
         with_ties = FALSE
       ) |>
       dplyr::select(dplyr::all_of(c(key, "model_id")))
-    models <- x$models[unique(selection$model_id)]
+    models <- x$models
   } else {
     validate_models(models)
     selection <- NULL
@@ -138,20 +135,23 @@ get_fcast <- function(
       }
     })
 
-    # Keep only each series' selected models before ensembling.
-    if (!is.null(selection)) {
-      model_fcast <- dplyr::semi_join(
+    # Keep every component forecast, but ensemble only each series' selection.
+    ensemble_fcast <- if (!is.null(selection)) {
+      dplyr::semi_join(
         model_fcast,
         selection,
         by = c(key, ".model" = "model_id")
       )
+    } else {
+      model_fcast
     }
+    successful_models <- unique(as.character(model_fcast$.model))
 
     # --------- Equal-weight ensemble per series ---------
     # The linear pool mixes the predictive distributions, so it is built
     # before the quantiles are extracted.
     if (ensemble == "linear_pool") {
-      pool <- model_fcast |>
+      pool <- ensemble_fcast |>
         dplyr::summarise(
           observation = mix_equally(observation),
           .mean = mean(.mean),
@@ -174,7 +174,16 @@ get_fcast <- function(
     # Quantile average: at each quantile level,
     # take the median of the models' quantiles.
     if (ensemble == "quantile_average") {
-      ens <- hub$model_out_tbl |>
+      ensemble_tbl <- if (!is.null(selection)) {
+        dplyr::semi_join(
+          hub$model_out_tbl,
+          selection,
+          by = c(key, "model_id")
+        )
+      } else {
+        hub$model_out_tbl
+      }
+      ens <- ensemble_tbl |>
         hubEnsembles::simple_ensemble(
           agg_fun = stats::median,
           model_id = "ENSEMBLE"
@@ -187,7 +196,7 @@ get_fcast <- function(
       hub = hub,
       score = score,
       meta = list(
-        models = names(models),
+        models = successful_models,
         selection = selection,
         top_n = if (use_cv_ranking) top_n,
         ensemble = ensemble,
@@ -225,8 +234,29 @@ forecast_final <- function(ts, models, h) {
 
   out <- dplyr::bind_rows(
     if (any(!is_joint)) forecast_fable(ts, models[!is_joint], h),
-    if (any(is_joint)) forecast_joint(ts, models[is_joint], h)
+    if (any(is_joint)) {
+      dplyr::bind_rows(lapply(names(models)[is_joint], function(nm) {
+        tryCatch(
+          forecast_joint(ts, models[nm], h),
+          error = function(e) {
+            warning(
+              "Model ", nm, " failed and was dropped: ", conditionMessage(e),
+              call. = FALSE
+            )
+            NULL
+          }
+        )
+      }))
+    }
   )
+  if (nrow(out) == 0L) {
+    stop(
+      "Model", if (length(models) == 1L) " " else "s ",
+      paste(names(models), collapse = ", "),
+      " failed to fit or forecast; no usable forecasts remain.",
+      call. = FALSE
+    )
+  }
 
   dplyr::mutate(out, observation = truncate_counts(observation))
 }
@@ -240,32 +270,26 @@ forecast_final <- function(ts, models, h) {
 #' @noRd
 forecast_fable <- function(ts, models, h) {
   fit <- fabletools::model(ts, !!!models)
-
-  # A model that fails to fit becomes a fable "null model" whose NA forecasts
-  # would only crash much later, in the quantile math. Name it and stop here.
   failed <- names(models)[vapply(
     names(models),
-    function(m) {
-      any(vapply(
-        fit[[m]],
-        function(x) inherits(x$fit, "null_mdl"),
-        logical(1L)
-      ))
-    },
+    function(m) any(vapply(
+      fit[[m]], function(x) inherits(x$fit, "null_mdl"), logical(1L)
+    )),
     logical(1L)
   )]
-  if (length(failed) > 0) {
-    stop(
-      "Model", if (length(failed) > 1) "s " else " ",
-      paste(failed, collapse = ", "),
-      " failed to fit (fable's warning above says why). ",
-      "Fix or drop the model, or use different models."
+
+  if (length(failed)) {
+    warning(
+      "Model", if (length(failed) == 1L) " " else "s ",
+      paste(failed, collapse = ", "), " failed and ",
+      if (length(failed) == 1L) "was" else "were", " dropped.",
+      call. = FALSE
     )
   }
+  if (length(failed) == length(models)) return(NULL)
+  fit <- dplyr::select(fit, -dplyr::all_of(failed))
 
-  fit |>
-    fabletools::forecast(h = h) |>
-    dplyr::as_tibble()
+  dplyr::as_tibble(fabletools::forecast(fit, h = h))
 }
 
 

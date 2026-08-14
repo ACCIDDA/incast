@@ -56,25 +56,34 @@ fcast <- example_data |>
 #> ℹ Truncating from max_delay = 6 to 2.
 #> ℹ Using max_delay = 6 from data
 #> ℹ Truncating from max_delay = 6 to 2.
-#> [2026-07-31 12:37:37.015] get_cv: +3.4740 secs
-#> [2026-07-31 12:37:40.503] get_fcast: +4.8977 secs
+#> [2026-08-14 14:15:33.969] get_cv: +3.4360 secs
+#> [2026-08-14 14:15:37.416] get_fcast: +5.3411 secs
 
 fcast
 #> <incast_fcast>
 #> Target:   wk inc flu hosp
 #> Series:   2 (location)
 #> Forecast: 2025-12-20 to 2026-01-10 (h = 4)
-#> Models:   3 + ENSEMBLE
+#> Models:   4 + ENSEMBLE
 
 fcast |> autoplot()
 ```
 
 <img src="man/figures/README-forecast-1.png" alt="" width="100%" />
 
-Save to [myRespiLens](https://www.respilens.com/myrespilens) format:
+Save and upload to [myRespiLens](https://www.respilens.com/myrespilens):
 
 ``` r
-to_respilens(fcast, path = "respilens.json")
+library(dplyr)
+fcast$hub$model_out_tbl |>
+  dplyr::mutate(
+    location = dplyr::recode(
+      location,
+      CA = "06",
+      NY = "36"
+    )
+  ) |>
+  write.csv("myrespilens_forecast.csv", row.names = FALSE)
 ```
 
 ## Citation

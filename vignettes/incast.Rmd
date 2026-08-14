@@ -99,9 +99,11 @@ Three arguments determine how cross-validation is performed.
   - `step = h` (default) produces non-overlapping forecasts and is the fastest option.
   - `step < h` produces overlapping forecasts, resulting in more evaluation points but requiring more model fits.
 
-- **`n_origins`** or **`eval_start_date`**: where the evaluation period starts. Supply exactly one:
+- **`n_origins`**, **`eval_start_date`**, or **`origins`**: supply exactly one:
   - `n_origins`: the number of forecast origins.
   - `eval_start_date`: the date of the first forecast origin.
+  - `origins`: explicit, possibly non-contiguous dates, such as corresponding
+    weeks in previous seasons.
 
 A forecast origin at time `d` predicts intervals `d` to `d + h - 1`, so `n_origins` origins spaced `step` intervals apart cover the last `h + (n_origins - 1) * step` reporting intervals of the series. For example, with `h = 4`, `step = 4`, and `n_origins = 3`, the evaluation period covers the last 12 intervals:
 
@@ -144,20 +146,71 @@ autoplot(fcast)
 
 ### Adding custom models
 
-Any model compatible with the [`fable`](https://fable.tidyverts.org/) framework can be passed to `get_cv()`/`get_fcast()` via `models`. Compose with `default_models()` to keep the built-ins alongside your own:
+Any model compatible with the [`fable`](https://fable.tidyverts.org/) framework can be passed to `get_cv()`/`get_fcast()` via `models`. Epidemiological transmission models built with `odin2` can be added through [`incast.odin`](https://github.com/ACCIDDA/incast.odin). Compose with `default_models()` to keep the built-ins alongside your own:
 
 ```{r, extra-models, eval = FALSE}
 library(fable)
 library(fable.prophet)
 library(EpiEstim)
 library(projections)
+library(incast.odin)
+
+# Illustrative inputs for the joint HHH4 models. Replace the connections with
+# ones appropriate to your application; rows are sources and columns recipients.
+adjacency <- rbind(
+  CA = c(CA = 0, NY = 1),
+  NY = c(CA = 1, NY = 0)
+)
+population <- c(CA = 39.4e6, NY = 20.0e6)
+population <- population / sum(population)
+annual_seasonality <- surveillance::addSeason2formula(
+  f = ~1,
+  S = 1,
+  period = round(365.25 / ncast$interval)
+)
+
 my_models <- c(
   default_models(),
   list(
+    # Statistical models
     CUSTOM_ARIMA = ARIMA(observation ~ pdq(1, 1, 0)),
+
+    # Epidemiological models
+    EPIESTIM = EPIESTIM(
+      observation,
+      mean_si = 3.5,
+      std_si = 2.1,
+      rt_window = ncast$interval
+    ),
+    ODIN2_SIR = odin_sir(observation),
+    ODIN2_SEIR = odin_seir(observation),
+    HHH4_AR_END = HHH4(
+      observation,
+      control = list(
+        ar = list(f = ~1, lag = 1),
+        ne = list(f = ~ -1),
+        end = list(f = annual_seasonality),
+        family = "NegBin1"
+      ),
+      population = population
+    ),
+    HHH4_FULL = HHH4(
+      observation,
+      control = list(
+        ar = list(f = ~1, lag = 1),
+        ne = list(f = ~1, lag = 1, normalize = TRUE),
+        end = list(f = annual_seasonality),
+        family = "NegBin1"
+      ),
+      neighbourhood = adjacency,
+      population = population
+    ),
+
+    # Machine learning models
     PROPHET = prophet(observation ~ season("year")),
     NNETAR = NNETAR(observation),
-    EPIESTIM = EPIESTIM(observation, mean_si = 3, std_si = 2, rt_window = 7),
+
+    # Foundation models
     CHRONOS = FOUNDATION(log(observation), "chronos"),
     TIMESFM = FOUNDATION(log(observation), "timesfm")
   )
@@ -175,8 +228,8 @@ fcast <- get_fcast(cv, top_n = 3)
 
 ## Submit to RespiLens
 
-[RespiLens](https://www.respilens.com/) is a platform for sharing respiratory disease forecasts. Use `to_respilens()` to export the forecast as JSON for upload to [MyRespiLens](https://www.respilens.com/myrespilens).
+[RespiLens](https://www.respilens.com/) is a platform for sharing respiratory disease forecasts. Drop your forecasts as `.csv` files into the myRespiLens web interface.
 
-```{r, to-respilens, eval = FALSE}
-to_respilens(fcast, "respilens.json")
+```{r, respilens, eval = FALSE}
+write.csv(fcast$hub$model_out_tbl, "respilens.csv", row.names = FALSE)
 ```

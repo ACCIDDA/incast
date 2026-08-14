@@ -22,13 +22,41 @@ test_that("get_cv validates its parameters", {
   expect_error(get_cv(x, eval_start_date = "2023-03-01", models = list()), "models")
 })
 
-test_that("get_cv requires exactly one of eval_start_date and n_origins", {
+test_that("get_cv requires exactly one origin specification", {
   x <- check_data(make_weekly_df(n = 20))
 
-  expect_error(get_cv(x), "either")
+  expect_error(get_cv(x), "exactly one")
   expect_error(
     get_cv(x, eval_start_date = "2023-03-01", n_origins = 4),
-    "either"
+    "exactly one"
+  )
+  expect_error(
+    get_cv(
+      x,
+      n_origins = 4,
+      origins = as.Date(c("2023-03-05", "2023-04-02"))
+    ),
+    "exactly one"
+  )
+})
+
+test_that("get_cv supports explicit non-contiguous origins", {
+  x <- check_data(make_weekly_df(n = 40))
+  origins <- as.Date(c("2023-03-26", "2023-06-18"))
+
+  cv <- get_cv(
+    x,
+    origins = origins,
+    h = 2,
+    models = list(NAIVE = fable::NAIVE(observation))
+  )
+
+  expect_equal(cv$meta$eval_start_date, min(origins))
+  expect_null(cv$meta$step)
+  expect_equal(cv$meta$n_origins, 2)
+  expect_equal(
+    sort(unique(cv$forecasts$reference_date)),
+    origins - x$interval
   )
 })
 
@@ -74,6 +102,28 @@ test_that("get_cv works with a single model", {
 
   expect_s3_class(cv, "incast_cv")
   expect_contains(names(cv$score), "wis")
+})
+
+test_that("get_cv warns, drops a failed model, and scores the others", {
+  x <- check_data(make_weekly_df(n = 30))
+
+  expect_warning(
+    cv <- get_cv(
+      x,
+      eval_start_date = "2023-05-21",
+      h = 1,
+      step = 4,
+      models = list(
+        GOOD = fable::NAIVE(observation),
+        BAD = fable::ARIMA(observation ~ pdq(30, 0, 0))
+      )
+    ),
+    "Model BAD failed and was dropped"
+  )
+
+  expect_named(cv$models, "GOOD")
+  expect_equal(unique(cv$forecasts$model_id), "GOOD")
+  expect_equal(unique(cv$score$model_id), "GOOD")
 })
 
 test_that("get_cv errors when a series starts after eval_start_date", {

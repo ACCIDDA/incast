@@ -10,7 +10,8 @@ get_cv(
   h = 4,
   models = default_models(),
   step = h,
-  n_origins = NULL
+  n_origins = NULL,
+  origins = NULL
 )
 }
 \arguments{
@@ -21,7 +22,7 @@ get_cv(
 \item{eval_start_date}{Date (or character string coercible to a date) giving
 the first forecast origin to evaluate. Must fall within the data window.
 All earlier observations are used as the initial training period.
-This argument is exclusive with \code{n_origins}.}
+This argument is exclusive with \code{n_origins} and \code{origins}.}
 
 \item{h}{Integer giving the forecast horizon in reporting intervals (for
 example, weeks for weekly data). Defaults to \code{4}.}
@@ -39,7 +40,13 @@ as an alternative to \code{eval_start_date}. Origins are placed so that
 the last forecast ends at the last observation:
 \code{eval_start_date = t - ((h - 1) + (n_origins - 1) * step) * interval},
 where \code{t} is the last observation date.
-This argument is exclusive with \code{eval_start_date}.}
+This argument is exclusive with \code{eval_start_date} and \code{origins}.}
+
+\item{origins}{Date vector giving explicit dates on which evaluation
+forecasts begin (the first target date in each forecast window). Use this
+for non-contiguous dates, such as corresponding weeks in previous seasons.
+This argument is exclusive with \code{eval_start_date} and
+\code{n_origins}; \code{step} is ignored.}
 }
 \value{
 An \code{incast_cv} object containing:

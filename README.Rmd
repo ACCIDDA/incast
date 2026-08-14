@@ -50,9 +50,18 @@ fcast
 fcast |> autoplot()
 ```
 
-Save to [myRespiLens](https://www.respilens.com/myrespilens) format:
+Save and upload to [myRespiLens](https://www.respilens.com/myrespilens):
 ```{r respilens, eval = FALSE}
-to_respilens(fcast, path = "respilens.json")
+library(dplyr)
+fcast$hub$model_out_tbl |>
+  dplyr::mutate(
+    location = dplyr::recode(
+      location,
+      CA = "06",
+      NY = "36"
+    )
+  ) |>
+  write.csv("myrespilens_forecast.csv", row.names = FALSE)
 ```
 
 ## Citation

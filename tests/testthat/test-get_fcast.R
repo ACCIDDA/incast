@@ -75,7 +75,7 @@ test_that("get_fcast rejects unknown ensemble methods", {
   expect_error(get_fcast(x, ensemble = "stacking"), "should be one of")
 })
 
-test_that("get_fcast selects each series' own top_n from the cv ranking", {
+test_that("get_fcast retains all models and ensembles each series' top_n", {
   dates <- seq(as.Date("2023-01-01"), by = "week", length.out = 30)
   df <- rbind(
     # strong trend: NAIVE clearly beats MEAN
@@ -108,9 +108,24 @@ test_that("get_fcast selects each series' own top_n from the cv ranking", {
 
   out <- fcast$hub$model_out_tbl
   for (loc in c("TREND", "FLAT")) {
-    expect_equal(
+    expect_setequal(
       setdiff(unique(out$model_id[out$location == loc]), "ENSEMBLE"),
-      top1$model_id[top1$location == loc]
+      c("NAIVE", "MEAN")
+    )
+
+    selected <- out |>
+      dplyr::filter(
+        location == loc,
+        model_id == top1$model_id[top1$location == loc]
+      ) |>
+      dplyr::arrange(target_end_date, output_type_id)
+    ensemble <- out |>
+      dplyr::filter(location == loc, model_id == "ENSEMBLE") |>
+      dplyr::arrange(target_end_date, output_type_id)
+    expect_equal(
+      ensemble$value,
+      selected$value,
+      tolerance = 1e-6
     )
   }
   expect_equal(fcast$meta$top_n, 1)
@@ -119,6 +134,37 @@ test_that("get_fcast selects each series' own top_n from the cv ranking", {
     fcast$meta$selection,
     dplyr::select(top1, location, model_id)
   )
+})
+
+test_that("quantile_average retains all models but uses the cv selection", {
+  x <- check_data(make_weekly_df(n = 30))
+  cv <- get_cv(
+    x,
+    eval_start_date = "2023-05-21",
+    h = 1,
+    models = list(
+      NAIVE = fable::NAIVE(observation),
+      MEAN = fable::MEAN(observation)
+    )
+  )
+  selected_model <- cv$score |>
+    dplyr::slice_min(wis, n = 1, with_ties = FALSE) |>
+    dplyr::pull(model_id)
+
+  out <- get_fcast(
+    cv,
+    top_n = 1,
+    ensemble = "quantile_average"
+  )$hub$model_out_tbl
+
+  expect_setequal(unique(out$model_id), c("NAIVE", "MEAN", "ENSEMBLE"))
+  selected <- out |>
+    dplyr::filter(model_id == selected_model) |>
+    dplyr::arrange(target_end_date, output_type_id)
+  ensemble <- out |>
+    dplyr::filter(model_id == "ENSEMBLE") |>
+    dplyr::arrange(target_end_date, output_type_id)
+  expect_equal(ensemble$value, selected$value)
 })
 
 test_that("get_fcast uses explicit models over the cv ranking when supplied", {
@@ -193,6 +239,28 @@ test_that("get_fcast names a model that fails to fit", {
     ),
     "Model BAD failed to fit"
   )
+})
+
+test_that("get_fcast warns and continues when one model fails", {
+  x <- check_data(make_weekly_df(n = 20))
+
+  expect_warning(
+    fcast <- get_fcast(
+      x,
+      models = list(
+        GOOD = fable::NAIVE(observation),
+        BAD = fable::ARIMA(observation ~ pdq(30, 0, 0))
+      ),
+      h = 1
+    ),
+    "Model BAD failed and was dropped"
+  )
+
+  expect_setequal(
+    unique(fcast$hub$model_out_tbl$model_id),
+    c("GOOD", "ENSEMBLE")
+  )
+  expect_equal(fcast$meta$models, "GOOD")
 })
 
 test_that("get_fcast runs the default models end-to-end", {

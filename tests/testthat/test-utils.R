@@ -33,3 +33,16 @@ test_that("as_model_ts supports composite keys", {
   expect_equal(tsibble::key_vars(ts), c("location", "age_group"))
   expect_equal(nrow(ts), 16)
 })
+
+test_that("sample count distributions remain quantile-safe in mixtures", {
+  samples <- distributional::dist_sample(list(
+    c(-2, 1, 3),
+    c(-4, 2, 5)
+  ))
+
+  counts <- truncate_counts(samples)
+  mixture <- mix_equally(counts)
+
+  expect_true(all(unlist(distributional::parameters(counts)$x) >= 0))
+  expect_silent(stats::quantile(mixture, c(0.025, 0.5, 0.975)))
+})

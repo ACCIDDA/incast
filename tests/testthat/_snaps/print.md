@@ -61,5 +61,5 @@
       Target:   wk inc covid hosp
       Series:   2 (location)
       Forecast: 2023-05-21 to 2023-05-21 (h = 1)
-      Models:   1 + ENSEMBLE
+      Models:   2 + ENSEMBLE
 
