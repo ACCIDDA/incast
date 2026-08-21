@@ -1,8 +1,8 @@
 # Scores from the 2025–26 FluSight backtest
 
-Score summaries comparing `incast` with selected FluSight models. They
-let the FluSight vignette run without refitting models or downloading
-Hub data.
+Score summaries comparing `incast` with official FluSight team
+submissions. They let the vignette run without refitting models or
+downloading Hub data.
 
 ## Usage
 
@@ -46,7 +46,13 @@ columns:
 
 - model_group:
 
-  One of `"FluSight ensemble"`, `"FluSight model"`, or `"incast model"`.
+  One of `"FluSight ensemble"`, `"FluSight baseline"`,
+  `"FluSight model"`, or `"incast model"`.
+
+- display:
+
+  Whether the vignette's concise comparison displays the model. All
+  models remain available for custom filtering.
 
 ## Source
 

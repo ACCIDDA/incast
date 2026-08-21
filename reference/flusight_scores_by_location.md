@@ -47,11 +47,17 @@ A data frame with one row per model and location and these columns:
 
 - model_group:
 
-  One of `"FluSight ensemble"`, `"FluSight model"`, or `"incast model"`.
+  One of `"FluSight ensemble"`, `"FluSight baseline"`,
+  `"FluSight model"`, or `"incast model"`.
 
 - state:
 
   Two-letter state abbreviation.
+
+- display:
+
+  Whether the vignette's concise comparison displays the model. All
+  models remain available for custom filtering.
 
 ## Source
 

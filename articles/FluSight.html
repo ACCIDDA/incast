@@ -111,10 +111,9 @@ forecasts and scores keep the plots fast and reproducible.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">flusight_forecasts</span>, <span class="st">"incast.csv"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>The data contain every candidate that fitted successfully. For each
-state and round, the candidate with the lowest cross-validation weighted
-interval score (WIS) is also stored as <code>model_id = "incast"</code>.
-Here, <code>incast</code> is a selected model rather than an
-ensemble.</p>
+state and round, the three candidates with the lowest cross-validation
+weighted interval score (WIS) are combined with equal weights and stored
+as <code>model_id = "incast"</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="backtest-design">Backtest design<a class="anchor" aria-label="anchor" href="#backtest-design"></a>
@@ -156,9 +155,10 @@ origins.</li>
 <li>At each origin, fit every candidate using only earlier observations
 and score its four-week forecast against the latest values available for
 that round.</li>
-<li>Select the lowest-WIS candidate separately for each state.</li>
-<li>Refit every candidate to the data available for the current round
-and save all four forecast horizons. Also save the selected candidate as
+<li>Select the three lowest-WIS candidates separately for each
+state.</li>
+<li>Refit every candidate to the current data and combine the selected
+three using an equal-weight linear pool. Save this ensemble as
 <code>incast</code>.</li>
 </ol>
 <p>The candidates include the four defaults, plus ARIMA, HHH4, Prophet,
@@ -282,7 +282,7 @@ cross-validation explicit:</p>
 <span>    models <span class="op">=</span> <span class="va">my_models</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span>  <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, h <span class="op">=</span> <span class="va">forecast_steps</span>, top_n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">$</span><span class="va">hub</span><span class="op">$</span><span class="va">model_out_tbl</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, h <span class="op">=</span> <span class="va">forecast_steps</span>, top_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">hub</span><span class="op">$</span><span class="va">model_out_tbl</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span></span>
 <span>      model_id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">model_id</span> <span class="op">==</span> <span class="st">"ENSEMBLE"</span>, <span class="st">"incast"</span>, <span class="va">model_id</span><span class="op">)</span>,</span>
 <span>      reference_date <span class="op">=</span> <span class="va">ref_date</span>,</span>
@@ -310,10 +310,10 @@ cross-validation explicit:</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">flusight_forecasts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">rounds</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span></span>
 <span>  <span class="va">flusight_forecasts</span>,</span>
-<span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"flusight_forecasts.rda"</span><span class="op">)</span>,</span>
-<span>  compress <span class="op">=</span> <span class="st">"xz"</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"data-raw"</span>, <span class="st">"incast.csv"</span><span class="op">)</span>,</span>
+<span>  row.names <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
@@ -322,16 +322,20 @@ cross-validation explicit:</p>
 </h2>
 <p>The saved forecasts were scored with
 <code><a href="https://hubverse-org.github.io/hubEvals/reference/score_model_out.html" class="external-link">hubEvals::score_model_out()</a></code> against the FluSight v1.2.0
-target data. <code>FluSight-ensemble</code> is the baseline. Lower WIS
-is better, and scaled relative WIS below one indicates better
-performance than the ensemble.</p>
+target data. Scores are scaled relative to
+<code>FluSight-ensemble</code>. Lower WIS is better, and scaled relative
+WIS below one indicates better performance than the ensemble.</p>
 <p>Only the five quantiles available for every model (0.025, 0.25, 0.5,
 0.75, and 0.975) are scored. Consequently, this is a like-for-like
 comparison among the models shown here, but it is not the official
 FluSight evaluation based on the Hub’s complete quantile grid.</p>
-<p>The plot includes the three best and three worst individual FluSight
-models, plus the FluSight ensemble. Ranks use pooled scaled relative WIS
-across seven states.</p>
+<p>The plot includes the FluSight ensemble, the naive
+<code>FluSight-baseline</code>, the three best individual FluSight
+models, and the models ranked nearest the 50th and 75th percentiles.
+Ranks use pooled scaled relative WIS across seven states, among
+submissions covering at least 90% of the scored forecasts. Note that the
+top three are identified with hindsight; only the ensemble and baseline
+were available in real time.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot_scores</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">x</span> <span class="op">|&gt;</span></span>
@@ -353,29 +357,31 @@ across seven states.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"top"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu">plot_scores</span><span class="op">(</span><span class="va">flusight_scores</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">flusight_scores</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">display</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">plot_scores</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="FluSight_files/figure-html/score-overall-1.png" class="r-plt" alt="" width="960"></p>
 <p>Performance varies by state. Points left of the vertical line
 outperform the FluSight ensemble. The two <code>odin2</code> candidates
-are omitted because they are not well parameterised.
-<code>CHRONOS</code> and <code>TIMESFM</code> may have seen earlier
-FluSight data during training; their published training cut-off dates
-should be checked before interpreting the comparison.</p>
+are omitted here: they are not well parameterised, and their extreme
+state-level scores would stretch the facet scales. Neither <a href="https://huggingface.co/amazon/chronos-t5-small" class="external-link"><code>CHRONOS</code></a>
+nor <a href="https://huggingface.co/google/timesfm-2.5-200m-pytorch" class="external-link"><code>TIMESFM</code></a>
+could have been pretrained on the 2025–26 evaluation wave.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">plot_scores</span><span class="op">(</span><span class="va">flusight_scores_by_location</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="va">flusight_scores_by_location</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">display</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">plot_scores</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">state</span>, scales <span class="op">=</span> <span class="st">"free_x"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="FluSight_files/figure-html/score-by-location-1.png" class="r-plt" alt="" width="1320"></p>
 </div>
 <div class="section level2">
 <h2 id="recomputing-the-saved-results">Recomputing the saved results<a class="anchor" aria-label="anchor" href="#recomputing-the-saved-results"></a>
 </h2>
-<p>The score tables used above are stored as
-<code>flusight_scores</code> and
-<code>flusight_scores_by_location</code>. To update the packaged
-forecasts and scores after replacing <code>data-raw/incast.csv</code>,
-run <code>data-raw/FluSight.R</code>. The script downloads the matching
-FluSight forecasts and truth and updates the <code>.rda</code> files; it
-does not refit any <code>incast</code> model.</p>
+<p>Run <code>data-raw/FluSight-backtest.R</code> to refit the backtest
+and write <code>data-raw/incast.csv</code>. The script caches each
+round’s cross-validation object so future changes to <code>top_n</code>
+are faster. It then packages the forecasts and recomputes the score
+tables automatically.</p>
 <p>The model-fitting chunks use <code>eval = FALSE</code>. Run them only
 to regenerate the backtest.</p>
 </div>
