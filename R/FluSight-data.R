@@ -23,8 +23,8 @@
 
 #' Scores from the 2025--26 FluSight backtest
 #'
-#' Score summaries comparing `incast` with selected FluSight models. They let
-#' the FluSight vignette run without refitting models or downloading Hub data.
+#' Score summaries comparing `incast` with official FluSight team submissions.
+#' They let the vignette run without refitting models or downloading Hub data.
 #'
 #' `flusight_scores` contains scores pooled across locations.
 #' `flusight_scores_by_location` contains scores stratified by location.
@@ -40,8 +40,10 @@
 #'   \item{wis_scaled_relative_skill}{Relative WIS scaled to the
 #'     `FluSight-ensemble`; values below one are better.}
 #'   \item{count}{Number of forecast tasks scored.}
-#'   \item{model_group}{One of `"FluSight ensemble"`, `"FluSight model"`,
-#'     or `"incast model"`.}
+#'   \item{model_group}{One of `"FluSight ensemble"`, `"FluSight baseline"`,
+#'     `"FluSight model"`, or `"incast model"`.}
+#'   \item{display}{Whether the vignette's concise comparison displays the
+#'     model. All models remain available for custom filtering.}
 #' }
 #'
 #' @source Forecasts and target data from the
@@ -63,9 +65,11 @@
 #'   \item{wis_scaled_relative_skill}{Relative WIS scaled to the
 #'     `FluSight-ensemble`; values below one are better.}
 #'   \item{count}{Number of forecast tasks scored.}
-#'   \item{model_group}{One of `"FluSight ensemble"`, `"FluSight model"`,
-#'     or `"incast model"`.}
+#'   \item{model_group}{One of `"FluSight ensemble"`, `"FluSight baseline"`,
+#'     `"FluSight model"`, or `"incast model"`.}
 #'   \item{state}{Two-letter state abbreviation.}
+#'   \item{display}{Whether the vignette's concise comparison displays the
+#'     model. All models remain available for custom filtering.}
 #' }
 #' @source Forecasts and target data from the
 #'   \href{https://github.com/cdcepi/FluSight-forecast-hub/tree/v1.2.0}{

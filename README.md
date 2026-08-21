@@ -4,7 +4,8 @@
 # incast <a href="https://accidda.github.io/incast/"><img src="man/figures/logo.png" align="right" height="139" alt="incast website" /></a>
 
 <!-- badges: start -->
-
+[![R-CMD-check](https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/ACCIDDA/incast/graph/badge.svg)](https://app.codecov.io/gh/ACCIDDA/incast)
 <!-- badges: end -->
 
 `incast` is an R package for infectious disease nowcasting and

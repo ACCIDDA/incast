@@ -33,17 +33,17 @@ hub_fcast <- hubData::connect_hub(
     output_type_id %in% c("0.025", "0.25", "0.5", "0.75", "0.975")
   ) |>
   hubData::collect_hub() |>
-  # Keep team submissions plus the primary FluSight ensemble. Other model IDs
-  # beginning with "FluSight-" are Hub baselines or alternative aggregates,
-  # not individual team submissions.
+  # Keep team submissions plus the Hub's ensemble and naive baseline. Other
+  # model IDs beginning with "FluSight-" are alternative aggregates, not
+  # individual team submissions.
   filter(
-    model_id == "FluSight-ensemble" |
+    model_id %in% c("FluSight-ensemble", "FluSight-baseline") |
       !startsWith(model_id, "FluSight-")
   )
 
 flusight_submissions <- setdiff(
   unique(hub_fcast$model_id),
-  "FluSight-ensemble"
+  c("FluSight-ensemble", "FluSight-baseline")
 )
 
 truth <- read.csv(
@@ -97,6 +97,7 @@ add_model_group <- function(x) {
     mutate(
       model_group = case_when(
         model_id == "FluSight-ensemble" ~ "FluSight ensemble",
+        model_id == "FluSight-baseline" ~ "FluSight baseline",
         model_id %in% flusight_submissions ~ "FluSight model",
         TRUE ~ "incast model"
       )
@@ -108,18 +109,23 @@ all_scores <- bind_rows(flusight_forecasts, hub_fcast) |>
   add_model_group() |>
   arrange(wis_scaled_relative_skill)
 
+# Reference models: the top three submissions plus the ones ranked nearest the
+# 50th and 75th percentiles, among submissions covering at least 90% of the
+# scored forecasts.
 ranked_submissions <- all_scores |>
-  filter(model_group == "FluSight model") |>
-  pull(model_id)
+  filter(model_group == "FluSight model", count >= 0.9 * max(count)) |>
+  arrange(wis_scaled_relative_skill)
 
 comparison_models <- c(
-  head(ranked_submissions, 3),
-  tail(ranked_submissions, 3)
+  head(ranked_submissions$model_id, 3),
+  ranked_submissions$model_id[
+    ceiling(c(0.5, 0.75) * nrow(ranked_submissions))
+  ]
 )
 
 flusight_scores <- all_scores |>
-  filter(
-    model_group != "FluSight model" |
+  mutate(
+    display = model_group != "FluSight model" |
       model_id %in% comparison_models
   )
 
@@ -132,10 +138,8 @@ flusight_scores_by_location <- bind_rows(
   score_forecasts(by = c("model_id", "location")) |>
   add_model_group() |>
   mutate(
-    state = locations$abbreviation[match(location, locations$location)]
-  ) |>
-  filter(
-    model_group != "FluSight model" |
+    state = locations$abbreviation[match(location, locations$location)],
+    display = model_group != "FluSight model" |
       model_id %in% comparison_models
   ) |>
   arrange(state, wis_scaled_relative_skill)

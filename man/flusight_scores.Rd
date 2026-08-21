@@ -16,8 +16,10 @@ columns:
 \item{wis_scaled_relative_skill}{Relative WIS scaled to the
 \code{FluSight-ensemble}; values below one are better.}
 \item{count}{Number of forecast tasks scored.}
-\item{model_group}{One of \code{"FluSight ensemble"}, \code{"FluSight model"},
-or \code{"incast model"}.}
+\item{model_group}{One of \code{"FluSight ensemble"}, \code{"FluSight baseline"},
+\code{"FluSight model"}, or \code{"incast model"}.}
+\item{display}{Whether the vignette's concise comparison displays the
+model. All models remain available for custom filtering.}
 }
 }
 \source{
@@ -29,8 +31,8 @@ FluSight Forecast Hub, version 1.2.0}.
 flusight_scores
 }
 \description{
-Score summaries comparing \code{incast} with selected FluSight models. They let
-the FluSight vignette run without refitting models or downloading Hub data.
+Score summaries comparing \code{incast} with official FluSight team submissions.
+They let the vignette run without refitting models or downloading Hub data.
 }
 \details{
 \code{flusight_scores} contains scores pooled across locations.

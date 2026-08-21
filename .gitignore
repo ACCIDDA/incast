@@ -13,3 +13,6 @@ docs
 .Ruserdata
 
 **/*.quarto_ipynb
+
+# Resumable FluSight backtest cache
+data-raw/flusight-cache/

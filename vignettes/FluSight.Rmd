@@ -56,9 +56,8 @@ write.csv(flusight_forecasts, "incast.csv", row.names = FALSE)
 ```
 
 The data contain every candidate that fitted successfully. For each state and
-round, the candidate with the lowest cross-validation weighted interval score
-(WIS) is also stored as `model_id = "incast"`. Here, `incast` is a selected
-model rather than an ensemble.
+round, the three candidates with the lowest cross-validation weighted interval
+score (WIS) are combined with equal weights and stored as `model_id = "incast"`.
 
 ## Backtest design
 
@@ -96,9 +95,9 @@ For each round:
 3. At each origin, fit every candidate using only earlier observations and
    score its four-week forecast against the latest values available for that
    round.
-4. Select the lowest-WIS candidate separately for each state.
-5. Refit every candidate to the data available for the current round and save
-   all four forecast horizons. Also save the selected candidate as `incast`.
+4. Select the three lowest-WIS candidates separately for each state.
+5. Refit every candidate to the current data and combine the selected three
+   using an equal-weight linear pool. Save this ensemble as `incast`.
 
 The candidates include the four defaults, plus ARIMA, HHH4, Prophet, neural
 network, mechanistic and foundation models:
@@ -225,7 +224,7 @@ fcast_round <- function(ref_date) {
     models = my_models
   )
 
-  get_fcast(cv, h = forecast_steps, top_n = 1)$hub$model_out_tbl |>
+  get_fcast(cv, h = forecast_steps, top_n = 3)$hub$model_out_tbl |>
     transmute(
       model_id = if_else(model_id == "ENSEMBLE", "incast", model_id),
       reference_date = ref_date,
@@ -253,28 +252,31 @@ rounds <- lapply(reference_dates, function(ref_date) {
 })
 
 flusight_forecasts <- bind_rows(rounds)
-save(
+write.csv(
   flusight_forecasts,
-  file = file.path("data", "flusight_forecasts.rda"),
-  compress = "xz"
+  file.path("data-raw", "incast.csv"),
+  row.names = FALSE
 )
 ```
 
 ## Scoring results
 
 The saved forecasts were scored with `hubEvals::score_model_out()` against the
-FluSight v1.2.0 target data. `FluSight-ensemble` is the baseline. Lower WIS is
-better, and scaled relative WIS below one indicates better performance than the
-ensemble.
+FluSight v1.2.0 target data. Scores are scaled relative to `FluSight-ensemble`.
+Lower WIS is better, and scaled relative WIS below one indicates better
+performance than the ensemble.
 
 Only the five quantiles available for every model (0.025, 0.25, 0.5, 0.75, and
 0.975) are scored. Consequently, this is a like-for-like comparison among the
 models shown here, but it is not the official FluSight evaluation based on the
 Hub's complete quantile grid.
 
-The plot includes the three best and three worst individual FluSight models,
-plus the FluSight ensemble. Ranks use pooled scaled relative WIS across seven
-states.
+The plot includes the FluSight ensemble, the naive `FluSight-baseline`, the
+three best individual FluSight models, and the models ranked nearest the 50th
+and 75th percentiles. Ranks use pooled scaled relative WIS across seven states,
+among submissions covering at least 90% of the scored forecasts. Note that the
+top three are identified with hindsight; only the ensemble and baseline were
+available in real time.
 
 ```{r score-overall, fig.height = 8}
 plot_scores <- function(x) {
@@ -297,27 +299,29 @@ plot_scores <- function(x) {
     theme(legend.position = "top")
 }
 
-plot_scores(flusight_scores)
+flusight_scores |>
+  filter(display) |>
+  plot_scores()
 ```
 
 Performance varies by state. Points left of the vertical line outperform the
-FluSight ensemble. The two `odin2` candidates are omitted because they are not
-well parameterised. `CHRONOS` and `TIMESFM` may have seen earlier FluSight data
-during training; their published training cut-off dates should be checked
-before interpreting the comparison.
+FluSight ensemble. The two `odin2` candidates are omitted here: they are not
+well parameterised, and their extreme state-level scores would stretch the
+facet scales. Neither [`CHRONOS`](https://huggingface.co/amazon/chronos-t5-small) nor [`TIMESFM`](https://huggingface.co/google/timesfm-2.5-200m-pytorch) could have been pretrained on the 2025--26 evaluation wave.
 
 ```{r score-by-location, fig.width = 11, fig.height = 15}
-plot_scores(flusight_scores_by_location) +
+flusight_scores_by_location |>
+  filter(display) |>
+  plot_scores() +
   facet_wrap(~state, scales = "free_x")
 ```
 
 ## Recomputing the saved results
 
-The score tables used above are stored as `flusight_scores` and
-`flusight_scores_by_location`. To update the packaged forecasts and scores after
-replacing `data-raw/incast.csv`, run `data-raw/FluSight.R`. The script downloads
-the matching FluSight forecasts and truth and updates the `.rda` files; it does
-not refit any `incast` model.
+Run `data-raw/FluSight-backtest.R` to refit the backtest and write
+`data-raw/incast.csv`. The script caches each round's cross-validation object so
+future changes to `top_n` are faster. It then packages the forecasts and
+recomputes the score tables automatically.
 
 The model-fitting chunks use `eval = FALSE`. Run them only to regenerate the
 backtest.
