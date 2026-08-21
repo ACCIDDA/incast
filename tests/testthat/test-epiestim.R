@@ -1,6 +1,6 @@
 # EPIESTIM depends on the Suggests-only EpiEstim + projections packages.
 skip_if_no_epiestim <- function() {
-  skip_if_not_installed("EpiEstim")
+  skip_if_not_installed("EpiEstim", "2.4")
   skip_if_not_installed("projections")
 }
 

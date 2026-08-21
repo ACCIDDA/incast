@@ -4,7 +4,14 @@ Version: 0.0.1
 Date: 2026-07-30
 Authors@R: c(
     person("Cyril", "Geismar", , "cgeisma1@jh.edu", role = c("aut", "cre")),
-    person("Insight Net", role = c("cph", "fnd")))
+    person("Shaun", "Truelove", role = "ctb"),
+    person("Emily", "Przykucki", role = "ctb"),
+    person("Shelby", "Anderson", role = "ctb"),
+    person("Matthew", "Mietchen", role = "ctb"),
+    person("ACCIDDA", role = "cph"),
+    person("Insight Net", role = "fnd"),
+    person("Centers for Disease Control and Prevention, Center for Forecasting and Outbreak Analytics",
+           role = "fnd"))
 Description: A single workflow for preparing surveillance data, nowcasting
     reporting delays, evaluating models, and forecasting epidemics.
 License: MIT + file LICENSE
@@ -31,7 +38,7 @@ Imports:
     rlang
 Suggests:
     data.table,
-    EpiEstim,
+    EpiEstim (>= 2.4),
     projections,
     surveillance,
     hubData,
