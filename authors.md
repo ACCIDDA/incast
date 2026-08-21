@@ -4,7 +4,20 @@
 
 - **Cyril Geismar**. Author, maintainer.
 
-- **Insight Net**. Copyright holder, funder.
+- **Shaun Truelove**. Contributor.
+
+- **Emily Przykucki**. Contributor.
+
+- **Shelby Anderson**. Contributor.
+
+- **Matthew Mietchen**. Contributor.
+
+- **ACCIDDA**. Copyright holder.
+
+- **Insight Net**. Funder.
+
+- **Centers for Disease Control and Prevention, Center for Forecasting
+  and Outbreak Analytics**. Funder.
 
 ## Citation
 

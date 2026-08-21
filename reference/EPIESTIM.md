@@ -1,7 +1,7 @@
 # EpiEstim model for fable
 
 Estimate the effective reproduction number (Rt) with
-[`EpiEstim::estimate_R()`](https://rdrr.io/pkg/EpiEstim/man/estimate_R.html)
+[`EpiEstim::estimate_R()`](https://mrc-ide.github.io/EpiEstim/reference/estimate_R.html)
 and forecast with
 [`projections::project()`](https://www.repidemicsconsortium.org/projections/reference/project.html).
 
