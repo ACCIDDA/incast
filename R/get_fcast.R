@@ -71,7 +71,7 @@ get_fcast <- function(
 
   ensemble <- match.arg(ensemble)
 
-  if(!is.numeric(quantiles) || any(quantiles<0) || any(quantiles>1)) {
+  if(!is.numeric(quantiles) || any(quantiles<=0L) || any(quantiles>=1L)) {
     stop("quantiles not correctly specified; must be numeric between 0 and 1")
   }
   quantiles <- union(quantiles, c(0.025, 0.25, 0.5, 0.75, 0.975)) |> sort()
