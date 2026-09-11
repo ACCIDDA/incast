@@ -4,12 +4,12 @@
 #'
 #' When provided with an \code{incast_cv} object, the function forecasts every
 #' successfully evaluated model and uses the cross-validation results to select
-#' the best-performing models for each series for the equal-weight ensemble.
-#' For \code{incast_data} or \code{incast_ncast} objects, all models in
+#' the best-performing models for each series for the equal-weight ensemble. For
+#' \code{incast_data} or \code{incast_ncast} objects, all models in
 #' \code{models} are fitted, forecast, and combined.
 #'
-#' If the input contains nowcast uncertainty from \code{\link{get_ncast}},
-#' this uncertainty is incorporated into the forecast intervals.
+#' If the input contains nowcast uncertainty from \code{\link{get_ncast}}, this
+#' uncertainty is incorporated into the forecast intervals.
 #'
 #' @author Cyril Geismar
 #'
@@ -30,12 +30,14 @@
 #'   \code{3}.
 #'
 #' @param ensemble Method used to combine the models into the \code{ENSEMBLE}
-#'   forecast.
-#'   \code{"linear_pool"} (default) mixes the models' predictive
-#'   distributions with equal weights.
-#'   \code{"quantile_average"} takes, at each quantile level,
-#'   the median of the models' quantiles using
+#'   forecast. \code{"linear_pool"} (default) mixes the models' predictive
+#'   distributions with equal weights. \code{"quantile_average"} takes, at each
+#'   quantile level, the median of the models' quantiles using
 #'   \code{\link[hubEnsembles]{simple_ensemble}}
+#'
+#' @param quantiles Numeric vector of quantiles to extract. Defaults to
+#'   \code{c(0.025, 0.25, 0.5, 0.75, 0.975)} and these default will be included
+#'   regardless of any additional custom quantiles passed here.
 #'
 #' @return An \code{incast_fcast} object containing:
 #' \describe{
@@ -63,9 +65,16 @@ get_fcast <- function(
   models = default_models(),
   h = 4,
   top_n = 3,
-  ensemble = c("linear_pool", "quantile_average")
+  ensemble = c("linear_pool", "quantile_average"),
+  quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975)
 ) {
+
   ensemble <- match.arg(ensemble)
+
+  if(!is.numeric(quantiles) || any(quantiles<=0L) || any(quantiles>=1L)) {
+    stop("quantiles not correctly specified; must be numeric between 0 and 1")
+  }
+  quantiles <- union(quantiles, c(0.025, 0.25, 0.5, 0.75, 0.975)) |> sort()
 
   use_cv_ranking <- inherits(x, "incast_cv") && missing(models)
 
@@ -150,7 +159,8 @@ get_fcast <- function(
       ts,
       key = key,
       target = meta$target,
-      interval = meta$interval
+      interval = meta$interval,
+      quantiles = quantiles
     )
 
     if (ensemble == "quantile_average") {
@@ -185,7 +195,8 @@ get_fcast <- function(
         target = meta$target,
         interval = meta$interval,
         nowcast = has_nowcast,
-        eval_start_date = meta$eval_start_date
+        eval_start_date = meta$eval_start_date,
+        quantiles = quantiles
       )
     )
   } |>
