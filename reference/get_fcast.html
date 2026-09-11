@@ -51,7 +51,8 @@
 <span>  models <span class="op">=</span> <span class="fu"><a href="default_models.html">default_models</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  h <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  top_n <span class="op">=</span> <span class="fl">3</span>,</span>
-<span>  ensemble <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"linear_pool"</span>, <span class="st">"quantile_average"</span><span class="op">)</span></span>
+<span>  ensemble <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"linear_pool"</span>, <span class="st">"quantile_average"</span><span class="op">)</span>,</span>
+<span>  quantiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.025</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="fl">0.975</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -85,12 +86,16 @@ the ensemble for each series. Used only when <code>x</code> is an
 
 <dt id="arg-ensemble">ensemble<a class="anchor" aria-label="anchor" href="#arg-ensemble"></a></dt>
 <dd><p>Method used to combine the models into the <code>ENSEMBLE</code>
-forecast.
-<code>"linear_pool"</code> (default) mixes the models' predictive
-distributions with equal weights.
-<code>"quantile_average"</code> takes, at each quantile level,
-the median of the models' quantiles using
+forecast. <code>"linear_pool"</code> (default) mixes the models' predictive
+distributions with equal weights. <code>"quantile_average"</code> takes, at each
+quantile level, the median of the models' quantiles using
 <code><a href="https://hubverse-org.github.io/hubEnsembles/reference/simple_ensemble.html" class="external-link">simple_ensemble</a></code></p></dd>
+
+
+<dt id="arg-quantiles">quantiles<a class="anchor" aria-label="anchor" href="#arg-quantiles"></a></dt>
+<dd><p>Numeric vector of quantiles to extract. Defaults to
+<code>c(0.025, 0.25, 0.5, 0.75, 0.975)</code> and these default will be included
+regardless of any additional custom quantiles passed here.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -113,11 +118,11 @@ interval, nowcast information, and evaluation date.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>When provided with an <code>incast_cv</code> object, the function forecasts every
 successfully evaluated model and uses the cross-validation results to select
-the best-performing models for each series for the equal-weight ensemble.
-For <code>incast_data</code> or <code>incast_ncast</code> objects, all models in
+the best-performing models for each series for the equal-weight ensemble. For
+<code>incast_data</code> or <code>incast_ncast</code> objects, all models in
 <code>models</code> are fitted, forecast, and combined.</p>
-<p>If the input contains nowcast uncertainty from <code><a href="get_ncast.html">get_ncast</a></code>,
-this uncertainty is incorporated into the forecast intervals.</p>
+<p>If the input contains nowcast uncertainty from <code><a href="get_ncast.html">get_ncast</a></code>, this
+uncertainty is incorporated into the forecast intervals.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

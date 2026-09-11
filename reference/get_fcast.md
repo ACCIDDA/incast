@@ -11,7 +11,8 @@ get_fcast(
   models = default_models(),
   h = 4,
   top_n = 3,
-  ensemble = c("linear_pool", "quantile_average")
+  ensemble = c("linear_pool", "quantile_average"),
+  quantiles = c(0.025, 0.25, 0.5, 0.75, 0.975)
 )
 ```
 
@@ -49,6 +50,12 @@ get_fcast(
   with equal weights. `"quantile_average"` takes, at each quantile
   level, the median of the models' quantiles using
   [`simple_ensemble`](https://hubverse-org.github.io/hubEnsembles/reference/simple_ensemble.html)
+
+- quantiles:
+
+  Numeric vector of quantiles to extract. Defaults to
+  `c(0.025, 0.25, 0.5, 0.75, 0.975)` and these default will be included
+  regardless of any additional custom quantiles passed here.
 
 ## Value
 
