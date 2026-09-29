@@ -1,4 +1,4 @@
-test_that("as_tibble.incast_data returns one latest-revision row per series and date", {
+test_that("as_tibble.insightcast_data returns one latest-revision row per series and date", {
   raw <- make_weekly_df(locations = c("NY", "CA"), n = 10, revisions = TRUE)
   x <- check_data(raw)
 
@@ -15,7 +15,7 @@ test_that("as_tibble.incast_data returns one latest-revision row per series and 
   expect_equal(joined$observation.x, joined$observation.y)
 })
 
-test_that("as_tibble.incast_ncast returns the nowcast summary", {
+test_that("as_tibble.insightcast_ncast returns the nowcast summary", {
   x <- check_data(
     make_weekly_df(locations = c("NY", "CA"), n = 8, revisions = TRUE)
   )
@@ -31,7 +31,7 @@ test_that("as_tibble.incast_ncast returns the nowcast summary", {
   expect_setequal(unique(out$location), c("NY", "CA"))
 })
 
-test_that("as_tibble.incast_fcast keeps every model's quantile bands", {
+test_that("as_tibble.insightcast_fcast keeps every model's quantile bands", {
   x <- check_data(make_weekly_df(n = 12))
   fcast <- get_fcast(x, models = list(NAIVE = fable::NAIVE(observation)), h = 2)
 

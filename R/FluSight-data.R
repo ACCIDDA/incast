@@ -1,8 +1,8 @@
 #' Forecasts from the 2025--26 FluSight backtest
 #'
-#' Precomputed forecasts from every successfully fitted `incast` candidate.
+#' Precomputed forecasts from every successfully fitted `insight.cast` candidate.
 #' For each state and forecast round, the candidate selected by real-time
-#' cross-validation is duplicated with `model_id = "incast"`.
+#' cross-validation is duplicated with `model_id = "insight.cast"`.
 #'
 #' @format A data frame with 52,500 rows and 9 columns:
 #' \describe{
@@ -17,13 +17,13 @@
 #'   \item{value}{Forecast value.}
 #' }
 #'
-#' @source Generated with `incast` from CDC NHSN influenza hospital admission
+#' @source Generated with `insight.cast` from CDC NHSN influenza hospital admission
 #'   data for the 2025--26 FluSight season.
 "flusight_forecasts"
 
 #' Scores from the 2025--26 FluSight backtest
 #'
-#' Score summaries comparing `incast` with official FluSight team submissions.
+#' Score summaries comparing `insight.cast` with official FluSight team submissions.
 #' They let the vignette run without refitting models or downloading Hub data.
 #'
 #' `flusight_scores` contains scores pooled across locations.
@@ -41,7 +41,7 @@
 #'     `FluSight-ensemble`; values below one are better.}
 #'   \item{count}{Number of forecast tasks scored.}
 #'   \item{model_group}{One of `"FluSight ensemble"`, `"FluSight baseline"`,
-#'     `"FluSight model"`, or `"incast model"`.}
+#'     `"FluSight model"`, or `"insight.cast model"`.}
 #'   \item{display}{Whether the vignette's concise comparison displays the
 #'     model. All models remain available for custom filtering.}
 #' }
@@ -66,7 +66,7 @@
 #'     `FluSight-ensemble`; values below one are better.}
 #'   \item{count}{Number of forecast tasks scored.}
 #'   \item{model_group}{One of `"FluSight ensemble"`, `"FluSight baseline"`,
-#'     `"FluSight model"`, or `"incast model"`.}
+#'     `"FluSight model"`, or `"insight.cast model"`.}
 #'   \item{state}{Two-letter state abbreviation.}
 #'   \item{display}{Whether the vignette's concise comparison displays the
 #'     model. All models remain available for custom filtering.}

@@ -14,20 +14,20 @@ get_fcast(
 )
 }
 \arguments{
-\item{x}{An \verb{incast_*} object.}
+\item{x}{An \verb{insightcast_*} object.}
 
-\item{models}{Named list of ordinary \code{fable} or joint incast model
+\item{models}{Named list of ordinary \code{fable} or joint insight.cast model
 specifications, such as \code{\link{HHH4}}. Defaults to
-\code{\link{default_models}}. When \code{x} is an \code{incast_cv} object,
+\code{\link{default_models}}. When \code{x} is an \code{insightcast_cv} object,
 leave unset to forecast its models and use the top-ranked models for the
 ensemble, or provide a custom set of models to forecast and combine.}
 
 \item{h}{Forecast horizon in reporting intervals. Defaults to \code{4}, or the
-cross-validation horizon when \code{x} is an \code{incast_cv} object.}
+cross-validation horizon when \code{x} is an \code{insightcast_cv} object.}
 
 \item{top_n}{Integer giving the number of top-ranked models to combine into
 the ensemble for each series. Used only when \code{x} is an
-\code{incast_cv} object and \code{models} is not provided. Defaults to
+\code{insightcast_cv} object and \code{models} is not provided. Defaults to
 \code{3}.}
 
 \item{ensemble}{Method used to combine the models into the \code{ENSEMBLE}
@@ -41,7 +41,7 @@ quantile level, the median of the models' quantiles using
 regardless of any additional custom quantiles passed here.}
 }
 \value{
-An \code{incast_fcast} object containing:
+An \code{insightcast_fcast} object containing:
 \describe{
 \item{hub}{Hub-format forecasts containing \code{model_out_tbl} and
 \code{oracle_output}.}
@@ -55,10 +55,10 @@ interval, nowcast information, and evaluation date.}
 Fit models to the full series and forecast the next \code{h} reporting intervals.
 }
 \details{
-When provided with an \code{incast_cv} object, the function forecasts every
+When provided with an \code{insightcast_cv} object, the function forecasts every
 successfully evaluated model and uses the cross-validation results to select
 the best-performing models for each series for the equal-weight ensemble. For
-\code{incast_data} or \code{incast_ncast} objects, all models in
+\code{insightcast_data} or \code{insightcast_ncast} objects, all models in
 \code{models} are fitted, forecast, and combined.
 
 If the input contains nowcast uncertainty from \code{\link{get_ncast}}, this

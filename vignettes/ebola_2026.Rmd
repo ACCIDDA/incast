@@ -74,14 +74,14 @@ ebola <- ebola |>
 ```
 
 
-## `incast` workflow
+## `insight.cast` workflow
 
 ### Validate the data
 
-`check_data()` standardises the columns and returns an `incast_data` object.
+`check_data()` standardises the columns and returns an `insightcast_data` object.
 
 ```{r, check_data, eval = FALSE}
-library(incast)
+library(insight.cast)
 data <- ebola |> check_data()
 ```
 
@@ -89,7 +89,7 @@ data <- ebola |> check_data()
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-library(incast)
+library(insight.cast)
 data <- readRDS("ebola_data.rds")
 ```
 

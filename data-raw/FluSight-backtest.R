@@ -1,4 +1,4 @@
-# Regenerates data-raw/incast.csv using a top-three ensemble for each state and
+# Regenerates data-raw/insight.cast.csv using a top-three ensemble for each state and
 # forecast round. Run from the package root. Completed rounds are cached so an
 # interrupted run can resume and future top_n changes can reuse CV results.
 
@@ -10,7 +10,7 @@ library(dplyr)
 library(fable)
 library(fable.prophet)
 library(igraph)
-library(incast.odin)
+library(insight.cast.odin)
 library(reticulate)
 library(surveillance)
 
@@ -170,7 +170,7 @@ fcast_round <- function(ref_date) {
     ensemble = "linear_pool"
   )$hub$model_out_tbl |>
     transmute(
-      model_id = if_else(model_id == "ENSEMBLE", "incast", model_id),
+      model_id = if_else(model_id == "ENSEMBLE", "insight.cast", model_id),
       reference_date = ref_date,
       target,
       horizon = as.integer(target_end_date - ref_date) %/% 7L,
@@ -203,16 +203,16 @@ if (length(failed)) {
 
 flusight_forecasts <- bind_rows(rounds)
 
-expected_incast_rows <- length(reference_dates) * length(states) * 4L * 5L
-stopifnot(sum(flusight_forecasts$model_id == "incast") == expected_incast_rows)
+expected_insightcast_rows <- length(reference_dates) * length(states) * 4L * 5L
+stopifnot(sum(flusight_forecasts$model_id == "insight.cast") == expected_insightcast_rows)
 
 if (shard_total == 1L) {
   write.csv(
     flusight_forecasts,
-    file.path("data-raw", "incast.csv"),
+    file.path("data-raw", "insight.cast.csv"),
     row.names = FALSE
   )
-  message("Saved ", nrow(flusight_forecasts), " rows to data-raw/incast.csv")
+  message("Saved ", nrow(flusight_forecasts), " rows to data-raw/insight.cast.csv")
   message("Packaging forecasts and recomputing FluSight scores")
   sys.source(
     file.path("data-raw", "FluSight.R"),

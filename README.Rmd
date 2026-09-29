@@ -15,14 +15,14 @@ knitr::opts_chunk$set(
 set.seed(2026)
 ```
 
-# incast <a href="https://accidda.github.io/incast/"><img src="man/figures/logo.png" align="right" height="139" alt="incast website" /></a>
+# insight.cast <a href="https://accidda.github.io/insight.cast/"><img src="man/figures/logo.png" align="right" height="139" alt="insight.cast website" /></a>
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/ACCIDDA/incast/graph/badge.svg)](https://app.codecov.io/gh/ACCIDDA/incast)
+[![R-CMD-check](https://github.com/ACCIDDA/insight.cast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ACCIDDA/insight.cast/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/ACCIDDA/insight.cast/graph/badge.svg)](https://app.codecov.io/gh/ACCIDDA/insight.cast)
 <!-- badges: end -->
 
-`incast` is an R package for infectious disease nowcasting and forecasting. It was developed through **[Insight Net](https://www.cdc.gov/insight-net)**, a **[CDC Center for Forecasting and Outbreak Analytics](https://www.cdc.gov/forecast-outbreak-analytics/index.html)** initiative.
+`insight.cast` is an R package for infectious disease nowcasting and forecasting. It was developed through **[Insight Net](https://www.cdc.gov/insight-net)**, a **[CDC Center for Forecasting and Outbreak Analytics](https://www.cdc.gov/forecast-outbreak-analytics/index.html)** initiative.
 
 Use it to fetch or validate data, correct reporting delays, compare models and produce forecasts.
 
@@ -32,13 +32,13 @@ Install the development version from GitHub:
 
 ```{r install, eval = FALSE}
 # install.packages("pak")
-pak::pak("ACCIDDA/incast")
+pak::pak("ACCIDDA/insight.cast")
 ```
 
 ## Quick start
 
 ```{r example-data, eval = TRUE, message = FALSE}
-library(incast)
+library(insight.cast)
 tail(example_data)
 ```
 
@@ -72,12 +72,12 @@ fcast$hub$model_out_tbl |>
 
 ## Citation
 
-To cite `incast`:
+To cite `insight.cast`:
 
 ```{r citation}
-citation("incast")
+citation("insight.cast")
 ```
 
 ## Acknowledgements
 
-`incast` uses [`baselinenowcast`](https://baselinenowcast.epinowcast.org/) and [`fable`](https://fable.tidyverts.org/). It returns forecasts in [`hubverse`](https://hubverse.io/) format for submission to [CDC forecast hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).
+`insight.cast` uses [`baselinenowcast`](https://baselinenowcast.epinowcast.org/) and [`fable`](https://fable.tidyverts.org/). It returns forecasts in [`hubverse`](https://hubverse.io/) format for submission to [CDC forecast hubs](https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html).

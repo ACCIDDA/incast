@@ -7,7 +7,7 @@
 get_ncast(x, max_delay = 2, draws = 1000, prop_delay = 0.5, scale_factor = 3)
 }
 \arguments{
-\item{x}{An \code{incast_data} object with revision history.}
+\item{x}{An \code{insightcast_data} object with revision history.}
 
 \item{max_delay}{Number of recent weeks to nowcast. Defaults to \code{2}.}
 
@@ -20,7 +20,7 @@ Must be between 0 and 1. Defaults to \code{0.5}.}
 window. Defaults to \code{3}.}
 }
 \value{
-An \code{incast_ncast} object with the shared backbone
+An \code{insightcast_ncast} object with the shared backbone
 (\code{key}, \code{target}, \code{window}, \code{interval},
 \code{history}) plus:
 \describe{
