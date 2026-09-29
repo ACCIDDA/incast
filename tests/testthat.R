@@ -1,6 +1,6 @@
 # This file is part of the standard testthat testing framework setup
 
 library(testthat)
-library(incast)
+library(insight.cast)
 
-test_check("incast")
+test_check("insight.cast")

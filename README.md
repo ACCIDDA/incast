@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# incast <a href="https://accidda.github.io/incast/"><img src="man/figures/logo.png" align="right" height="139" alt="incast website" /></a>
+# insight.cast <a href="https://accidda.github.io/insight.cast/"><img src="man/figures/logo.png" align="right" height="139" alt="insight.cast website" /></a>
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml)
-[![Codecov test coverage](https://codecov.io/gh/ACCIDDA/incast/graph/badge.svg)](https://app.codecov.io/gh/ACCIDDA/incast)
+[![R-CMD-check](https://github.com/ACCIDDA/insight.cast/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ACCIDDA/insight.cast/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/ACCIDDA/insight.cast/graph/badge.svg)](https://app.codecov.io/gh/ACCIDDA/insight.cast)
 <!-- badges: end -->
 
-`incast` is an R package for infectious disease nowcasting and
+`insight.cast` is an R package for infectious disease nowcasting and
 forecasting. It was developed through **[Insight
 Net](https://www.cdc.gov/insight-net)**, a **[CDC Center for Forecasting
 and Outbreak
@@ -24,13 +24,13 @@ Install the development version from GitHub:
 
 ``` r
 # install.packages("pak")
-pak::pak("ACCIDDA/incast")
+pak::pak("ACCIDDA/insight.cast")
 ```
 
 ## Quick start
 
 ``` r
-library(incast)
+library(insight.cast)
 tail(example_data)
 #> # A tibble: 6 × 5
 #>   as_of      location target          target_end_date observation
@@ -53,7 +53,7 @@ fcast <- example_data |>
 
 ``` r
 fcast
-#> <incast_fcast>
+#> <insight.cast_fcast>
 #> Target:   wk inc flu hosp
 #> Series:   2 (location)
 #> Forecast: 2025-12-20 to 2026-01-10 (h = 4)
@@ -82,29 +82,29 @@ fcast$hub$model_out_tbl |>
 
 ## Citation
 
-To cite `incast`:
+To cite `insight.cast`:
 
 ``` r
-citation("incast")
-#> To cite package 'incast' in publications use:
+citation("insight.cast")
+#> To cite package 'insight.cast' in publications use:
 #> 
-#>   Geismar C (2026). _incast: Tools for Epidemic Forecasting_. R package
-#>   version 0.0.1, <https://github.com/ACCIDDA/incast>.
+#>   Geismar C (2026). _insight.cast: Tools for Epidemic Forecasting_. R package
+#>   version 0.0.1, <https://github.com/ACCIDDA/insight.cast>.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
-#>     title = {incast: Tools for Epidemic Forecasting},
+#>     title = {insight.cast: Tools for Epidemic Forecasting},
 #>     author = {Cyril Geismar},
 #>     year = {2026},
 #>     note = {R package version 0.0.1},
-#>     url = {https://github.com/ACCIDDA/incast},
+#>     url = {https://github.com/ACCIDDA/insight.cast},
 #>   }
 ```
 
 ## Acknowledgements
 
-`incast` uses
+`insight.cast` uses
 [`baselinenowcast`](https://baselinenowcast.epinowcast.org/) and
 [`fable`](https://fable.tidyverts.org/). It returns forecasts in
 [`hubverse`](https://hubverse.io/) format for submission to [CDC

@@ -11,12 +11,12 @@
 #'
 #' @param data A data frame with `target_end_date` (`Date`), `observation`
 #'   (numeric), `target` (character) and the key columns. Add `as_of` (`Date`)
-#'   for revision history. An `incast_data` object is returned unchanged.
+#'   for revision history. An `insight.cast_data` object is returned unchanged.
 #'
 #' @param key Character vector naming the columns that identify a series.
 #'   Defaults to `"location"`.
 #'
-#' @return An \code{incast_data} object containing:
+#' @return An \code{insight.cast_data} object containing:
 #' \describe{
 #' \item{data}{Validated data with standardised column types.}
 #' \item{key}{Names of the key columns.}
@@ -45,7 +45,7 @@ check_data <- function(data, key = "location") {
     stop("`key` must be a vector of unique column names.")
   }
 
-  if (inherits(data, "incast_data")) {
+  if (inherits(data, "insight.cast_data")) {
     if (!missing(key) && !identical(key, data$key)) {
       stop(
         "`data` is already validated with key: ",
@@ -185,7 +185,7 @@ check_data <- function(data, key = "location") {
     to = max(data$target_end_date)
   )
 
-  new_incast_data(
+  new_insight.cast_data(
     data = data,
     key = key,
     target = target,

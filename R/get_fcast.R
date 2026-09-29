@@ -2,10 +2,10 @@
 #'
 #' Fit models to the full series and forecast the next `h` reporting intervals.
 #'
-#' When provided with an \code{incast_cv} object, the function forecasts every
+#' When provided with an \code{insight.cast_cv} object, the function forecasts every
 #' successfully evaluated model and uses the cross-validation results to select
 #' the best-performing models for each series for the equal-weight ensemble. For
-#' \code{incast_data} or \code{incast_ncast} objects, all models in
+#' \code{insight.cast_data} or \code{insight.cast_ncast} objects, all models in
 #' \code{models} are fitted, forecast, and combined.
 #'
 #' If the input contains nowcast uncertainty from \code{\link{get_ncast}}, this
@@ -13,20 +13,20 @@
 #'
 #' @author Cyril Geismar
 #'
-#' @param x An `incast_*` object.
+#' @param x An `insight.cast_*` object.
 #'
-#' @param models Named list of ordinary \code{fable} or joint incast model
+#' @param models Named list of ordinary \code{fable} or joint insight.cast model
 #'   specifications, such as \code{\link{HHH4}}. Defaults to
-#'   \code{\link{default_models}}. When \code{x} is an \code{incast_cv} object,
+#'   \code{\link{default_models}}. When \code{x} is an \code{insight.cast_cv} object,
 #'   leave unset to forecast its models and use the top-ranked models for the
 #'   ensemble, or provide a custom set of models to forecast and combine.
 #'
 #' @param h Forecast horizon in reporting intervals. Defaults to `4`, or the
-#'   cross-validation horizon when `x` is an `incast_cv` object.
+#'   cross-validation horizon when `x` is an `insight.cast_cv` object.
 #'
 #' @param top_n Integer giving the number of top-ranked models to combine into
 #'   the ensemble for each series. Used only when \code{x} is an
-#'   \code{incast_cv} object and \code{models} is not provided. Defaults to
+#'   \code{insight.cast_cv} object and \code{models} is not provided. Defaults to
 #'   \code{3}.
 #'
 #' @param ensemble Method used to combine the models into the \code{ENSEMBLE}
@@ -39,7 +39,7 @@
 #'   \code{c(0.025, 0.25, 0.5, 0.75, 0.975)} and these default will be included
 #'   regardless of any additional custom quantiles passed here.
 #'
-#' @return An \code{incast_fcast} object containing:
+#' @return An \code{insight.cast_fcast} object containing:
 #' \describe{
 #'   \item{hub}{Hub-format forecasts containing \code{model_out_tbl} and
 #'   \code{oracle_output}.}
@@ -76,22 +76,22 @@ get_fcast <- function(
   }
   quantiles <- union(quantiles, c(0.025, 0.25, 0.5, 0.75, 0.975)) |> sort()
 
-  use_cv_ranking <- inherits(x, "incast_cv") && missing(models)
+  use_cv_ranking <- inherits(x, "insight.cast_cv") && missing(models)
 
-  if (inherits(x, "incast_cv")) {
+  if (inherits(x, "insight.cast_cv")) {
     if (missing(h)) {
       h <- x$meta$h
     }
     score <- x$score
     meta <- x$meta
     df <- x$data
-  } else if (inherits(x, c("incast_data", "incast_ncast"))) {
+  } else if (inherits(x, c("insight.cast_data", "insight.cast_ncast"))) {
     score <- NULL
-    meta <- incast_meta(x)
+    meta <- insight.cast_meta(x)
     df <- extract_series(x)
   } else {
     stop(
-      "`x` must be an incast_cv, incast_data or incast_ncast object.\n",
+      "`x` must be an insight.cast_cv, insight.cast_data or insight.cast_ncast object.\n",
       "Run check_data() on your data frame first."
     )
   }
@@ -182,7 +182,7 @@ get_fcast <- function(
       hub$model_out_tbl <- dplyr::bind_rows(hub$model_out_tbl, ens)
     }
 
-    new_incast_fcast(
+    new_insight.cast_fcast(
       hub = hub,
       score = score,
       meta = list(
@@ -218,7 +218,7 @@ get_fcast <- function(
 #' @keywords internal
 #' @noRd
 forecast_final <- function(ts, models, h) {
-  is_joint <- vapply(models, inherits, logical(1L), "incast_joint")
+  is_joint <- vapply(models, inherits, logical(1L), "insight.cast_joint")
 
   out <- dplyr::bind_rows(
     if (any(!is_joint)) forecast_fable(ts, models[!is_joint], h),

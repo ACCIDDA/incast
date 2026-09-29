@@ -9,13 +9,13 @@ check_data(data, key = "location")
 \arguments{
 \item{data}{A data frame with \code{target_end_date} (\code{Date}), \code{observation}
 (numeric), \code{target} (character) and the key columns. Add \code{as_of} (\code{Date})
-for revision history. An \code{incast_data} object is returned unchanged.}
+for revision history. An \code{insight.cast_data} object is returned unchanged.}
 
 \item{key}{Character vector naming the columns that identify a series.
 Defaults to \code{"location"}.}
 }
 \value{
-An \code{incast_data} object containing:
+An \code{insight.cast_data} object containing:
 \describe{
 \item{data}{Validated data with standardised column types.}
 \item{key}{Names of the key columns.}

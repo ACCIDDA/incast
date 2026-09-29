@@ -1,6 +1,6 @@
 #' Internal S3 constructors
 #'
-#' @name incast-class
+#' @name insight.cast-class
 #' @keywords internal
 #' @noRd
 NULL
@@ -8,7 +8,7 @@ NULL
 
 #' @keywords internal
 #' @noRd
-new_incast_data <- function(data, key, target, window, interval, history) {
+new_insight.cast_data <- function(data, key, target, window, interval, history) {
   stopifnot(
     is.data.frame(data),
     is.character(key), length(key) > 0L, all(key %in% names(data)),
@@ -26,14 +26,14 @@ new_incast_data <- function(data, key, target, window, interval, history) {
       interval = as.integer(interval),
       history = history
     ),
-    class = "incast_data"
+    class = "insight.cast_data"
   )
 }
 
 
 #' @keywords internal
 #' @noRd
-new_incast_ncast <- function(
+new_insight.cast_ncast <- function(
   data,
   key,
   target,
@@ -43,16 +43,16 @@ new_incast_ncast <- function(
   meta
 ) {
   stopifnot(is.list(meta))
-  out <- new_incast_data(data, key, target, window, interval, history)
+  out <- new_insight.cast_data(data, key, target, window, interval, history)
   out$meta <- meta
-  class(out) <- "incast_ncast"
+  class(out) <- "insight.cast_ncast"
   out
 }
 
 
 #' @keywords internal
 #' @noRd
-new_incast_cv <- function(forecasts, oracle, score, models, meta, data) {
+new_insight.cast_cv <- function(forecasts, oracle, score, models, meta, data) {
   stopifnot(is.list(models), is.list(meta), is.data.frame(data))
   structure(
     list(
@@ -63,37 +63,37 @@ new_incast_cv <- function(forecasts, oracle, score, models, meta, data) {
       meta = meta,
       data = data
     ),
-    class = "incast_cv"
+    class = "insight.cast_cv"
   )
 }
 
 
 #' @keywords internal
 #' @noRd
-new_incast_fcast <- function(hub, score, meta) {
+new_insight.cast_fcast <- function(hub, score, meta) {
   stopifnot(is.list(hub), is.list(meta))
   structure(
     list(hub = hub, score = score, meta = meta),
-    class = "incast_fcast"
+    class = "insight.cast_fcast"
   )
 }
 
 
 #' Read shared metadata from a pipeline object
-#' @param x An \code{incast_data}, \code{incast_ncast}, \code{incast_cv} or
-#'   \code{incast_fcast}.
+#' @param x An \code{insight.cast_data}, \code{insight.cast_ncast}, \code{insight.cast_cv} or
+#'   \code{insight.cast_fcast}.
 #' @return A named list.
 #' @keywords internal
 #' @noRd
-incast_meta <- function(x) {
-  if (inherits(x, c("incast_data", "incast_ncast"))) {
+insight.cast_meta <- function(x) {
+  if (inherits(x, c("insight.cast_data", "insight.cast_ncast"))) {
     x[c("key", "target", "window", "interval", "history")]
-  } else if (inherits(x, c("incast_cv", "incast_fcast"))) {
+  } else if (inherits(x, c("insight.cast_cv", "insight.cast_fcast"))) {
     x$meta[c("key", "target", "interval")]
   } else {
     stop(
-      "`x` must be an incast_data, incast_ncast, incast_cv or ",
-      "incast_fcast object.\n",
+      "`x` must be an insight.cast_data, insight.cast_ncast, insight.cast_cv or ",
+      "insight.cast_fcast object.\n",
       "Run check_data() on your data frame first."
     )
   }

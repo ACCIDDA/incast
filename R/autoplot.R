@@ -10,12 +10,12 @@ ggplot2::autoplot
 #'
 #' @author Cyril Geismar
 #'
-#' @param object An \code{incast_data} from \code{\link{check_data}}.
+#' @param object An \code{insight.cast_data} from \code{\link{check_data}}.
 #' @param ... Ignored.
 #' @return A ggplot object.
 #' @export
-autoplot.incast_data <- function(object, ...) {
-  m <- incast_meta(object)
+autoplot.insight.cast_data <- function(object, ...) {
+  m <- insight.cast_meta(object)
   ggplot2::ggplot(
     extract_series(object),
     ggplot2::aes(target_end_date, observation)
@@ -52,14 +52,14 @@ plot_bands <- function(bands, x, key, target) {
 #'
 #' @author Cyril Geismar
 #'
-#' @param object An \code{incast_ncast} object returned by
+#' @param object An \code{insight.cast_ncast} object returned by
 #' \code{\link{get_ncast}}.
 #' @param ... Ignored.
 #'
 #' @return A ggplot object.
 #' @export
-autoplot.incast_ncast <- function(object, ...) {
-  m <- incast_meta(object)
+autoplot.insight.cast_ncast <- function(object, ...) {
+  m <- insight.cast_meta(object)
   plot_bands(
     object$meta$ncast_summary,
     reference_date,
@@ -78,13 +78,13 @@ autoplot.incast_ncast <- function(object, ...) {
 #'
 #' @author Cyril Geismar
 #'
-#' @param object An \code{incast_cv} object returned by \code{\link{get_cv}}.
+#' @param object An \code{insight.cast_cv} object returned by \code{\link{get_cv}}.
 #' @param ... Ignored.
 #'
 #' @return A ggplot object.
 #' @export
-autoplot.incast_cv <- function(object, ...) {
-  m <- incast_meta(object)
+autoplot.insight.cast_cv <- function(object, ...) {
+  m <- insight.cast_meta(object)
   score <- object$score
 
   p <- if ("wis_relative_skill" %in% names(score)) {
@@ -119,15 +119,15 @@ autoplot.incast_cv <- function(object, ...) {
 #'
 #' @author Cyril Geismar
 #'
-#' @param object An \code{incast_fcast} object returned by
+#' @param object An \code{insight.cast_fcast} object returned by
 #' \code{\link{get_fcast}}.
 #' @param model The model to plot. Defaults to \code{"ENSEMBLE"}.
 #' @param ... Ignored.
 #'
 #' @return A ggplot object.
 #' @export
-autoplot.incast_fcast <- function(object, model = "ENSEMBLE", ...) {
-  m <- incast_meta(object)
+autoplot.insight.cast_fcast <- function(object, model = "ENSEMBLE", ...) {
+  m <- insight.cast_meta(object)
   out <- object$hub$model_out_tbl
   if (length(model) != 1L || !model %in% out$model_id) {
     stop("`model` must be one of: ", paste(unique(out$model_id), collapse = ", "))

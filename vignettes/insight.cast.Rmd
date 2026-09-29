@@ -1,8 +1,8 @@
 ---
-title: "incast"
+title: "insight.cast"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{incast}
+  %\VignetteIndexEntry{insight.cast}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-`incast` builds infectious disease forecasts in a few steps:
+`insight.cast` builds infectious disease forecasts in a few steps:
 
 1. `get_data()` or `check_data()` fetches or validates surveillance data.
 2. `get_ncast()` optionally corrects recent weeks for reporting delays.
@@ -32,7 +32,7 @@ See [Planning an infectious disease forecast](forecast_planning.html) before
 starting a new forecasting project.
 
 ```{r, setup}
-library(incast)
+library(insight.cast)
 ```
 
 ## Step 1: Get data

@@ -15,7 +15,7 @@ get_data(pathogen, geo_value, revisions = FALSE)
 \code{FALSE}.}
 }
 \value{
-An \code{incast_data} object (see \code{\link{check_data}}).
+An \code{insight.cast_data} object (see \code{\link{check_data}}).
 }
 \description{
 Fetch confirmed US hospital admissions for COVID-19, influenza or RSV from

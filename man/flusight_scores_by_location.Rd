@@ -17,7 +17,7 @@ A data frame with one row per model and location and these columns:
 \code{FluSight-ensemble}; values below one are better.}
 \item{count}{Number of forecast tasks scored.}
 \item{model_group}{One of \code{"FluSight ensemble"}, \code{"FluSight baseline"},
-\code{"FluSight model"}, or \code{"incast model"}.}
+\code{"FluSight model"}, or \code{"insight.cast model"}.}
 \item{state}{Two-letter state abbreviation.}
 \item{display}{Whether the vignette's concise comparison displays the
 model. All models remain available for custom filtering.}

@@ -47,7 +47,7 @@ df <- data.frame(
 ```
 
 ```{r}
-library(incast)
+library(insight.cast)
 head(df)
 
 checked <- check_data(df)

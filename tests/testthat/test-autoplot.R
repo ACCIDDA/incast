@@ -1,4 +1,4 @@
-test_that("autoplot.incast_data draws one panel per series", {
+test_that("autoplot.insight.cast_data draws one panel per series", {
   x <- check_data(make_weekly_df(locations = c("NY", "CA"), n = 10))
 
   p <- autoplot(x)
@@ -7,7 +7,7 @@ test_that("autoplot.incast_data draws one panel per series", {
   expect_no_error(ggplot2::ggplot_build(p))
 })
 
-test_that("autoplot.incast_cv compares models by relative WIS", {
+test_that("autoplot.insight.cast_cv compares models by relative WIS", {
   x <- check_data(make_weekly_df(locations = c("NY", "CA"), n = 30))
   cv <- get_cv(
     x,
@@ -29,7 +29,7 @@ test_that("autoplot.incast_cv compares models by relative WIS", {
   expect_contains(geoms, "GeomVline")
 })
 
-test_that("autoplot.incast_cv falls back to raw WIS for a single model", {
+test_that("autoplot.insight.cast_cv falls back to raw WIS for a single model", {
   x <- check_data(make_weekly_df(n = 30))
   cv <- get_cv(
     x,
@@ -47,7 +47,7 @@ test_that("autoplot.incast_cv falls back to raw WIS for a single model", {
   expect_false("GeomVline" %in% geoms)
 })
 
-test_that("autoplot.incast_fcast plots the ensemble by default", {
+test_that("autoplot.insight.cast_fcast plots the ensemble by default", {
   x <- check_data(make_weekly_df(n = 12))
   fcast <- get_fcast(x, models = list(NAIVE = fable::NAIVE(observation)), h = 2)
 

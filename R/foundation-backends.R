@@ -6,7 +6,7 @@
 # adding a model is one list entry.
 
 # Session cache of loaded pipelines, keyed by "<backend>@<model_id>@<device>".
-.incast_pipelines <- new.env(parent = emptyenv())
+.insight.cast_pipelines <- new.env(parent = emptyenv())
 
 
 ensure_reticulate <- function() {
@@ -204,8 +204,8 @@ foundation_backend <- function(backend) foundation_backends()[[backend]]
 # validation (which refits at every origin) initialises each model only once.
 load_foundation_pipeline <- function(backend, model_id, device) {
   key <- paste(backend, model_id, device, sep = "@")
-  if (!is.null(.incast_pipelines[[key]])) {
-    return(.incast_pipelines[[key]])
+  if (!is.null(.insight.cast_pipelines[[key]])) {
+    return(.insight.cast_pipelines[[key]])
   }
 
   ensure_reticulate()
@@ -224,7 +224,7 @@ load_foundation_pipeline <- function(backend, model_id, device) {
   torch$set_num_threads(1L)
 
   pipeline <- spec$load(model_id, device)
-  .incast_pipelines[[key]] <- pipeline
+  .insight.cast_pipelines[[key]] <- pipeline
   pipeline
 }
 

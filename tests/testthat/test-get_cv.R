@@ -1,7 +1,7 @@
 test_that("get_cv rejects plain data frames", {
   expect_error(
     get_cv(data.frame(wrong_column = 1), eval_start_date = Sys.Date()),
-    "incast_data or incast_ncast"
+    "insight.cast_data or insight.cast_ncast"
   )
 })
 
@@ -101,7 +101,7 @@ test_that("get_cv works with a single model", {
     models = list(NAIVE = fable::NAIVE(observation))
   )
 
-  expect_s3_class(cv, "incast_cv")
+  expect_s3_class(cv, "insight.cast_cv")
   expect_contains(names(cv$score), "wis")
 })
 
@@ -156,7 +156,7 @@ test_that("get_cv errors when eval_start_date leaves nothing to score", {
   )
 })
 
-test_that("get_cv returns an incast_cv with the expected structure", {
+test_that("get_cv returns an insight.cast_cv with the expected structure", {
   x <- check_data(make_weekly_df(n = 40))
 
   cv <- get_cv(
@@ -166,7 +166,7 @@ test_that("get_cv returns an incast_cv with the expected structure", {
     models = list(NAIVE = fable::NAIVE(observation), MEAN = fable::MEAN(observation))
   )
 
-  expect_s3_class(cv, "incast_cv")
+  expect_s3_class(cv, "insight.cast_cv")
   expect_named(cv, c("forecasts", "oracle", "score", "models", "meta", "data"))
   expect_named(cv$models, c("NAIVE", "MEAN"))
   expect_contains(names(cv$score), c("model_id", "location", "wis"))

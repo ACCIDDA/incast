@@ -1,5 +1,5 @@
 #' Internal helpers
-#' @name incast-utils
+#' @name insight.cast-utils
 #' @keywords internal
 #' @noRd
 NULL
@@ -38,16 +38,16 @@ detect_interval <- function(dates) {
 
 
 #' Extract series data, keeping the latest revision
-#' @param x An \code{incast_data} or \code{incast_ncast} object.
+#' @param x An \code{insight.cast_data} or \code{insight.cast_ncast} object.
 #' @return A data frame with one row per series per target_end_date.
 #' @keywords internal
 #' @noRd
 extract_series <- function(x) {
-  if (inherits(x, "incast_ncast") || inherits(x, "incast_data")) {
+  if (inherits(x, "insight.cast_ncast") || inherits(x, "insight.cast_data")) {
     df <- x$data
   } else {
     stop(
-      "`x` must be an incast_data or incast_ncast object.\n",
+      "`x` must be an insight.cast_data or insight.cast_ncast object.\n",
       "Run check_data() on your data frame first."
     )
   }

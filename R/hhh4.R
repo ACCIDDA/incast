@@ -4,7 +4,7 @@
 #' simulated forecasts for [get_cv()] and [get_fcast()].
 #'
 #' Model components and `control` options are documented in
-#' [surveillance::hhh4()]. `incast` manages `control$subset`, so do not supply
+#' [surveillance::hhh4()]. `insight.cast` manages `control$subset`, so do not supply
 #' it. Data must have one series key, and all unit-indexed inputs must be named
 #' with its values. Fractional observations are rounded to counts before
 #' fitting.
@@ -94,7 +94,7 @@ HHH4 <- function(
   }
   if (!is.null(control$subset)) {
     stop(
-      "`control$subset` is managed by incast and must not be supplied.",
+      "`control$subset` is managed by insight.cast and must not be supplied.",
       call. = FALSE
     )
   }

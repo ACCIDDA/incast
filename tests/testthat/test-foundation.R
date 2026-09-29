@@ -34,7 +34,7 @@ test_that("FOUNDATION() plumbs draws through to a hub forecast (mocked)", {
         ncol = n_samples
       )
     },
-    .package = "incast"
+    .package = "insight.cast"
   )
 
   df <- check_data(data.frame(
@@ -50,7 +50,7 @@ test_that("FOUNDATION() plumbs draws through to a hub forecast (mocked)", {
     ),
     h = 2
   )
-  expect_s3_class(fcast, "incast_fcast")
+  expect_s3_class(fcast, "insight.cast_fcast")
   expect_true("CHRONOS" %in% fcast$hub$model_out_tbl$model_id)
   expect_true(all(is.finite(fcast$hub$model_out_tbl$value)))
 
@@ -79,7 +79,7 @@ test_that("FOUNDATION() forecasts through the fable interface (live chronos)", {
     ),
     h = 2
   )
-  expect_s3_class(fcast, "incast_fcast")
+  expect_s3_class(fcast, "insight.cast_fcast")
   expect_true("CHRONOS" %in% fcast$hub$model_out_tbl$model_id)
   expect_true(all(is.finite(fcast$hub$model_out_tbl$value)))
 })

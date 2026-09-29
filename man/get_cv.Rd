@@ -15,7 +15,7 @@ get_cv(
 )
 }
 \arguments{
-\item{x}{An \code{incast_data} or \code{incast_ncast} object.}
+\item{x}{An \code{insight.cast_data} or \code{insight.cast_ncast} object.}
 
 \item{eval_start_date}{Date (or character string coercible to a date) giving
 the first forecast origin to evaluate. Must fall within the data window.
@@ -24,7 +24,7 @@ This argument is exclusive with \code{n_origins} and \code{origins}.}
 
 \item{h}{Forecast horizon in reporting intervals. Defaults to \code{4}.}
 
-\item{models}{Named list of \code{fable} or joint incast model
+\item{models}{Named list of \code{fable} or joint insight.cast model
 specifications, such as \code{\link{HHH4}}. Defaults to
 \code{\link{default_models}}.}
 
@@ -43,7 +43,7 @@ This argument is exclusive with \code{eval_start_date} and
 \code{n_origins}; \code{step} is ignored.}
 }
 \value{
-An \code{incast_cv} object containing:
+An \code{insight.cast_cv} object containing:
 \describe{
 \item{forecasts}{Forecasts for each model, series, and cross-validation origin.}
 \item{oracle}{Observed values used for scoring.}

@@ -8,7 +8,7 @@
 #'
 #' @author Cyril Geismar
 #'
-#' @param x An `incast_data` or `incast_ncast` object.
+#' @param x An `insight.cast_data` or `insight.cast_ncast` object.
 #'
 #' @param eval_start_date Date (or character string coercible to a date) giving
 #'   the first forecast origin to evaluate. Must fall within the data window.
@@ -17,7 +17,7 @@
 #'
 #' @param h Forecast horizon in reporting intervals. Defaults to `4`.
 #'
-#' @param models Named list of \code{fable} or joint incast model
+#' @param models Named list of \code{fable} or joint insight.cast model
 #'   specifications, such as \code{\link{HHH4}}. Defaults to
 #'   \code{\link{default_models}}.
 #'
@@ -35,7 +35,7 @@
 #'   This argument is exclusive with \code{eval_start_date} and
 #'   \code{n_origins}; \code{step} is ignored.
 #'
-#' @return An \code{incast_cv} object containing:
+#' @return An \code{insight.cast_cv} object containing:
 #' \describe{
 #'   \item{forecasts}{Forecasts for each model, series, and cross-validation origin.}
 #'   \item{oracle}{Observed values used for scoring.}
@@ -74,7 +74,7 @@ get_cv <- function(
   origins = NULL
 ) {
   df <- extract_series(x)
-  meta <- incast_meta(x)
+  meta <- insight.cast_meta(x)
 
   explicit_origins <- !is.null(origins)
   if (sum(!vapply(
@@ -176,7 +176,7 @@ get_cv <- function(
         dplyr::arrange(dplyr::across(dplyr::all_of(meta$key)), wis)
     })
 
-    new_incast_cv(
+    new_insight.cast_cv(
       forecasts = hub$model_out_tbl,
       oracle = hub$oracle_output,
       score = score,

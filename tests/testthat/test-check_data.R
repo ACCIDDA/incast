@@ -1,7 +1,7 @@
 test_that("check_data validates a single-location frame", {
   x <- check_data(make_weekly_df(n = 3))
 
-  expect_s3_class(x, "incast_data")
+  expect_s3_class(x, "insight.cast_data")
   expect_equal(x$key, "location")
   expect_equal(x$target, "wk inc covid hosp")
   expect_equal(x$interval, 7L)
@@ -32,7 +32,7 @@ test_that("check_data validates the key argument", {
   )
 })
 
-test_that("check_data returns an incast_data unchanged", {
+test_that("check_data returns an insight.cast_data unchanged", {
   x <- check_data(make_weekly_df(n = 3))
 
   expect_identical(check_data(x), x)
@@ -135,7 +135,7 @@ test_that("check_data requires one row per series and date", {
   expect_error(check_data(df), "more than one row")
   expect_s3_class(
     check_data(df, key = c("location", "age_group")),
-    "incast_data"
+    "insight.cast_data"
   )
 })
 

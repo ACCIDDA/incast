@@ -1,4 +1,4 @@
-test_that("print.incast_data shows the shared grid", {
+test_that("print.insight.cast_data shows the shared grid", {
   x <- check_data(make_weekly_df(locations = c("NY", "CA"), n = 20))
   expect_snapshot(print(x))
 
@@ -6,7 +6,7 @@ test_that("print.incast_data shows the shared grid", {
   expect_snapshot(print(rev))
 })
 
-test_that("print.incast_ncast and a pooled forecast print consistently", {
+test_that("print.insight.cast_ncast and a pooled forecast print consistently", {
   ncast <- get_ncast(
     check_data(make_weekly_df(locations = c("NY", "CA"), n = 8, revisions = TRUE)),
     draws = 50
@@ -17,7 +17,7 @@ test_that("print.incast_ncast and a pooled forecast print consistently", {
   expect_snapshot(print(fcast))
 })
 
-test_that("print.incast_cv and print.incast_fcast print consistently", {
+test_that("print.insight.cast_cv and print.insight.cast_fcast print consistently", {
   x <- check_data(make_weekly_df(locations = c("NY", "CA"), n = 20))
   cv <- get_cv(
     x,
