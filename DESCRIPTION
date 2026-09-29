@@ -1,4 +1,4 @@
-Package: incast
+Package: insight.cast
 Title: Tools for Epidemic Forecasting
 Version: 0.0.1
 Date: 2026-07-30
@@ -56,6 +56,6 @@ VignetteBuilder: knitr
 Depends: 
     R (>= 4.1.0)
 LazyData: true
-URL: https://github.com/ACCIDDA/incast, https://accidda.github.io/incast/
+URL: https://github.com/ACCIDDA/insight.cast, https://accidda.github.io/insight.cast/
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
