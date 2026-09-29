@@ -2,17 +2,17 @@
 inst/doc
 /doc/
 /Meta/
-
 /.quarto/
 docs
 .DS_Store
-
 # R workspace and history
 .RData
 .Rhistory
 .Ruserdata
-
 **/*.quarto_ipynb
-
 # Resumable FluSight backtest cache
 data-raw/flusight-cache/
+Rproj
+*.Rproj
+*Rproj
+incast.Rproj
