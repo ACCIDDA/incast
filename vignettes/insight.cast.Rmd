@@ -160,7 +160,7 @@ autoplot(fcast)
 ### Adding custom models
 
 Pass any [`fable`](https://fable.tidyverts.org/) model through `models`.
-[`incast.odin`](https://github.com/ACCIDDA/incast.odin) adds transmission models
+[`insight.cast.odin`](https://github.com/ACCIDDA/insight.cast.odin) adds transmission models
 built with `odin2`. Combine custom specifications with `default_models()` to
 retain the defaults:
 
@@ -169,7 +169,7 @@ library(fable)
 library(fable.prophet)
 library(EpiEstim)
 library(projections)
-library(incast.odin)
+library(insight.cast.odin)
 
 # Illustrative inputs for the joint HHH4 models. Replace the connections with
 # ones appropriate to your application; rows are sources and columns recipients.

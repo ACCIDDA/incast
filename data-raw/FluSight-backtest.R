@@ -10,7 +10,7 @@ library(dplyr)
 library(fable)
 library(fable.prophet)
 library(igraph)
-library(incast.odin)
+library(insight.cast.odin)
 library(reticulate)
 library(surveillance)
 
