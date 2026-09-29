@@ -23,7 +23,7 @@ utils::globalVariables(c(
   "reference_date",
   "horizon",
   "output_type",
-  # fable_to_hub / autoplot.incast_fcast
+  # fable_to_hub / autoplot.insightcast_fcast
   "oracle_value",
   # package data transformations
   "target",

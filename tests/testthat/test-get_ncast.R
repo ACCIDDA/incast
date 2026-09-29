@@ -24,7 +24,7 @@ test_that("get_ncast corrects every series and returns one tidy summary", {
 
   result <- get_ncast(x, draws = 100)
 
-  expect_s3_class(result, "incast_ncast")
+  expect_s3_class(result, "insightcast_ncast")
   expect_equal(result$key, "location")
   expect_setequal(unique(result$data$location), c("NY", "CA"))
   expect_true(all(c("ncast_lower", "ncast_upper") %in% names(result$data)))
@@ -75,7 +75,7 @@ test_that("downward revisions are redistributed, not dropped", {
 
   result <- get_ncast(check_data(df), draws = 50)
 
-  expect_s3_class(result, "incast_ncast")
+  expect_s3_class(result, "insightcast_ncast")
 })
 
 test_that("get_ncast requires revision history", {
@@ -109,7 +109,7 @@ test_that("get_ncast rejects non-weekly data", {
   expect_error(get_ncast(x), "weekly data only")
 })
 
-test_that("autoplot.incast_ncast returns a faceted ggplot", {
+test_that("autoplot.insightcast_ncast returns a faceted ggplot", {
   x <- check_data(
     make_weekly_df(locations = c("NY", "CA"), n = 8, revisions = TRUE)
   )

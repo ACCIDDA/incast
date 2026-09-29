@@ -1,6 +1,6 @@
 # Packages the saved FluSight backtest and regenerates its score tables.
 #
-# This script does not refit any incast models. It reads data-raw/incast.csv,
+# This script does not refit any insight.cast models. It reads data-raw/insight.cast.csv,
 # saves it as a compressed package dataset, downloads the matching FluSight
 # forecasts and truth, and recomputes the summaries in vignettes/FluSight.Rmd.
 
@@ -64,7 +64,7 @@ truth <- read.csv(
   )
 
 flusight_forecasts <- read.csv(
-  file.path("data-raw", "incast.csv"),
+  file.path("data-raw", "insight.cast.csv"),
   colClasses = c(location = "character")
 ) |>
   as_tibble() |>
@@ -99,7 +99,7 @@ add_model_group <- function(x) {
         model_id == "FluSight-ensemble" ~ "FluSight ensemble",
         model_id == "FluSight-baseline" ~ "FluSight baseline",
         model_id %in% flusight_submissions ~ "FluSight model",
-        TRUE ~ "incast model"
+        TRUE ~ "insight.cast model"
       )
     )
 }

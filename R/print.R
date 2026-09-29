@@ -25,15 +25,15 @@ fmt_window <- function(from, to, interval) {
 }
 
 
-#' Print an \code{incast_data} object
+#' Print an \code{insightcast_data} object
 #'
-#' @param x An \code{incast_data} object.
+#' @param x An \code{insightcast_data} object.
 #' @param ... Ignored.
 #'
 #' @export
-print.incast_data <- function(x, ...) {
-  m <- incast_meta(x)
-  cat("<incast_data>\n")
+print.insightcast_data <- function(x, ...) {
+  m <- insightcast_meta(x)
+  cat("<insightcast_data>\n")
   cat_field("Target", m$target)
   cat_field("Series", fmt_series(x$data, m$key))
   cat_field("Window", fmt_window(m$window[["from"]], m$window[["to"]], m$interval))
@@ -44,15 +44,15 @@ print.incast_data <- function(x, ...) {
 }
 
 
-#' Print an \code{incast_ncast} object
+#' Print an \code{insightcast_ncast} object
 #'
-#' @param x An \code{incast_ncast} object.
+#' @param x An \code{insightcast_ncast} object.
 #' @param ... Ignored.
 #'
 #' @export
-print.incast_ncast <- function(x, ...) {
-  m <- incast_meta(x)
-  cat("<incast_ncast>\n")
+print.insightcast_ncast <- function(x, ...) {
+  m <- insightcast_meta(x)
+  cat("<insightcast_ncast>\n")
   cat_field("Target", m$target)
   cat_field("Series", fmt_series(x$data, m$key))
   cat_field("Window", fmt_window(m$window[["from"]], m$window[["to"]], m$interval))
@@ -64,15 +64,15 @@ print.incast_ncast <- function(x, ...) {
 }
 
 
-#' Print an \code{incast_cv} object
+#' Print an \code{insightcast_cv} object
 #'
-#' @param x An \code{incast_cv} object.
+#' @param x An \code{insightcast_cv} object.
 #' @param ... Ignored.
 #'
 #' @export
-print.incast_cv <- function(x, ...) {
-  m <- incast_meta(x)
-  cat("<incast_cv>\n")
+print.insightcast_cv <- function(x, ...) {
+  m <- insightcast_meta(x)
+  cat("<insightcast_cv>\n")
   cat_field("Target", m$target)
   cat_field("Series", fmt_series(x$data, m$key))
   cat_field(
@@ -88,16 +88,16 @@ print.incast_cv <- function(x, ...) {
 }
 
 
-#' Print an \code{incast_fcast} object
+#' Print an \code{insightcast_fcast} object
 #'
-#' @param x An \code{incast_fcast} object.
+#' @param x An \code{insightcast_fcast} object.
 #' @param ... Ignored.
 #'
 #' @export
-print.incast_fcast <- function(x, ...) {
-  m <- incast_meta(x)
+print.insightcast_fcast <- function(x, ...) {
+  m <- insightcast_meta(x)
   rng <- range(x$hub$model_out_tbl$target_end_date)
-  cat("<incast_fcast>\n")
+  cat("<insightcast_fcast>\n")
   cat_field("Target", m$target)
   cat_field("Series", fmt_series(x$hub$model_out_tbl, m$key))
   cat_field("Forecast", rng[1], " to ", rng[2], " (h = ", x$meta$h, ")")

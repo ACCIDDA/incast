@@ -86,4 +86,4 @@ Once the question and data are suitable:
 3. Compare models with `get_cv()`.
 4. Produce the forecast with `get_fcast()`.
 
-See `vignette("incast")` for a complete example.
+See `vignette("insight.cast")` for a complete example.

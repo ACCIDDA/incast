@@ -19,15 +19,15 @@ A data frame with 52,500 rows and 9 columns:
 }
 }
 \source{
-Generated with \code{incast} from CDC NHSN influenza hospital admission
+Generated with \code{insight.cast} from CDC NHSN influenza hospital admission
 data for the 2025--26 FluSight season.
 }
 \usage{
 flusight_forecasts
 }
 \description{
-Precomputed forecasts from every successfully fitted \code{incast} candidate.
+Precomputed forecasts from every successfully fitted \code{insight.cast} candidate.
 For each state and forecast round, the candidate selected by real-time
-cross-validation is duplicated with \code{model_id = "incast"}.
+cross-validation is duplicated with \code{model_id = "insight.cast"}.
 }
 \keyword{datasets}

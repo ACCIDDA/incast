@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
   fig.height = 5
 )
 
-library(incast)
+library(insight.cast)
 flu <- readRDS("hhh4_data.rds")
 cv <- readRDS("hhh4_cv.rds")
 fcast <- readRDS("hhh4_fcast.rds")
@@ -25,7 +25,7 @@ fcast <- readRDS("hhh4_fcast.rds")
 
 ## Overview
 
-Most `incast` models fit each series separately. HHH4 fits them jointly, so
+Most `insight.cast` models fit each series separately. HHH4 fits them jointly, so
 recent counts in one series can help predict another.
 
 A **unit** is one key value, such as a state when `key = "location"`. HHH4
@@ -76,7 +76,7 @@ the saved plots are rebuilt with the article.
 
 ```{r packages-data, eval = FALSE}
 # install.packages("surveillance") # Run once if needed.
-library(incast)
+library(insight.cast)
 library(surveillance)
 
 states <- c("ct", "nj", "ny", "pa")
@@ -186,7 +186,7 @@ hhh4_models <- list(
 
 ## Compare and forecast
 
-Compare the HHH4 specifications with the default `incast` models using the same
+Compare the HHH4 specifications with the default `insight.cast` models using the same
 forecast origins:
 
 ```{r evaluate, eval = FALSE}

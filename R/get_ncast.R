@@ -11,7 +11,7 @@
 #'
 #' @author Cyril Geismar
 #'
-#' @param x An `incast_data` object with revision history.
+#' @param x An `insightcast_data` object with revision history.
 #' @param max_delay Number of recent weeks to nowcast. Defaults to `2`.
 #' @param draws Number of posterior samples. Defaults to `1000`.
 #' @param prop_delay Proportion of reference times used to estimate delays.
@@ -19,7 +19,7 @@
 #' @param scale_factor Multiplier applied to `max_delay` to set the estimation
 #'   window. Defaults to `3`.
 #'
-#' @return An \code{incast_ncast} object with the shared backbone
+#' @return An \code{insightcast_ncast} object with the shared backbone
 #'   (\code{key}, \code{target}, \code{window}, \code{interval},
 #'   \code{history}) plus:
 #'   \describe{
@@ -121,7 +121,7 @@ get_ncast <- function(
     dplyr::select(-reference_date, -ncast_median, -corrected) |>
     dplyr::arrange(dplyr::across(dplyr::all_of(c(x$key, "target_end_date"))))
 
-  new_incast_ncast(
+  new_insightcast_ncast(
     data = data,
     key = x$key,
     target = x$target,

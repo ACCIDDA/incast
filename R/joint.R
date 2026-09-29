@@ -1,6 +1,6 @@
 #' Internal joint models
 #'
-#' @name incast-joint
+#' @name insight.cast-joint
 #' @keywords internal
 #' @noRd
 NULL
@@ -10,13 +10,13 @@ NULL
 #'
 #' @param model A model class from \code{\link[fabletools]{new_model_class}}.
 #' @param ... Arguments passed to the model's \code{train} function.
-#' @return An \code{incast_joint} object.
+#' @return An \code{insightcast_joint} object.
 #' @keywords internal
 #' @noRd
 new_joint_model <- function(model, ...) {
   structure(
     list(model = model, args = list(...)),
-    class = "incast_joint"
+    class = "insightcast_joint"
   )
 }
 
@@ -24,9 +24,9 @@ new_joint_model <- function(model, ...) {
 #' Fit and forecast joint models
 #'
 #' @param ts A keyed model \code{tsibble} from \code{as_model_ts}.
-#' @param models A named list of \code{incast_joint} specifications.
+#' @param models A named list of \code{insightcast_joint} specifications.
 #' @param h Forecast horizon in reporting intervals.
-#' @return Forecasts in the standard long format used by \code{incast}.
+#' @return Forecasts in the standard long format used by \code{insight.cast}.
 #'
 #' @keywords internal
 #' @noRd

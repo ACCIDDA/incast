@@ -10,7 +10,7 @@
 #' @param revisions Fetch revision history for [get_ncast()]. Defaults to
 #'   `FALSE`.
 #'
-#' @return An \code{incast_data} object (see \code{\link{check_data}}).
+#' @return An \code{insightcast_data} object (see \code{\link{check_data}}).
 #'
 #' @export
 #' @examples

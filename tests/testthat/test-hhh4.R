@@ -1,7 +1,7 @@
 # HHH4 depends on the Suggests-only surveillance package.
 skip_if_no_hhh4 <- function() skip_if_not_installed("surveillance")
 
-# Weekly counts simulated from a genuine endemic-epidemic process, in incast's
+# Weekly counts simulated from a genuine endemic-epidemic process, in insight.cast's
 # long input shape. `make_weekly_df()` is a noiseless sinusoid, which drives the
 # negative-binomial overdispersion to zero and prevents hhh4 converging; these
 # series carry both real overdispersion and real coupling between locations.
@@ -97,7 +97,7 @@ test_that("HHH4() returns a joint spec without touching the data", {
   skip_if_no_hhh4()
   spec <- hhh4_spec()
 
-  expect_s3_class(spec, "incast_joint")
+  expect_s3_class(spec, "insightcast_joint")
   expect_named(
     spec$args,
     c("control", "neighbourhood", "population", "n_sim")
@@ -109,7 +109,7 @@ test_that("HHH4() rejects a user-supplied control$subset", {
   skip_if_no_hhh4()
   expect_error(
     HHH4(observation, control = list(ar = list(f = ~1), subset = 2:10)),
-    "managed by incast"
+    "managed by insight.cast"
   )
 })
 
@@ -132,7 +132,7 @@ test_that("HHH4 fits jointly and forecasts through get_cv()", {
     check_data() |>
     get_cv(h = 2, n_origins = 3, models = list(HHH4 = hhh4_spec(n_sim = 100L)))
 
-  expect_s3_class(cv, "incast_cv")
+  expect_s3_class(cv, "insightcast_cv")
   expect_setequal(cv$score$model_id, "HHH4")
   expect_setequal(cv$score$location, c("CA", "NY"))
   expect_true(all(is.finite(cv$score$wis)))
@@ -179,7 +179,7 @@ test_that("joint and fable models combine in one model list", {
   expect_equal(unname(n_rows[["HHH4"]]), unname(n_rows[["NAIVE"]]))
 
   fc <- get_fcast(cv, top_n = 2)
-  expect_s3_class(fc, "incast_fcast")
+  expect_s3_class(fc, "insightcast_fcast")
   expect_true("ENSEMBLE" %in% fc$hub$model_out_tbl$model_id)
   expect_false(anyNA(fc$hub$model_out_tbl$value))
 })
@@ -187,7 +187,7 @@ test_that("joint and fable models combine in one model list", {
 
 test_that("neighbour component propagates incidence between series", {
   skip_if_no_hhh4()
-  ts <- incast:::as_model_ts(hhh4_df(), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(), "location")
 
   fit_one <- function(ne) {
     spec <- hhh4_spec(ne = ne, n_sim = 4000L)
@@ -215,7 +215,7 @@ test_that("neighbour component propagates incidence between series", {
 test_that("asymmetric per-series inputs are matched by name, not position", {
   skip_if_no_hhh4()
   locations <- c("A", "M", "Z")
-  ts <- incast:::as_model_ts(hhh4_df(locations), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(locations), "location")
   adjacency <- matrix(
     c(0, 1, 0, 0, 0, 1, 1, 0, 0),
     3,
@@ -239,7 +239,7 @@ test_that("asymmetric per-series inputs are matched by name, not position", {
       n_sim = 50L
     )
     set.seed(1)
-    incast:::forecast_joint(ts, list(HHH4 = spec), h = 2)
+    insight.cast:::forecast_joint(ts, list(HHH4 = spec), h = 2)
   }
 
   a <- run(locations)
@@ -251,7 +251,7 @@ test_that("asymmetric per-series inputs are matched by name, not position", {
 test_that("explicit transmission weights are aligned by both dimensions", {
   skip_if_no_hhh4()
   locations <- c("Z", "A", "M")
-  ts <- incast:::as_model_ts(hhh4_df(locations), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(locations), "location")
   neighbourhood <- hhh4_W(locations)
   weights <- matrix(
     c(0, 0.11, 0.12, 0.21, 0, 0.23, 0.31, 0.32, 0),
@@ -300,7 +300,7 @@ test_that("all nested unit-indexed control inputs are aligned", {
     dimnames = list(NULL, supplied)
   )
 
-  control <- incast:::prepare_hhh4_control(
+  control <- insight.cast:::prepare_hhh4_control(
     list(
       ne = list(weights = weights, scale = c(Z = 3, A = 1, M = 2)),
       family = family,
@@ -323,11 +323,11 @@ test_that("misaligned per-series inputs are rejected with a clear message", {
   skip_if_no_hhh4()
 
   expect_error(
-    incast:::align_units(c(CA = 0.5, XX = 0.5), c("CA", "NY"), "population"),
+    insight.cast:::align_units(c(CA = 0.5, XX = 0.5), c("CA", "NY"), "population"),
     "missing series: NY"
   )
   expect_error(
-    incast:::align_units(
+    insight.cast:::align_units(
       unname(hhh4_W()), c("CA", "NY"), "neighbourhood",
       square = TRUE
     ),
@@ -336,29 +336,29 @@ test_that("misaligned per-series inputs are rejected with a clear message", {
   bad_rows <- hhh4_W()
   rownames(bad_rows) <- NULL
   expect_error(
-    incast:::align_units(
+    insight.cast:::align_units(
       bad_rows, c("CA", "NY"), "neighbourhood",
       square = TRUE
     ),
     "rows.*must be named"
   )
   expect_equal(
-    incast:::align_units(c(NY = 2, CA = 1), c("CA", "NY"), "population"),
+    insight.cast:::align_units(c(NY = 2, CA = 1), c("CA", "NY"), "population"),
     c(CA = 1, NY = 2)
   )
-  expect_null(incast:::align_units(NULL, c("CA", "NY"), "population"))
+  expect_null(insight.cast:::align_units(NULL, c("CA", "NY"), "population"))
 })
 
 
 test_that("a joint model that fails to fit stops the run", {
   skip_if_no_hhh4()
-  ts <- incast:::as_model_ts(hhh4_df(), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(), "location")
 
   spec <- hhh4_spec()
   spec$args$population <- c(CA = 0.5, XX = 0.5)
 
   expect_error(
-    suppressWarnings(incast:::forecast_joint(ts, list(HHH4 = spec), h = 2)),
+    suppressWarnings(insight.cast:::forecast_joint(ts, list(HHH4 = spec), h = 2)),
     "failed to fit"
   )
 })
@@ -368,12 +368,12 @@ test_that("fractional counts are rounded, not refused", {
   skip_if_no_hhh4()
   df <- hhh4_df()
   df$observation <- df$observation + 0.65
-  ts <- incast:::as_model_ts(df, "location")
+  ts <- insight.cast:::as_model_ts(df, "location")
 
   # Nowcast estimates are fractional, so this must fit quietly rather than
   # error or emit a warning per observation per iteration.
   expect_no_warning(
-    fc <- incast:::forecast_joint(ts, list(HHH4 = hhh4_spec(n_sim = 50L)), h = 2)
+    fc <- insight.cast:::forecast_joint(ts, list(HHH4 = hhh4_spec(n_sim = 50L)), h = 2)
   )
   expect_equal(nrow(fc), 4L)
   expect_false(anyNA(fc$.mean))
@@ -444,8 +444,8 @@ test_that("control$data covariates are sliced for CV and include future values",
   short <- spec
   short$args$control$data$holiday <- holiday[seq_len(n)]
   expect_error(
-    suppressWarnings(incast:::forecast_joint(
-      incast:::as_model_ts(data, "location"), list(HHH4 = short),
+    suppressWarnings(insight.cast:::forecast_joint(
+      insight.cast:::as_model_ts(data, "location"), list(HHH4 = short),
       h = horizon
     )),
     "training history plus forecast horizon"
@@ -470,7 +470,7 @@ test_that("HHH4 forecasts from nowcast output, whose values are fractional", {
   )
   fc <- get_fcast(cv, top_n = 1)
 
-  expect_s3_class(fc, "incast_fcast")
+  expect_s3_class(fc, "insightcast_fcast")
   expect_true(fc$meta$nowcast)
   expect_false(anyNA(fc$hub$model_out_tbl$value))
 })
@@ -479,10 +479,10 @@ test_that("HHH4 forecasts from nowcast output, whose values are fractional", {
 test_that("joint models require a single key column", {
   skip_if_no_hhh4()
   df <- make_weekly_df(locations = c("CA", "NY"), age_groups = c("0-4", "5+"))
-  ts <- incast:::as_model_ts(df, c("location", "age_group"))
+  ts <- insight.cast:::as_model_ts(df, c("location", "age_group"))
 
   expect_error(
-    incast:::forecast_joint(ts, list(HHH4 = hhh4_spec()), h = 2),
+    insight.cast:::forecast_joint(ts, list(HHH4 = hhh4_spec()), h = 2),
     "single key column"
   )
 })
@@ -490,7 +490,7 @@ test_that("joint models require a single key column", {
 
 test_that("lagged epidemic components fit and forecast", {
   skip_if_no_hhh4()
-  ts <- incast:::as_model_ts(hhh4_df(), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(), "location")
 
   # lag > 1 needs `subset` to skip more leading periods and `y.start` to carry
   # one row per lag; both were hardcoded to lag 1 at first.
@@ -506,7 +506,7 @@ test_that("lagged epidemic components fit and forecast", {
     n_sim = 50L
   )
 
-  expect_no_warning(fc <- incast:::forecast_joint(ts, list(HHH4 = spec), h = 3))
+  expect_no_warning(fc <- insight.cast:::forecast_joint(ts, list(HHH4 = spec), h = 3))
   expect_equal(nrow(fc), 6L)
   expect_false(anyNA(fc$.mean))
 })
@@ -514,7 +514,7 @@ test_that("lagged epidemic components fit and forecast", {
 
 test_that("fitted values, residuals, and augment retain every response", {
   skip_if_no_hhh4()
-  ts <- incast:::as_model_ts(hhh4_df(n = 80), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(n = 80), "location")
   mable <- hhh4_mable(ts, hhh4_spec(n_sim = 20L))
   model <- mable$M[[1]]$fit
 
@@ -529,10 +529,10 @@ test_that("fitted values, residuals, and augment retain every response", {
 test_that("too little history for the requested lag is refused", {
   skip_if_no_hhh4()
   spec <- HHH4(observation, control = list(ar = list(f = ~1, lag = 5)))
-  ts <- incast:::as_model_ts(hhh4_df(n = 6), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(n = 6), "location")
 
   expect_error(
-    suppressWarnings(incast:::forecast_joint(ts, list(HHH4 = spec), h = 2)),
+    suppressWarnings(insight.cast:::forecast_joint(ts, list(HHH4 = spec), h = 2)),
     "failed to fit"
   )
 })
@@ -540,7 +540,7 @@ test_that("too little history for the requested lag is refused", {
 
 test_that("a fitted joint model cannot exceed its prepared horizon", {
   skip_if_no_hhh4()
-  ts <- incast:::as_model_ts(hhh4_df(), "location")
+  ts <- insight.cast:::as_model_ts(hhh4_df(), "location")
   model <- fit_hhh4(ts, hhh4_spec(n_sim = 20L), horizon = 2L)
   expect_error(
     fabletools::forecast(model, new_data = data.frame(x = 1:3)),

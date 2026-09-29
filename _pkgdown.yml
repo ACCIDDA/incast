@@ -1,4 +1,4 @@
-url: https://accidda.github.io/incast/
+url: https://accidda.github.io/insight.cast/
 template:
   bootstrap: 5
   bslib:
@@ -8,7 +8,7 @@ template:
     height: 250px
 repo:
   url:
-    home: https://github.com/ACCIDDA/incast
-    issue: https://github.com/ACCIDDA/incast/issues
+    home: https://github.com/ACCIDDA/insight.cast
+    issue: https://github.com/ACCIDDA/insight.cast/issues
     user: https://github.com/ACCIDDA
-    source: https://github.com/ACCIDDA/incast/blob/main/
+    source: https://github.com/ACCIDDA/insight.cast/blob/main/

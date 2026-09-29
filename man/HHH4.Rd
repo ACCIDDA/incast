@@ -27,7 +27,7 @@ simulated forecasts for \code{\link[=get_cv]{get_cv()}} and \code{\link[=get_fca
 }
 \details{
 Model components and \code{control} options are documented in
-\code{\link[surveillance:hhh4]{surveillance::hhh4()}}. \code{incast} manages \code{control$subset}, so do not supply
+\code{\link[surveillance:hhh4]{surveillance::hhh4()}}. \code{insight.cast} manages \code{control$subset}, so do not supply
 it. Data must have one series key, and all unit-indexed inputs must be named
 with its values. Fractional observations are rounded to counts before
 fitting.
