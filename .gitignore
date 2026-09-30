@@ -12,7 +12,4 @@ docs
 **/*.quarto_ipynb
 # Resumable FluSight backtest cache
 data-raw/flusight-cache/
-Rproj
 *.Rproj
-*Rproj
-insight.cast.Rproj
