@@ -49,7 +49,7 @@ Suggests:
     reticulate,
     testthat (>= 3.0.0)
 Remotes:
-    ACCIDDA/incast.odin,
+    ACCIDDA/insight.cast.odin,
     hubverse-org/hubData,
     hubverse-org/hubEvals
 VignetteBuilder: knitr

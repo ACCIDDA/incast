@@ -1,4 +1,4 @@
-^(incast|insight\.cast)\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
