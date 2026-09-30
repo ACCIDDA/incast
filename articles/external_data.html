@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Preparing External Data • incast</title>
+<title>Preparing External Data • insight.cast</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -24,7 +24,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">incast</a>
+    <a class="navbar-brand me-2" href="../index.html">insight.cast</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
@@ -35,16 +35,16 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/incast.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating insight.cast against FluSight</a></li>
     <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
+    <li><a class="dropdown-item" href="../articles/insight.cast.html">insight.cast</a></li>
   </ul>
 </li>
       </ul>
@@ -52,7 +52,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ACCIDDA/incast" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ACCIDDA/insight.cast" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -68,7 +68,7 @@
       <img src="../logo.png" class="logo" alt=""><h1>Preparing External Data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ACCIDDA/incast/blob/main/vignettes/external_data.Rmd" class="external-link"><code>vignettes/external_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ACCIDDA/insight.cast/blob/main/vignettes/external_data.Rmd" class="external-link"><code>vignettes/external_data.Rmd</code></a></small>
       <div class="d-none name"><code>external_data.Rmd</code></div>
     </div>
 
@@ -134,7 +134,7 @@ columns with <code>key</code>, for example
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/incast" class="external-link">incast</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/insight.cast" class="external-link">insight.cast</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   target_end_date observation location             target</span></span>
 <span><span class="co">## 1      2024-01-01          13       NY inc hosp influenza</span></span>
@@ -146,7 +146,7 @@ columns with <code>key</code>, for example
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">checked</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_data.html">check_data</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="va">checked</span></span></code></pre></div>
-<pre><code><span><span class="co">## &lt;incast_data&gt;</span></span>
+<pre><code><span><span class="co">## &lt;insightcast_data&gt;</span></span>
 <span><span class="co">## Target:   inc hosp influenza</span></span>
 <span><span class="co">## Series:   1 (location)</span></span>
 <span><span class="co">## Window:   2024-01-01 to 2024-12-23 (7-day interval)</span></span></code></pre>

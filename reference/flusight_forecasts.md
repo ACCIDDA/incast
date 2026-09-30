@@ -1,8 +1,9 @@
 # Forecasts from the 2025–26 FluSight backtest
 
-Precomputed forecasts from every successfully fitted `incast` candidate.
-For each state and forecast round, the candidate selected by real-time
-cross-validation is duplicated with `model_id = "incast"`.
+Precomputed forecasts from every successfully fitted `insight.cast`
+candidate. For each state and forecast round, the candidate selected by
+real-time cross-validation is duplicated with
+`model_id = "insight.cast"`.
 
 ## Usage
 
@@ -52,5 +53,5 @@ A data frame with 52,500 rows and 9 columns:
 
 ## Source
 
-Generated with `incast` from CDC NHSN influenza hospital admission data
-for the 2025–26 FluSight season.
+Generated with `insight.cast` from CDC NHSN influenza hospital admission
+data for the 2025–26 FluSight season.

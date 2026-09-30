@@ -2,8 +2,8 @@
 
 ## Overview
 
-Most `incast` models fit each series separately. HHH4 fits them jointly,
-so recent counts in one series can help predict another.
+Most `insight.cast` models fit each series separately. HHH4 fits them
+jointly, so recent counts in one series can help predict another.
 
 A **unit** is one key value, such as a state when `key = "location"`.
 HHH4 requires one key column and a meaningful set of connected units.
@@ -55,7 +55,7 @@ article.
 ``` r
 
 # install.packages("surveillance") # Run once if needed.
-library(incast)
+library(insight.cast)
 library(surveillance)
 
 states <- c("ct", "nj", "ny", "pa")
@@ -65,7 +65,7 @@ flu <- get_data(pathogen = "flu", geo_value = states)
 ``` r
 
 flu
-#> <incast_data>
+#> <insightcast_data>
 #> Target:   wk inc flu hosp
 #> Series:   4 (location)
 #> Window:   2020-08-08 to 2026-08-08 (7-day interval)
@@ -179,8 +179,8 @@ hhh4_models <- list(
 
 ## Compare and forecast
 
-Compare the HHH4 specifications with the default `incast` models using
-the same forecast origins:
+Compare the HHH4 specifications with the default `insight.cast` models
+using the same forecast origins:
 
 ``` r
 
@@ -198,7 +198,7 @@ cv <- get_cv(
 ``` r
 
 cv
-#> <incast_cv>
+#> <insightcast_cv>
 #> Target:   wk inc flu hosp
 #> Series:   4 (location)
 #> Window:   2020-08-08 to 2026-08-08 (7-day interval)
@@ -212,7 +212,7 @@ state.](hhh4_files/figure-html/show-cv-1.png)
 Cross-validation performance by model and state.
 
 Passing `hhh4_models` to
-[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
+[`get_fcast()`](https://accidda.github.io/insight.cast/reference/get_fcast.md)
 refits all four specifications. The default plot shows their ensemble;
 set `model` to inspect one specification.
 
@@ -225,7 +225,7 @@ fcast <- get_fcast(cv, models = hhh4_models)
 ``` r
 
 fcast
-#> <incast_fcast>
+#> <insightcast_fcast>
 #> Target:   wk inc flu hosp
 #> Series:   4 (location)
 #> Forecast: 2026-08-15 to 2026-09-05 (h = 4)

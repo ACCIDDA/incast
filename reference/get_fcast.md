@@ -20,28 +20,29 @@ get_fcast(
 
 - x:
 
-  An `incast_*` object.
+  An `insightcast_*` object.
 
 - models:
 
-  Named list of ordinary `fable` or joint incast model specifications,
-  such as [`HHH4`](https://accidda.github.io/incast/reference/HHH4.md).
+  Named list of ordinary `fable` or joint insight.cast model
+  specifications, such as
+  [`HHH4`](https://accidda.github.io/insight.cast/reference/HHH4.md).
   Defaults to
-  [`default_models`](https://accidda.github.io/incast/reference/default_models.md).
-  When `x` is an `incast_cv` object, leave unset to forecast its models
-  and use the top-ranked models for the ensemble, or provide a custom
-  set of models to forecast and combine.
+  [`default_models`](https://accidda.github.io/insight.cast/reference/default_models.md).
+  When `x` is an `insightcast_cv` object, leave unset to forecast its
+  models and use the top-ranked models for the ensemble, or provide a
+  custom set of models to forecast and combine.
 
 - h:
 
   Forecast horizon in reporting intervals. Defaults to `4`, or the
-  cross-validation horizon when `x` is an `incast_cv` object.
+  cross-validation horizon when `x` is an `insightcast_cv` object.
 
 - top_n:
 
   Integer giving the number of top-ranked models to combine into the
-  ensemble for each series. Used only when `x` is an `incast_cv` object
-  and `models` is not provided. Defaults to `3`.
+  ensemble for each series. Used only when `x` is an `insightcast_cv`
+  object and `models` is not provided. Defaults to `3`.
 
 - ensemble:
 
@@ -59,7 +60,7 @@ get_fcast(
 
 ## Value
 
-An `incast_fcast` object containing:
+An `insightcast_fcast` object containing:
 
 - hub:
 
@@ -77,14 +78,14 @@ An `incast_fcast` object containing:
 
 ## Details
 
-When provided with an `incast_cv` object, the function forecasts every
-successfully evaluated model and uses the cross-validation results to
-select the best-performing models for each series for the equal-weight
-ensemble. For `incast_data` or `incast_ncast` objects, all models in
-`models` are fitted, forecast, and combined.
+When provided with an `insightcast_cv` object, the function forecasts
+every successfully evaluated model and uses the cross-validation results
+to select the best-performing models for each series for the
+equal-weight ensemble. For `insightcast_data` or `insightcast_ncast`
+objects, all models in `models` are fitted, forecast, and combined.
 
 If the input contains nowcast uncertainty from
-[`get_ncast`](https://accidda.github.io/incast/reference/get_ncast.md),
+[`get_ncast`](https://accidda.github.io/insight.cast/reference/get_ncast.md),
 this uncertainty is incorporated into the forecast intervals.
 
 ## Author

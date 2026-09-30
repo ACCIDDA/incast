@@ -57,23 +57,23 @@ ebola <- ebola |>
   mutate(target = "insp_sitrep__cumulative_confirmed_cases__daily")
 ```
 
-## `incast` workflow
+## `insight.cast` workflow
 
 ### Validate the data
 
-[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
-standardises the columns and returns an `incast_data` object.
+[`check_data()`](https://accidda.github.io/insight.cast/reference/check_data.md)
+standardises the columns and returns an `insightcast_data` object.
 
 ``` r
 
-library(incast)
+library(insight.cast)
 data <- ebola |> check_data()
 ```
 
 ``` r
 
 data
-#> <incast_data>
+#> <insightcast_data>
 #> Target:   insp_sitrep__cumulative_confirmed_cases__daily
 #> Series:   6 (location)
 #> Window:   2026-05-15 to 2026-07-26 (1-day interval)
@@ -86,7 +86,7 @@ location.](ebola_2026_files/figure-html/show-data-1.png)
 Daily cumulative confirmed cases by location.
 
 Revision history is unavailable, so the workflow skips
-[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md).
+[`get_ncast()`](https://accidda.github.io/insight.cast/reference/get_ncast.md).
 
 ### Cross-validation
 
@@ -129,7 +129,7 @@ cv <- data |>
 ``` r
 
 cv
-#> <incast_cv>
+#> <insightcast_cv>
 #> Target:   insp_sitrep__cumulative_confirmed_cases__daily
 #> Series:   6 (location)
 #> Window:   2026-05-15 to 2026-07-26 (1-day interval)
@@ -171,7 +171,7 @@ cv$score |>
 ### Forecasting
 
 By default,
-[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md)
+[`get_fcast()`](https://accidda.github.io/insight.cast/reference/get_fcast.md)
 combines the three best models for each location.
 
 ``` r
@@ -182,7 +182,7 @@ fcast <- cv |> get_fcast()
 ``` r
 
 fcast
-#> <incast_fcast>
+#> <insightcast_fcast>
 #> Target:   insp_sitrep__cumulative_confirmed_cases__daily
 #> Series:   6 (location)
 #> Forecast: 2026-07-27 to 2026-08-02 (h = 7)

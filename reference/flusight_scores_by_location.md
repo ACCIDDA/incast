@@ -48,7 +48,7 @@ A data frame with one row per model and location and these columns:
 - model_group:
 
   One of `"FluSight ensemble"`, `"FluSight baseline"`,
-  `"FluSight model"`, or `"incast model"`.
+  `"FluSight model"`, or `"insight.cast model"`.
 
 - state:
 
@@ -66,4 +66,4 @@ Forecasts and target data from the [FluSight Forecast Hub, version
 
 ## See also
 
-[flusight_scores](https://accidda.github.io/incast/reference/flusight_scores.md)
+[flusight_scores](https://accidda.github.io/insight.cast/reference/flusight_scores.md)

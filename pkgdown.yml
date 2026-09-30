@@ -7,8 +7,8 @@ articles:
   FluSight: FluSight.html
   forecast_planning: forecast_planning.html
   hhh4: hhh4.html
-  incast: incast.html
-last_built: 2026-09-29T19:01Z
+  insight.cast: insight.cast.html
+last_built: 2026-09-30T20:32Z
 urls:
-  reference: https://accidda.github.io/incast/reference
-  article: https://accidda.github.io/incast/articles
+  reference: https://accidda.github.io/insight.cast/reference
+  article: https://accidda.github.io/insight.cast/articles

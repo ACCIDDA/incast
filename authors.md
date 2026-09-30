@@ -22,15 +22,15 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/ACCIDDA/incast/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/ACCIDDA/insight.cast/blob/main/DESCRIPTION)
 
-Geismar C (2026). *incast: Tools for Epidemic Forecasting*. R package
-version 0.0.1, <https://github.com/ACCIDDA/incast>.
+Geismar C (2026). *insight.cast: Tools for Epidemic Forecasting*. R
+package version 0.0.1, <https://github.com/ACCIDDA/insight.cast>.
 
     @Manual{,
-      title = {incast: Tools for Epidemic Forecasting},
+      title = {insight.cast: Tools for Epidemic Forecasting},
       author = {Cyril Geismar},
       year = {2026},
       note = {R package version 0.0.1},
-      url = {https://github.com/ACCIDDA/incast},
+      url = {https://github.com/ACCIDDA/insight.cast},
     }

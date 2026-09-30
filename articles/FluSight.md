@@ -1,10 +1,10 @@
-# Evaluating incast against FluSight
+# Evaluating insight.cast against FluSight
 
 ## Overview
 
 This vignette replays the 2025–26 US [FluSight
 season](https://github.com/cdcepi/FluSight-forecast-hub/tree/v1.2.0) as
-if `incast` had submitted each week.
+if `insight.cast` had submitted each week.
 
 The evaluation covers:
 
@@ -40,13 +40,13 @@ Save a Hubverse-format CSV for [myRespiLens](https://myrespilens.com):
 
 ``` r
 
-write.csv(flusight_forecasts, "incast.csv", row.names = FALSE)
+write.csv(flusight_forecasts, "insight.cast.csv", row.names = FALSE)
 ```
 
 The data contain every candidate that fitted successfully. For each
 state and round, the three candidates with the lowest cross-validation
 weighted interval score (WIS) are combined with equal weights and stored
-as `model_id = "incast"`.
+as `model_id = "insight.cast"`.
 
 ## Backtest design
 
@@ -91,7 +91,7 @@ For each round:
 4.  Select the three lowest-WIS candidates separately for each state.
 5.  Refit every candidate to the current data and combine the selected
     three using an equal-weight linear pool. Save this ensemble as
-    `incast`.
+    `insight.cast`.
 
 The candidates include the four defaults, plus ARIMA, HHH4, Prophet,
 neural network, mechanistic and foundation models:
@@ -101,7 +101,7 @@ neural network, mechanistic and foundation models:
 library(fable)
 library(fable.prophet)
 library(igraph)
-library(incast.odin)
+library(insight.cast.odin)
 library(reticulate)
 library(surveillance)
 
@@ -222,7 +222,7 @@ fcast_round <- function(ref_date) {
 
   get_fcast(cv, h = forecast_steps, top_n = 3)$hub$model_out_tbl |>
     transmute(
-      model_id = if_else(model_id == "ENSEMBLE", "incast", model_id),
+      model_id = if_else(model_id == "ENSEMBLE", "insight.cast", model_id),
       reference_date = ref_date,
       target,
       horizon = as.integer(target_end_date - ref_date) %/% 7L,
@@ -250,7 +250,7 @@ rounds <- lapply(reference_dates, function(ref_date) {
 flusight_forecasts <- bind_rows(rounds)
 write.csv(
   flusight_forecasts,
-  file.path("data-raw", "incast.csv"),
+  file.path("data-raw", "insight.cast.csv"),
   row.names = FALSE
 )
 ```
@@ -325,9 +325,9 @@ flusight_scores_by_location |>
 ## Recomputing the saved results
 
 Run `data-raw/FluSight-backtest.R` to refit the backtest and write
-`data-raw/incast.csv`. The script caches each round’s cross-validation
-object so future changes to `top_n` are faster. It then packages the
-forecasts and recomputes the score tables automatically.
+`data-raw/insight.cast.csv`. The script caches each round’s
+cross-validation object so future changes to `top_n` are faster. It then
+packages the forecasts and recomputes the score tables automatically.
 
 The model-fitting chunks use `eval = FALSE`. Run them only to regenerate
 the backtest.

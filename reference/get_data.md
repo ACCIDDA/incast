@@ -24,13 +24,13 @@ get_data(pathogen, geo_value, revisions = FALSE)
 - revisions:
 
   Fetch revision history for
-  [`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md).
+  [`get_ncast()`](https://accidda.github.io/insight.cast/reference/get_ncast.md).
   Defaults to `FALSE`.
 
 ## Value
 
-An `incast_data` object (see
-[`check_data`](https://accidda.github.io/incast/reference/check_data.md)).
+An `insightcast_data` object (see
+[`check_data`](https://accidda.github.io/insight.cast/reference/check_data.md)).
 
 ## Author
 

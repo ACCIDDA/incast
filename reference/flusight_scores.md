@@ -1,6 +1,6 @@
 # Scores from the 2025–26 FluSight backtest
 
-Score summaries comparing `incast` with official FluSight team
+Score summaries comparing `insight.cast` with official FluSight team
 submissions. They let the vignette run without refitting models or
 downloading Hub data.
 
@@ -47,7 +47,7 @@ columns:
 - model_group:
 
   One of `"FluSight ensemble"`, `"FluSight baseline"`,
-  `"FluSight model"`, or `"incast model"`.
+  `"FluSight model"`, or `"insight.cast model"`.
 
 - display:
 
@@ -66,4 +66,4 @@ Forecasts and target data from the [FluSight Forecast Hub, version
 
 ## See also
 
-[flusight_scores_by_location](https://accidda.github.io/incast/reference/flusight_scores_by_location.md)
+[flusight_scores_by_location](https://accidda.github.io/insight.cast/reference/flusight_scores_by_location.md)

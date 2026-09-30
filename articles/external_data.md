@@ -3,7 +3,7 @@
 ## Required columns
 
 Pass external surveillance data to
-[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+[`check_data()`](https://accidda.github.io/insight.cast/reference/check_data.md)
 before nowcasting or forecasting.
 
 The data frame needs four columns:
@@ -33,7 +33,7 @@ for example `check_data(df, key = c("location", "age_group"))`.
 
 ``` r
 
-library(incast)
+library(insight.cast)
 head(df)
 ```
 
@@ -51,14 +51,15 @@ checked <- check_data(df)
 checked
 ```
 
-    ## <incast_data>
+    ## <insightcast_data>
     ## Target:   inc hosp influenza
     ## Series:   1 (location)
     ## Window:   2024-01-01 to 2024-12-23 (7-day interval)
 
 Use the result directly with
-[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md) or
-[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md).
+[`get_cv()`](https://accidda.github.io/insight.cast/reference/get_cv.md)
+or
+[`get_fcast()`](https://accidda.github.io/insight.cast/reference/get_fcast.md).
 Use
-[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+[`get_ncast()`](https://accidda.github.io/insight.cast/reference/get_ncast.md)
 first when revision history is available.

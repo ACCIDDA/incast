@@ -15,7 +15,7 @@ check_data(data, key = "location")
 
   A data frame with `target_end_date` (`Date`), `observation` (numeric),
   `target` (character) and the key columns. Add `as_of` (`Date`) for
-  revision history. An `incast_data` object is returned unchanged.
+  revision history. An `insightcast_data` object is returned unchanged.
 
 - key:
 
@@ -24,7 +24,7 @@ check_data(data, key = "location")
 
 ## Value
 
-An `incast_data` object containing:
+An `insightcast_data` object containing:
 
 - data:
 

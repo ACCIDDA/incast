@@ -2,7 +2,7 @@
 
 Weekly confirmed influenza hospital admissions for New York and
 California, with revision history, fetched from CDC NHSN through
-[`get_data()`](https://accidda.github.io/incast/reference/get_data.md).
+[`get_data()`](https://accidda.github.io/insight.cast/reference/get_data.md).
 
 ## Usage
 
@@ -43,14 +43,14 @@ CDC NHSN via
 
 The archive is pinned to 14 December 2025 so the latest weeks remain
 incomplete. Pass it to
-[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+[`check_data()`](https://accidda.github.io/insight.cast/reference/check_data.md)
 before use. Regenerate it with `data-raw/example_data.R`.
 
 ## Examples
 
 ``` r
 example_data |> check_data()
-#> <incast_data>
+#> <insightcast_data>
 #> Target:   wk inc flu hosp
 #> Series:   2 (location)
 #> Window:   2022-06-04 to 2025-12-13 (7-day interval)

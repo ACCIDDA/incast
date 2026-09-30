@@ -68,15 +68,15 @@ cadence of the forecast. Before modelling, check that:
 - recent observations are complete enough to use directly.
 
 Use
-[`get_data()`](https://accidda.github.io/incast/reference/get_data.md)
+[`get_data()`](https://accidda.github.io/insight.cast/reference/get_data.md)
 for supported US respiratory hospital data. For other sources, use
-[`check_data()`](https://accidda.github.io/incast/reference/check_data.md)
+[`check_data()`](https://accidda.github.io/insight.cast/reference/check_data.md)
 and follow
-[`vignette("external_data")`](https://accidda.github.io/incast/articles/external_data.md).
+[`vignette("external_data")`](https://accidda.github.io/insight.cast/articles/external_data.md).
 
 If recent observations are revised as reports arrive, retain the full
 revision history and use
-[`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+[`get_ncast()`](https://accidda.github.io/insight.cast/reference/get_ncast.md)
 before forecasting.
 
 ## Start the workflow
@@ -84,17 +84,17 @@ before forecasting.
 Once the question and data are suitable:
 
 1.  Fetch or validate the data with
-    [`get_data()`](https://accidda.github.io/incast/reference/get_data.md)
+    [`get_data()`](https://accidda.github.io/insight.cast/reference/get_data.md)
     or
-    [`check_data()`](https://accidda.github.io/incast/reference/check_data.md).
+    [`check_data()`](https://accidda.github.io/insight.cast/reference/check_data.md).
 2.  Correct reporting delays with
-    [`get_ncast()`](https://accidda.github.io/incast/reference/get_ncast.md)
+    [`get_ncast()`](https://accidda.github.io/insight.cast/reference/get_ncast.md)
     when revision history is available.
 3.  Compare models with
-    [`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md).
+    [`get_cv()`](https://accidda.github.io/insight.cast/reference/get_cv.md).
 4.  Produce the forecast with
-    [`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md).
+    [`get_fcast()`](https://accidda.github.io/insight.cast/reference/get_fcast.md).
 
 See
-[`vignette("incast")`](https://accidda.github.io/incast/articles/incast.md)
+[`vignette("insight.cast")`](https://accidda.github.io/insight.cast/articles/insight.cast.md)
 for a complete example.

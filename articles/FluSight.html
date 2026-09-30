@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Evaluating incast against FluSight • incast</title>
+<title>Evaluating insight.cast against FluSight • insight.cast</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -16,7 +16,7 @@
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<script src="../extra.js"></script><meta property="og:title" content="Evaluating incast against FluSight">
+<script src="../extra.js"></script><meta property="og:title" content="Evaluating insight.cast against FluSight">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -24,7 +24,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">incast</a>
+    <a class="navbar-brand me-2" href="../index.html">insight.cast</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
@@ -35,16 +35,16 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="../articles/incast.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="../articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="../articles/FluSight.html">Evaluating insight.cast against FluSight</a></li>
     <li><a class="dropdown-item" href="../articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="../articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
+    <li><a class="dropdown-item" href="../articles/insight.cast.html">insight.cast</a></li>
   </ul>
 </li>
       </ul>
@@ -52,7 +52,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ACCIDDA/incast" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ACCIDDA/insight.cast" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -65,10 +65,10 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Evaluating incast against FluSight</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Evaluating insight.cast against FluSight</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ACCIDDA/incast/blob/main/vignettes/FluSight.Rmd" class="external-link"><code>vignettes/FluSight.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ACCIDDA/insight.cast/blob/main/vignettes/FluSight.Rmd" class="external-link"><code>vignettes/FluSight.Rmd</code></a></small>
       <div class="d-none name"><code>FluSight.Rmd</code></div>
     </div>
 
@@ -78,7 +78,7 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>This vignette replays the 2025–26 US <a href="https://github.com/cdcepi/FluSight-forecast-hub/tree/v1.2.0" class="external-link">FluSight
-season</a> as if <code>incast</code> had submitted each week.</p>
+season</a> as if <code>insight.cast</code> had submitted each week.</p>
 <p>The evaluation covers:</p>
 <ul>
 <li>7 states: Connecticut, Florida, Maryland, New Jersey, New York,
@@ -109,11 +109,11 @@ forecasts and scores keep the plots fast and reproducible.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> NAIVE    2025-11-22           1 09       0.025              1</span></span></code></pre></div>
 <p>Save a Hubverse-format CSV for <a href="https://myrespilens.com" class="external-link">myRespiLens</a>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">flusight_forecasts</span>, <span class="st">"incast.csv"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">flusight_forecasts</span>, <span class="st">"insight.cast.csv"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>The data contain every candidate that fitted successfully. For each
 state and round, the three candidates with the lowest cross-validation
 weighted interval score (WIS) are combined with equal weights and stored
-as <code>model_id = "incast"</code>.</p>
+as <code>model_id = "insight.cast"</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="backtest-design">Backtest design<a class="anchor" aria-label="anchor" href="#backtest-design"></a>
@@ -159,7 +159,7 @@ that round.</li>
 state.</li>
 <li>Refit every candidate to the current data and combine the selected
 three using an equal-weight linear pool. Save this ensemble as
-<code>incast</code>.</li>
+<code>insight.cast</code>.</li>
 </ol>
 <p>The candidates include the four defaults, plus ARIMA, HHH4, Prophet,
 neural network, mechanistic and foundation models:</p>
@@ -167,7 +167,7 @@ neural network, mechanistic and foundation models:</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fable.tidyverts.org" class="external-link">fable</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.mitchelloharawild.com/fable.prophet/" class="external-link">fable.prophet</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/incast.odin" class="external-link">incast.odin</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/insight.cast.odin" class="external-link">insight.cast.odin</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/reticulate/" class="external-link">reticulate</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://surveillance.R-Forge.R-project.org/" class="external-link">surveillance</a></span><span class="op">)</span></span>
 <span></span>
@@ -207,8 +207,8 @@ neural network, mechanistic and foundation models:</p>
 <span>  <span class="fu"><a href="../reference/default_models.html">default_models</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>    CUSTOM_ARIMA <span class="op">=</span> <span class="fu"><a href="https://fable.tidyverts.org/reference/ARIMA.html" class="external-link">ARIMA</a></span><span class="op">(</span><span class="va">observation</span> <span class="op">~</span> <span class="fu">pdq</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    ODIN2_SIR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/incast.odin/man/odin_sir.html" class="external-link">odin_sir</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
-<span>    ODIN2_SEIR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/incast.odin/man/odin_seir.html" class="external-link">odin_seir</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
+<span>    ODIN2_SIR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/insight.cast.odin/man/odin_sir.html" class="external-link">odin_sir</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
+<span>    ODIN2_SEIR <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/insight.cast.odin/man/odin_seir.html" class="external-link">odin_seir</a></span><span class="op">(</span><span class="va">observation</span><span class="op">)</span>,</span>
 <span>    HHH4_AR_END <span class="op">=</span> <span class="fu"><a href="../reference/HHH4.html">HHH4</a></span><span class="op">(</span></span>
 <span>      <span class="va">observation</span>,</span>
 <span>      control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -284,7 +284,7 @@ cross-validation explicit:</p>
 <span></span>
 <span>  <span class="fu"><a href="../reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="va">cv</span>, h <span class="op">=</span> <span class="va">forecast_steps</span>, top_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">hub</span><span class="op">$</span><span class="va">model_out_tbl</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/transmute.html" class="external-link">transmute</a></span><span class="op">(</span></span>
-<span>      model_id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">model_id</span> <span class="op">==</span> <span class="st">"ENSEMBLE"</span>, <span class="st">"incast"</span>, <span class="va">model_id</span><span class="op">)</span>,</span>
+<span>      model_id <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html" class="external-link">if_else</a></span><span class="op">(</span><span class="va">model_id</span> <span class="op">==</span> <span class="st">"ENSEMBLE"</span>, <span class="st">"insight.cast"</span>, <span class="va">model_id</span><span class="op">)</span>,</span>
 <span>      reference_date <span class="op">=</span> <span class="va">ref_date</span>,</span>
 <span>      <span class="va">target</span>,</span>
 <span>      horizon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">target_end_date</span> <span class="op">-</span> <span class="va">ref_date</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html" class="external-link">%/%</a></span> <span class="fl">7L</span>,</span>
@@ -312,7 +312,7 @@ cross-validation explicit:</p>
 <span><span class="va">flusight_forecasts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">rounds</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span></span>
 <span>  <span class="va">flusight_forecasts</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"data-raw"</span>, <span class="st">"incast.csv"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"data-raw"</span>, <span class="st">"insight.cast.csv"</span><span class="op">)</span>,</span>
 <span>  row.names <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -378,7 +378,7 @@ could have been pretrained on the 2025–26 evaluation wave.</p>
 <h2 id="recomputing-the-saved-results">Recomputing the saved results<a class="anchor" aria-label="anchor" href="#recomputing-the-saved-results"></a>
 </h2>
 <p>Run <code>data-raw/FluSight-backtest.R</code> to refit the backtest
-and write <code>data-raw/incast.csv</code>. The script caches each
+and write <code>data-raw/insight.cast.csv</code>. The script caches each
 round’s cross-validation object so future changes to <code>top_n</code>
 are faster. It then packages the forecasts and recomputes the score
 tables automatically.</p>

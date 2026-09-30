@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Tools for Epidemic Forecasting • incast</title>
+<title>Tools for Epidemic Forecasting • insight.cast</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
@@ -19,7 +19,7 @@
 <script src="extra.js"></script><meta property="og:title" content="Tools for Epidemic Forecasting">
 <meta name="description" content="A single workflow for preparing surveillance data, nowcasting reporting delays, evaluating models, and forecasting epidemics.">
 <meta property="og:description" content="A single workflow for preparing surveillance data, nowcasting reporting delays, evaluating models, and forecasting epidemics.">
-<meta property="og:image" content="https://accidda.github.io/incast/logo.png">
+<meta property="og:image" content="https://accidda.github.io/insight.cast/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -27,7 +27,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="index.html">incast</a>
+    <a class="navbar-brand me-2" href="index.html">insight.cast</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
@@ -38,16 +38,16 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item"><a class="nav-link" href="articles/incast.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/ebola_2026.html">Forecasting the 2026 Ebola Outbreak</a></li>
     <li><a class="dropdown-item" href="articles/external_data.html">Preparing External Data</a></li>
-    <li><a class="dropdown-item" href="articles/FluSight.html">Evaluating incast against FluSight</a></li>
+    <li><a class="dropdown-item" href="articles/FluSight.html">Evaluating insight.cast against FluSight</a></li>
     <li><a class="dropdown-item" href="articles/forecast_planning.html">Planning an Infectious Disease Forecast</a></li>
     <li><a class="dropdown-item" href="articles/hhh4.html">Forecasting connected time series with HHH4</a></li>
+    <li><a class="dropdown-item" href="articles/insight.cast.html">insight.cast</a></li>
   </ul>
 </li>
       </ul>
@@ -55,7 +55,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ACCIDDA/incast" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/ACCIDDA/insight.cast" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -65,13 +65,13 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
-<img src="logo.png" class="logo" alt=""><h1 id="incast-">incast 
-<a class="anchor" aria-label="anchor" href="#incast-"></a>
+<img src="logo.png" class="logo" alt=""><h1 id="insightcast-">insight.cast 
+<a class="anchor" aria-label="anchor" href="#insightcast-"></a>
 </h1>
 </div>
 <!-- badges: start -->
 
-<p><code>incast</code> is an R package for infectious disease nowcasting and forecasting. It was developed through <strong><a href="https://www.cdc.gov/insight-net" class="external-link">Insight Net</a></strong>, a <strong><a href="https://www.cdc.gov/forecast-outbreak-analytics/index.html" class="external-link">CDC Center for Forecasting and Outbreak Analytics</a></strong> initiative.</p>
+<p><code>insight.cast</code> is an R package for infectious disease nowcasting and forecasting. It was developed through <strong><a href="https://www.cdc.gov/insight-net" class="external-link">Insight Net</a></strong>, a <strong><a href="https://www.cdc.gov/forecast-outbreak-analytics/index.html" class="external-link">CDC Center for Forecasting and Outbreak Analytics</a></strong> initiative.</p>
 <p>Use it to fetch or validate data, correct reporting delays, compare models and produce forecasts.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -79,13 +79,13 @@
 <p>Install the development version from GitHub:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"ACCIDDA/incast"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"ACCIDDA/insight.cast"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/incast" class="external-link">incast</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/ACCIDDA/insight.cast" class="external-link">insight.cast</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">example_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; # A tibble: 6 × 5</span></span>
 <span><span class="co">#&gt;   as_of      location target          target_end_date observation</span></span>
@@ -104,7 +104,7 @@
 <span>  <span class="fu"><a href="reference/get_fcast.html">get_fcast</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fcast</span></span>
-<span><span class="co">#&gt; &lt;incast_fcast&gt;</span></span>
+<span><span class="co">#&gt; &lt;insightcast_fcast&gt;</span></span>
 <span><span class="co">#&gt; Target:   wk inc flu hosp</span></span>
 <span><span class="co">#&gt; Series:   2 (location)</span></span>
 <span><span class="co">#&gt; Forecast: 2025-12-20 to 2026-01-10 (h = 4)</span></span>
@@ -128,34 +128,34 @@
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<p>To cite <code>incast</code>:</p>
+<p>To cite <code>insight.cast</code>:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"incast"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; To cite package 'incast' in publications use:</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"insight.cast"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; To cite package 'insight.cast' in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Geismar C (2026). _incast: Tools for Epidemic Forecasting_. R package</span></span>
-<span><span class="co">#&gt;   version 0.0.1, &lt;https://github.com/ACCIDDA/incast&gt;.</span></span>
+<span><span class="co">#&gt;   Geismar C (2026). _insight.cast: Tools for Epidemic Forecasting_. R package</span></span>
+<span><span class="co">#&gt;   version 0.0.1, &lt;https://github.com/ACCIDDA/insight.cast&gt;.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   @Manual{,</span></span>
-<span><span class="co">#&gt;     title = {incast: Tools for Epidemic Forecasting},</span></span>
+<span><span class="co">#&gt;     title = {insight.cast: Tools for Epidemic Forecasting},</span></span>
 <span><span class="co">#&gt;     author = {Cyril Geismar},</span></span>
 <span><span class="co">#&gt;     year = {2026},</span></span>
 <span><span class="co">#&gt;     note = {R package version 0.0.1},</span></span>
-<span><span class="co">#&gt;     url = {https://github.com/ACCIDDA/incast},</span></span>
+<span><span class="co">#&gt;     url = {https://github.com/ACCIDDA/insight.cast},</span></span>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h2>
-<p><code>incast</code> uses <a href="https://baselinenowcast.epinowcast.org/" class="external-link"><code>baselinenowcast</code></a> and <a href="https://fable.tidyverts.org/" class="external-link"><code>fable</code></a>. It returns forecasts in <a href="https://hubverse.io/" class="external-link"><code>hubverse</code></a> format for submission to <a href="https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html" class="external-link">CDC forecast hubs</a>.</p>
+<p><code>insight.cast</code> uses <a href="https://baselinenowcast.epinowcast.org/" class="external-link"><code>baselinenowcast</code></a> and <a href="https://fable.tidyverts.org/" class="external-link"><code>fable</code></a>. It returns forecasts in <a href="https://hubverse.io/" class="external-link"><code>hubverse</code></a> format for submission to <a href="https://www.cdc.gov/cfa-modeling-and-forecasting/about/index.html" class="external-link">CDC forecast hubs</a>.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/ACCIDDA/incast" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/ACCIDDA/insight.cast" class="external-link">Browse source code</a></li>
 </ul>
 </div>
 
@@ -171,7 +171,7 @@
 <div class="citation">
 <h2 data-toc-skip>Citation</h2>
 <ul class="list-unstyled">
-<li><a href="authors.html#citation">Citing incast</a></li>
+<li><a href="authors.html#citation">Citing insight.cast</a></li>
 </ul>
 </div>
 
@@ -188,8 +188,8 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ACCIDDA/incast/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://app.codecov.io/gh/ACCIDDA/incast" class="external-link"><img src="https://codecov.io/gh/ACCIDDA/incast/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://github.com/ACCIDDA/insight.cast/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ACCIDDA/insight.cast/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/ACCIDDA/insight.cast" class="external-link"><img src="https://codecov.io/gh/ACCIDDA/insight.cast/graph/badge.svg" alt="Codecov test coverage"></a></li>
 </ul>
 </div>
 

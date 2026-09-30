@@ -3,8 +3,9 @@
 `HHH4()` fits
 [`surveillance::hhh4()`](https://rdrr.io/pkg/surveillance/man/hhh4.html)
 jointly to all series and returns simulated forecasts for
-[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md) and
-[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md).
+[`get_cv()`](https://accidda.github.io/insight.cast/reference/get_cv.md)
+and
+[`get_fcast()`](https://accidda.github.io/insight.cast/reference/get_fcast.md).
 
 ## Usage
 
@@ -17,7 +18,7 @@ HHH4(formula, control, neighbourhood = NULL, population = NULL, n_sim = 500L)
 - formula:
 
   Use `observation`. Units come from the single key supplied to
-  [`check_data()`](https://accidda.github.io/incast/reference/check_data.md).
+  [`check_data()`](https://accidda.github.io/insight.cast/reference/check_data.md).
 
 - control:
 
@@ -40,20 +41,21 @@ HHH4(formula, control, neighbourhood = NULL, population = NULL, n_sim = 500L)
 ## Value
 
 A joint model specification for
-[`get_cv()`](https://accidda.github.io/incast/reference/get_cv.md) or
-[`get_fcast()`](https://accidda.github.io/incast/reference/get_fcast.md).
+[`get_cv()`](https://accidda.github.io/insight.cast/reference/get_cv.md)
+or
+[`get_fcast()`](https://accidda.github.io/insight.cast/reference/get_fcast.md).
 
 ## Details
 
 Model components and `control` options are documented in
 [`surveillance::hhh4()`](https://rdrr.io/pkg/surveillance/man/hhh4.html).
-`incast` manages `control$subset`, so do not supply it. Data must have
-one series key, and all unit-indexed inputs must be named with its
+`insight.cast` manages `control$subset`, so do not supply it. Data must
+have one series key, and all unit-indexed inputs must be named with its
 values. Fractional observations are rounded to counts before fitting.
 
 ## See also
 
-[`vignette("hhh4")`](https://accidda.github.io/incast/articles/hhh4.md),
+[`vignette("hhh4")`](https://accidda.github.io/insight.cast/articles/hhh4.md),
 [`surveillance::hhh4()`](https://rdrr.io/pkg/surveillance/man/hhh4.html)
 
 ## Author

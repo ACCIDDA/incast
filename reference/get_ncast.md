@@ -16,7 +16,7 @@ get_ncast(x, max_delay = 2, draws = 1000, prop_delay = 0.5, scale_factor = 3)
 
 - x:
 
-  An `incast_data` object with revision history.
+  An `insightcast_data` object with revision history.
 
 - max_delay:
 
@@ -38,7 +38,7 @@ get_ncast(x, max_delay = 2, draws = 1000, prop_delay = 0.5, scale_factor = 3)
 
 ## Value
 
-An `incast_ncast` object with the shared backbone (`key`, `target`,
+An `insightcast_ncast` object with the shared backbone (`key`, `target`,
 `window`, `interval`, `history`) plus:
 
 - data:

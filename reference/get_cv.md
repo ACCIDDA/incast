@@ -20,7 +20,7 @@ get_cv(
 
 - x:
 
-  An `incast_data` or `incast_ncast` object.
+  An `insightcast_data` or `insightcast_ncast` object.
 
 - eval_start_date:
 
@@ -35,10 +35,10 @@ get_cv(
 
 - models:
 
-  Named list of `fable` or joint incast model specifications, such as
-  [`HHH4`](https://accidda.github.io/incast/reference/HHH4.md). Defaults
-  to
-  [`default_models`](https://accidda.github.io/incast/reference/default_models.md).
+  Named list of `fable` or joint insight.cast model specifications, such
+  as [`HHH4`](https://accidda.github.io/insight.cast/reference/HHH4.md).
+  Defaults to
+  [`default_models`](https://accidda.github.io/insight.cast/reference/default_models.md).
 
 - step:
 
@@ -61,7 +61,7 @@ get_cv(
 
 ## Value
 
-An `incast_cv` object containing:
+An `insightcast_cv` object containing:
 
 - forecasts:
 
@@ -88,14 +88,14 @@ An `incast_cv` object containing:
 - data:
 
   Input data with revisions collapsed, used by
-  [`get_fcast`](https://accidda.github.io/incast/reference/get_fcast.md).
+  [`get_fcast`](https://accidda.github.io/insight.cast/reference/get_fcast.md).
 
 ## Details
 
 Forecast performance is measured using weighted interval score (WIS) and
 interval coverage. Models are ranked separately for each series, and the
 resulting rankings are used by
-[`get_fcast`](https://accidda.github.io/incast/reference/get_fcast.md).
+[`get_fcast`](https://accidda.github.io/insight.cast/reference/get_fcast.md).
 
 ## Author
 
